@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Explore | RationalMind
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<main class="explore-container">
+
+
+<section class="explore-header">
+
+
+<p class="eyebrow">
+KNOWLEDGE LIBRARY
+</p>
+
+
+<h1>
+Understand the mind.
+</h1>
+
+
+<p>
+
+Explore ideas from psychology,
+philosophy, and decision science
+that influence how we think and act.
+
+</p>
+
+
+</section>
+
+
+
+<section class="lesson-grid">
+
+
+{% for lesson in lessons %}
+
+<div class="library-intro">
+
+<h2>
+The RationalMind Curriculum
+</h2>
+
+<p>
+Explore ideas from psychology, philosophy,
+and decision science that shape human thinking.
+</p>
+
+</div>
+
+
+<div class="lesson-card">
+
+
+<span class="lesson-category">
+
+{{ lesson.category }}
+
+</span>
+
+
+
+<h2>
+
+{{ lesson.title }}
+
+</h2>
+
+
+
+<p>
+
+{{ lesson.description }}
+
+</p>
+
+
+
+<div class="question-box">
+
+
+<strong>
+Reflection Question
+</strong>
+
+
+<p>
+
+{{ lesson.question }}
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+{% endfor %}
+
+
+</section>
+
+
+
+</main>
+
+
+{% endblock %}

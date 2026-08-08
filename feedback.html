@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}
+Feedback | RationalMind
+{% endblock %}
+
+{% block content %}
+
+<main class="feedback-container">
+
+    <p class="eyebrow">YOUR EXPERIENCE</p>
+
+    <h1>How was RationalMind?</h1>
+
+    {% if submitted %}
+
+        <div class="feedback-success">
+
+            <h2>Thank you.</h2>
+
+            <p>
+                Your feedback will help improve RationalMind.
+            </p>
+
+            <a href="/dashboard">
+                Return to Dashboard
+            </a>
+
+        </div>
+
+    {% else %}
+
+        <p>
+            Your feedback helps us understand what is useful
+            and what could be improved.
+        </p>
+
+        {% if error %}
+            <p class="feedback-error">
+                {{ error }}
+            </p>
+        {% endif %}
+
+        <form method="POST">
+
+            <label>
+                How helpful was RationalMind?
+            </label>
+
+            <div class="rating-options">
+
+                <label>
+                    <input type="radio" name="rating" value="1">
+                    1
+                </label>
+
+                <label>
+                    <input type="radio" name="rating" value="2">
+                    2
+                </label>
+
+                <label>
+                    <input type="radio" name="rating" value="3">
+                    3
+                </label>
+
+                <label>
+                    <input type="radio" name="rating" value="4">
+                    4
+                </label>
+
+                <label>
+                    <input type="radio" name="rating" value="5">
+                    5
+                </label>
+
+            </div>
+
+            <label for="comment">
+                What did you think? (optional)
+            </label>
+
+            <textarea
+                id="comment"
+                name="comment"
+                rows="5"
+                placeholder="Tell us what was useful or confusing..."
+            ></textarea>
+
+            <button type="submit">
+                Submit Feedback
+            </button>
+
+        </form>
+
+    {% endif %}
+
+</main>
+
+{% endblock %}

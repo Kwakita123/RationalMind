@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | RationalMind
+{% endblock %}
+
+{% block content %}
+
+<main class="dashboard-container">
+
+```
+<!-- WELCOME -->
+
+<section class="welcome-section">
+
+    <p class="eyebrow">
+        RATIONALMIND
+    </p>
+
+    <h1>
+        Build awareness.<br>
+        Make intentional choices.
+    </h1>
+
+    <p>
+        Your mind is shaped by your thoughts, emotions, and decisions.
+        RationalMind helps you understand those patterns and respond
+        with clarity.
+    </p>
+
+</section>
+
+
+<!-- ABOUT RATIONALMIND -->
+
+<section class="about-section">
+
+    <p class="eyebrow">
+        WHAT IS RATIONALMIND?
+    </p>
+
+    <h2>
+        Think clearly. Understand yourself. Choose intentionally.
+    </h2>
+
+    <p class="about-description">
+        RationalMind is a personal reflection and decision-making
+        tool designed to help you examine your thoughts, understand
+        your emotions, and approach important choices with greater
+        awareness.
+    </p>
+
+
+    <div class="about-grid">
+
+
+        <div class="about-card">
+
+            <h3>
+                Reflect
+            </h3>
+
+            <p>
+                Understand your experiences, emotions, thoughts,
+                and reactions.
+            </p>
+
+        </div>
+
+
+        <div class="about-card">
+
+            <h3>
+                Reason
+            </h3>
+
+            <p>
+                Separate facts from assumptions and consider
+                different perspectives.
+            </p>
+
+        </div>
+
+
+        <div class="about-card">
+
+            <h3>
+                Decide
+            </h3>
+
+            <p>
+                Compare options, consider tradeoffs, and make
+                choices aligned with your goals.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="about-principle">
+
+        <p>
+            RationalMind isn't about having perfect answers.
+            It's about developing a better understanding of
+            how you think.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- PERSONAL INSIGHT -->
+
+<section class="insight-card">
+
+    <p class="eyebrow">
+        PERSONAL INSIGHT
+    </p>
+
+    <h2>
+        Awareness creates change.
+    </h2>
+
+    <p>
+        You have completed
+        <strong>{{ reflection_count }}</strong>
+        reflection exercises.
+
+        Your most frequent emotional state is:
+        <strong>{{ common_emotion }}</strong>.
+
+        Continue observing patterns instead of judging them.
+    </p>
+
+</section>
+
+
+<!-- JOURNEY -->
+
+<section class="dashboard-header">
+
+    <p class="eyebrow">
+        YOUR JOURNEY
+    </p>
+
+    <h1>
+        Growth Dashboard
+    </h1>
+
+    <p>
+        Track your reflections and build awareness
+        of your thoughts, emotions, and decisions.
+    </p>
+
+</section>
+
+
+<!-- STATS -->
+
+<section class="stats-grid">
+
+
+    <div class="stat-card">
+
+        <h2>
+            {{ reflection_count }}
+        </h2>
+
+        <p>
+            Reflections Completed
+        </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h2>
+            {{ common_emotion }}
+        </h2>
+
+        <p>
+            Most Frequent Emotion
+        </p>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h2>
+            {{ reflection_count }}
+        </h2>
+
+        <p>
+            Entries Recorded
+        </p>
+
+    </div>
+
+
+</section>
+
+
+<!-- LATEST REFLECTION -->
+
+{% if latest_reflection %}
+
+<section class="insight-card">
+
+    <p class="eyebrow">
+        LATEST REFLECTION
+    </p>
+
+    <h2>
+        {{ latest_reflection["emotion"] }}
+    </h2>
+
+    <p>
+        {{ latest_reflection["situation"] }}
+    </p>
+
+
+    {% if latest_reflection["insights"] %}
+
+    <p>
+        <strong>Insight:</strong>
+        {{ latest_reflection["insights"] }}
+    </p>
+
+    {% endif %}
+
+
+    <p class="date">
+        {{ latest_reflection["created_at"] }}
+    </p>
+
+</section>
+
+{% endif %}
+
+
+<!-- TODAY'S PRACTICE -->
+
+<section class="practice-card">
+
+    <h2>
+        Today's Practice
+    </h2>
+
+    <p>
+        Choose one activity to strengthen your awareness.
+    </p>
+
+
+    <div class="practice-buttons">
+
+
+        <a href="/reflection">
+            Reflect on your thoughts
+        </a>
+
+
+        <a href="/reset">
+            Reset your attention
+        </a>
+
+
+        <a href="/decision">
+            Analyze a decision
+        </a>
+
+
+    </div>
+
+</section>
+
+
+<!-- RECENT REFLECTIONS -->
+
+<section class="recent-section">
+
+    <h2>
+        Recent Reflections
+    </h2>
+
+
+    {% if recent_reflections %}
+
+
+        {% for reflection in recent_reflections %}
+
+        <div class="recent-card">
+
+
+            <div class="date">
+                {{ reflection["created_at"] }}
+            </div>
+
+
+            <h3>
+                Emotion: {{ reflection["emotion"] }}
+            </h3>
+
+
+            <p>
+                {{ reflection["situation"] }}
+            </p>
+
+
+            {% if reflection["insights"] %}
+
+            <p>
+                <strong>Insight:</strong>
+                {{ reflection["insights"] }}
+            </p>
+
+            {% endif %}
+
+
+        </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <div class="empty-card">
+
+            <p>
+                Complete your first reflection to begin tracking
+                your growth.
+            </p>
+
+        </div>
+
+
+    {% endif %}
+
+</section>
+
+
+<!-- PRINCIPLE -->
+
+<section class="principle-card">
+
+    <h2>
+        The RationalMind Principle
+    </h2>
+
+    <p>
+        You cannot control every event,
+        but you can improve how you understand
+        and respond to those events.
+    </p>
+
+</section>
+```
+
+</main>
+
+{% endblock %}

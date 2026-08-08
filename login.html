@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Login | RationalMind</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="auth-container">
+
+
+<h1>
+Welcome Back
+</h1>
+
+
+<form method="POST">
+
+
+<input
+name="email"
+placeholder="Email"
+required>
+
+
+<input
+type="password"
+name="password"
+placeholder="Password"
+required>
+
+
+<button>
+Login
+</button>
+
+
+</form>
+
+
+<p>
+Don't have an account?
+<a href="/signup">
+Sign Up
+</a>
+</p>
+
+
+</div>
+
+
+</body>
+
+</html>

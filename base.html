@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        RationalMind
+        {% endblock %}
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<nav class="main-nav">
+
+    <div class="logo">
+
+        <a href="/">
+            RationalMind
+        </a>
+
+    </div>
+
+
+    <div class="nav-links">
+
+        {% if logged_in %}
+
+            <a href="/dashboard">
+                Dashboard
+            </a>
+
+           <nav class="navbar">
+
+<a href="/dashboard">
+Dashboard
+</a>
+
+<a href="/check-in">
+Reflect
+</a>
+
+<a href="/decision">
+Decide
+</a>
+
+<a href="/reset">
+Reset
+</a>
+
+<a href="/explore">
+Learn
+</a>
+
+<a href="/logout">
+Logout
+</a>
+
+<a href="/history">
+History
+</a>
+<a href="/feedback">
+Feedback
+</a>
+</nav>
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+{% block content %}
+{% endblock %}
+
+
+</body>
+
+</html>

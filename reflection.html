@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}
+Reflection | RationalMind
+{% endblock %}
+
+{% block content %}
+
+<main class="page-container">
+
+    <h1>Daily Reflection</h1>
+
+    <p>
+        Step back from your emotions and examine your experience objectively.
+    </p>
+
+    {% if message %}
+
+        <div class="success-message">
+            {{ message }}
+        </div>
+
+    {% endif %}
+
+
+    <form method="POST">
+
+        <!-- 01 -->
+
+        <label>
+            01 — What happened?
+        </label>
+
+        <p class="form-help">
+            Describe the situation as objectively as possible.
+            Focus on observable events rather than interpretations.
+        </p>
+
+        <textarea
+            name="situation"
+            required></textarea>
+
+
+        <!-- 02 -->
+
+        <label>
+            02 — What are you feeling?
+        </label>
+
+        <p class="form-help">
+            Name the emotion rather than judging it.
+        </p>
+
+        <input
+            type="text"
+            name="emotion"
+            required>
+
+
+        <label>
+            How intense is it?
+        </label>
+
+        <input
+            type="range"
+            name="intensity"
+            min="1"
+            max="10"
+            value="5"
+            oninput="this.nextElementSibling.value = this.value">
+
+        <output>5</output>
+
+
+        <!-- 03 -->
+
+        <label>
+            03 — What thought is behind the emotion?
+        </label>
+
+        <p class="form-help">
+            What are you telling yourself about the situation?
+        </p>
+
+        <textarea
+            name="thought"
+            required></textarea>
+
+
+        <!-- 04 -->
+
+        <label>
+            04 — What evidence supports that thought?
+        </label>
+
+        <p class="form-help">
+            Look for specific facts rather than assumptions.
+        </p>
+
+        <textarea
+            name="evidence"
+            required></textarea>
+
+
+        <!-- 05 -->
+
+        <label>
+            05 — What evidence challenges it?
+        </label>
+
+        <p class="form-help">
+            Consider information that doesn't fit your original interpretation.
+        </p>
+
+        <textarea
+            name="challenging_evidence"
+            required></textarea>
+
+
+        <!-- 06 -->
+
+        <label>
+            06 — What else could be true?
+        </label>
+
+        <p class="form-help">
+            Generate at least one alternative explanation.
+        </p>
+
+        <textarea
+            name="alternative"
+            required></textarea>
+
+
+        <!-- 07 -->
+
+        <label>
+            07 — What response aligns with your goals?
+        </label>
+
+        <p class="form-help">
+            You may not control the situation, but you can choose your next action.
+        </p>
+
+        <textarea
+            name="response"
+            required></textarea>
+
+
+        <!-- 08 -->
+
+        <label>
+            08 — What did you learn?
+        </label>
+
+        <p class="form-help">
+            Identify the insight you want to carry forward.
+        </p>
+
+        <textarea
+            name="insights"
+            required></textarea>
+
+
+        <button type="submit">
+            Save Reflection
+        </button>
+
+    </form>
+
+
+</main>
+
+{% endblock %}

@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Emotional Check-In | RationalMind
+{% endblock %}
+
+
+{% block content %}
+
+<main class="checkin-container">
+
+
+<section class="checkin-header">
+
+<p class="eyebrow">
+EMOTIONAL AWARENESS
+</p>
+
+<h1>
+Pause before you respond.
+</h1>
+
+<p>
+This exercise helps you separate what happened,
+what you felt, and what you believe happened.
+You don't need to eliminate emotion.
+You need to understand it.
+</p>
+
+</section>
+
+
+
+<form method="POST"
+      class="checkin-form">
+
+
+<!-- STEP 1 -->
+
+<div class="checkin-step">
+
+<span class="step-number">
+01
+</span>
+
+<h2>
+What happened?
+</h2>
+
+<p>
+Describe the situation as objectively as possible.
+Focus on observable events rather than interpretations.
+</p>
+
+<textarea
+name="situation"
+placeholder="Example: I received a lower grade than I expected."
+required></textarea>
+
+</div>
+
+
+
+<!-- STEP 2 -->
+
+<div class="checkin-step">
+
+<span class="step-number">
+02
+</span>
+
+<h2>
+What are you feeling?
+</h2>
+
+<p>
+Name the emotion rather than judging it.
+</p>
+
+<input
+name="emotion"
+placeholder="Frustration, disappointment, anxiety..."
+required>
+
+
+<label>
+How intense is it?
+</label>
+
+<div class="intensity-row">
+
+<input
+type="range"
+name="intensity"
+min="1"
+max="10"
+value="5"
+id="intensity">
+
+<span id="intensity-value">
+5
+</span>
+
+</div>
+
+</div>
+
+
+
+<!-- STEP 3 -->
+
+<div class="checkin-step">
+
+<span class="step-number">
+03
+</span>
+
+<h2>
+What thought is behind the emotion?
+</h2>
+
+<p>
+What are you telling yourself about the situation?
+</p>
+
+<textarea
+name="thought"
+placeholder="Example: Maybe I'm not as capable as I thought."
+required></textarea>
+
+</div>
+
+
+
+<!-- STEP 4 -->
+
+<div class="checkin-step">
+
+<span class="step-number">
+04
+</span>
+
+<h2>
+What evidence supports that thought?
+</h2>
+
+<p>
+Look for specific facts rather than assumptions.
+</p>
+
+<textarea
+name="evidence"
+placeholder="What facts make this interpretation seem reasonable?"
+required></textarea>
+
+</div>
+
+
+
+<!-- STEP 5 -->
+
+<div class="checkin-step">
+
+<span class="step-number">
+05
+</span>
+
+<h2>
+What evidence challenges it?
+</h2>
+
+<p>
+Consider information that doesn't fit your original interpretation.
+</p>
+
+<textarea
+name="counter_evidence"
+placeholder="What facts suggest another interpretation?"
+required></textarea>
+
+</div>
+
+
+
+<!-- STEP 6 -->
+
+<div class="checkin-step">
+
+<span class="step-number">
+06
+</span>
+
+<h2>
+What else could be true?
+</h2>
+
+<p>
+Generate at least one alternative explanation.
+</p>
+
+<textarea
+name="alternative"
+placeholder="Another possible explanation could be..."
+required></textarea>
+
+</div>
+
+
+
+<!-- STEP 7 -->
+
+<div class="checkin-step">
+
+<span class="step-number">
+07
+</span>
+
+<h2>
+What response aligns with your goals?
+</h2>
+
+<p>
+You may not control the situation,
+but you can choose your next action.
+</p>
+
+<textarea
+name="response"
+placeholder="What would be the most constructive response?"
+required></textarea>
+
+</div>
+
+
+
+<button
+type="submit"
+class="checkin-submit">
+
+Complete Reflection
+
+</button>
+
+
+</form>
+
+
+
+{% if reflection %}
+
+
+<section class="checkin-result">
+
+
+<p class="eyebrow">
+YOUR REFLECTION
+</p>
+
+
+<h2>
+You created space between feeling and response.
+</h2>
+
+
+<div class="result-grid">
+
+
+<div>
+
+<strong>
+Emotion
+</strong>
+
+<p>
+{{ reflection.emotion }}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>
+Intensity
+</strong>
+
+<p>
+{{ reflection.intensity }}/10
+</p>
+
+</div>
+
+
+<div>
+
+<strong>
+Original Thought
+</strong>
+
+<p>
+{{ reflection.thought }}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>
+Alternative Perspective
+</strong>
+
+<p>
+{{ reflection.alternative }}
+</p>
+
+</div>
+
+
+</div>
+
+<div class="response-highlight">
+
+<strong>
+RationalMind Insights
+</strong>
+
+
+{% for insight in reflection.insights %}
+
+<p>
+• {{ insight }}
+</p>
+
+{% endfor %}
+
+
+</div>
+<div class="response-highlight">
+
+<strong>
+Your intentional response
+</strong>
+
+<p>
+{{ reflection.response }}
+</p>
+
+</div>
+
+
+<p class="closing-message">
+
+The goal isn't to suppress emotion.
+It's to understand it well enough to choose
+your response deliberately.
+
+</p>
+
+
+</section>
+
+
+{% endif %}
+
+
+</main>
+
+
+
+<script>
+
+const slider = document.getElementById("intensity");
+
+const value = document.getElementById("intensity-value");
+
+
+if (slider) {
+
+    slider.addEventListener("input", function() {
+
+        value.textContent = this.value;
+
+    });
+
+}
+
+</script>
+
+
+{% endblock %}

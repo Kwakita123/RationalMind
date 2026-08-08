@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Stress Reset | RationalMind
+{% endblock %}
+
+
+{% block content %}
+
+
+<main class="reset-container">
+
+
+<section class="reset-header">
+
+<p class="eyebrow">
+MENTAL RESET
+</p>
+
+
+<h1>
+Create space before you react.
+</h1>
+
+
+<p>
+When stress rises, your attention narrows.
+This exercise helps you pause, regain awareness,
+and choose your next action deliberately.
+</p>
+
+
+</section>
+
+
+
+<section class="reset-card">
+
+
+<div class="reset-step">
+
+
+<span>
+01
+</span>
+
+
+<h2>
+Notice your current state.
+</h2>
+
+
+<p>
+Take a moment to identify what is happening
+without judging yourself.
+</p>
+
+
+<div class="question">
+
+<strong>
+What am I feeling right now?
+</strong>
+
+<p>
+Stress, frustration, uncertainty, pressure,
+fatigue, or something else?
+</p>
+
+</div>
+
+
+<textarea
+placeholder="Write your current state..."></textarea>
+
+
+</div>
+
+
+
+
+<div class="reset-step">
+
+
+<span>
+02
+</span>
+
+
+<h2>
+Slow your attention.
+</h2>
+
+
+<p>
+Follow this simple breathing cycle:
+</p>
+
+
+<div class="breathing-box">
+
+
+<h3 id="breathing-text">
+Ready
+</h3>
+
+
+<button
+onclick="startBreathing()">
+
+Begin Reset
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="reset-step">
+
+
+<span>
+03
+</span>
+
+
+<h2>
+Return with intention.
+</h2>
+
+
+<p>
+After creating space, decide what matters next.
+</p>
+
+
+<div class="question">
+
+<strong>
+What is one action I can take?
+</strong>
+
+
+<p>
+Focus on something within your control.
+</p>
+
+</div>
+
+
+<textarea
+placeholder="My next intentional action..."></textarea>
+
+
+</div>
+
+
+
+</section>
+
+
+
+<section class="reset-principle">
+
+
+<h2>
+The RationalMind Principle
+</h2>
+
+
+<p>
+You cannot always control your circumstances,
+but you can practice controlling your attention,
+interpretation, and response.
+</p>
+
+
+</section>
+
+
+
+</main>
+
+
+
+<script>
+
+
+function startBreathing(){
+
+let text = document.getElementById(
+"breathing-text"
+);
+
+
+let steps = [
+
+"Inhale",
+
+"Hold",
+
+"Exhale",
+
+"Pause"
+
+];
+
+
+let index = 0;
+
+
+text.innerHTML = steps[index];
+
+
+let timer = setInterval(function(){
+
+
+index++;
+
+
+if(index >= steps.length){
+
+index = 0;
+
+}
+
+
+text.innerHTML = steps[index];
+
+
+},4000);
+
+
+
+setTimeout(function(){
+
+clearInterval(timer);
+
+text.innerHTML="Reset Complete";
+
+
+},16000);
+
+
+}
+
+
+</script>
+
+
+
+{% endblock %}

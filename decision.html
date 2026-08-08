@@ -1,0 +1,477 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}
+Rational Decision | RationalMind
+{% endblock %}
+
+{% block content %}
+
+<main class="decision-container">
+
+    <section class="decision-header">
+
+        <p class="eyebrow">
+            RATIONAL DECISION
+        </p>
+
+        <h1>
+            Think before you choose.
+        </h1>
+
+        <p>
+            Use this framework to separate facts from
+            assumptions, compare alternatives, and
+            consider consequences before making a decision.
+        </p>
+
+    </section>
+
+
+    <form method="POST" class="decision-form">
+
+        <!-- STEP 1 -->
+
+        <div class="decision-step">
+
+            <span class="step-number">
+                01
+            </span>
+
+            <h2>
+                What decision are you facing?
+            </h2>
+
+            <p>
+                Describe the situation without deciding what
+                the answer should be yet.
+            </p>
+
+            <textarea
+                name="situation"
+                placeholder="What are you trying to decide?"
+                required></textarea>
+
+        </div>
+
+
+        <!-- STEP 2 -->
+
+        <div class="decision-step">
+
+            <span class="step-number">
+                02
+            </span>
+
+            <h2>
+                What is your actual goal?
+            </h2>
+
+            <p>
+                What outcome matters most to you?
+            </p>
+
+            <textarea
+                name="goal"
+                placeholder="What am I ultimately trying to achieve?"
+                required></textarea>
+
+        </div>
+
+
+        <!-- STEP 3 -->
+
+        <div class="decision-step">
+
+            <span class="step-number">
+                03
+            </span>
+
+            <h2>
+                What are the facts?
+            </h2>
+
+            <p>
+                List information that you can reasonably verify.
+            </p>
+
+            <textarea
+                name="facts"
+                placeholder="What do I actually know?"
+                required></textarea>
+
+        </div>
+
+
+        <!-- STEP 4 -->
+
+        <div class="decision-step">
+
+            <span class="step-number">
+                04
+            </span>
+
+            <h2>
+                What assumptions are you making?
+            </h2>
+
+            <p>
+                Identify things you believe may be true but
+                cannot completely verify.
+            </p>
+
+            <textarea
+                name="assumptions"
+                placeholder="What am I assuming?"
+                required></textarea>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+
+        <div class="decision-options">
+
+            <div class="option-card">
+
+                <span class="step-number">
+                    05A
+                </span>
+
+                <h2>
+                    Option A
+                </h2>
+
+                <input
+                    name="option_a"
+                    placeholder="Describe option A"
+                    required>
+
+                <label>
+                    Potential benefits
+                </label>
+
+                <textarea
+                    name="benefits_a"
+                    placeholder="What could go well?"
+                    required></textarea>
+
+                <label>
+                    Potential drawbacks
+                </label>
+
+                <textarea
+                    name="drawbacks_a"
+                    placeholder="What could go wrong?"
+                    required></textarea>
+
+            </div>
+
+
+            <div class="option-card">
+
+                <span class="step-number">
+                    05B
+                </span>
+
+                <h2>
+                    Option B
+                </h2>
+
+                <input
+                    name="option_b"
+                    placeholder="Describe option B"
+                    required>
+
+                <label>
+                    Potential benefits
+                </label>
+
+                <textarea
+                    name="benefits_b"
+                    placeholder="What could go well?"
+                    required></textarea>
+
+                <label>
+                    Potential drawbacks
+                </label>
+
+                <textarea
+                    name="drawbacks_b"
+                    placeholder="What could go wrong?"
+                    required></textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONSEQUENCES -->
+
+        <div class="decision-step">
+
+            <span class="step-number">
+                06
+            </span>
+
+            <h2>
+                Consider the time horizon.
+            </h2>
+
+            <label>
+                What are the short-term consequences?
+            </label>
+
+            <textarea
+                name="short_term"
+                placeholder="What happens immediately?"
+                required></textarea>
+
+            <label>
+                What are the long-term consequences?
+            </label>
+
+            <textarea
+                name="long_term"
+                placeholder="What could happen weeks, months, or years from now?"
+                required></textarea>
+
+        </div>
+
+
+        <!-- CHOICE -->
+
+        <div class="decision-step">
+
+            <span class="step-number">
+                07
+            </span>
+
+            <h2>
+                What are you choosing?
+            </h2>
+
+            <input
+                name="decision_choice"
+                placeholder="Option A, Option B, or another approach?"
+                required>
+
+            <label>
+                Why?
+            </label>
+
+            <textarea
+                name="reasoning"
+                placeholder="Explain your reasoning."
+                required></textarea>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="decision-submit">
+
+            Complete Decision Analysis
+
+        </button>
+
+    </form>
+
+
+    <!-- RESULTS -->
+
+    {% if result %}
+
+    <section class="decision-result">
+
+        <p class="eyebrow">
+            YOUR ANALYSIS
+        </p>
+
+        <h2>
+            You examined the decision before acting.
+        </h2>
+
+
+        <div class="decision-summary">
+
+
+            <!-- GOAL -->
+
+            <div class="summary-card">
+
+                <strong>
+                    Your Goal
+                </strong>
+
+                <p>
+                    {{ result.goal }}
+                </p>
+
+            </div>
+
+
+            <!-- FACTS -->
+
+            <div class="summary-card">
+
+                <strong>
+                    Facts
+                </strong>
+
+                <p>
+                    {{ result.facts }}
+                </p>
+
+            </div>
+
+
+            <!-- ASSUMPTIONS -->
+
+            <div class="summary-card">
+
+                <strong>
+                    Assumptions
+                </strong>
+
+                <p>
+                    {{ result.assumptions }}
+                </p>
+
+            </div>
+
+
+            <!-- OPTION A -->
+
+            <div class="summary-card">
+
+                <strong>
+                    Option A
+                </strong>
+
+                <p>
+                    <strong>Choice:</strong>
+                    {{ result.option_a }}
+                </p>
+
+                <p>
+                    <strong>Benefits:</strong>
+                    {{ result.benefits_a }}
+                </p>
+
+                <p>
+                    <strong>Drawbacks:</strong>
+                    {{ result.drawbacks_a }}
+                </p>
+
+            </div>
+
+
+            <!-- OPTION B -->
+
+            <div class="summary-card">
+
+                <strong>
+                    Option B
+                </strong>
+
+                <p>
+                    <strong>Choice:</strong>
+                    {{ result.option_b }}
+                </p>
+
+                <p>
+                    <strong>Benefits:</strong>
+                    {{ result.benefits_b }}
+                </p>
+
+                <p>
+                    <strong>Drawbacks:</strong>
+                    {{ result.drawbacks_b }}
+                </p>
+
+            </div>
+
+
+            <!-- SHORT TERM -->
+
+            <div class="summary-card">
+
+                <strong>
+                    Short-Term Consequences
+                </strong>
+
+                <p>
+                    {{ result.short_term }}
+                </p>
+
+            </div>
+
+
+            <!-- LONG TERM -->
+
+            <div class="summary-card">
+
+                <strong>
+                    Long-Term Consequences
+                </strong>
+
+                <p>
+                    {{ result.long_term }}
+                </p>
+
+            </div>
+
+
+            <!-- FINAL CHOICE -->
+
+            <div class="summary-card">
+
+                <strong>
+                    Your Choice
+                </strong>
+
+                <p>
+                    {{ result.decision_choice }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- REASONING -->
+
+        <div class="reasoning-card">
+
+            <strong>
+                Your Reasoning
+            </strong>
+
+            <p>
+                {{ result.reasoning }}
+            </p>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <p class="decision-message">
+
+            A rational decision does not require certainty.
+            It requires awareness of your goals, assumptions,
+            tradeoffs, and uncertainty.
+
+        </p>
+
+    </section>
+
+    {% endif %}
+
+
+</main>
+
+{% endblock %}
+```
