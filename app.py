@@ -114,7 +114,7 @@ lessons = [
 app = Flask(__name__)
 
 app.secret_key = "rationalmind_secret_key"
-CREATOR_EMAIL = os.environ.get("kwakita1214@gmail.com")
+CREATOR_EMAIL = os.environ.get("CREATOR_EMAIL", "").strip().lower()
 
 # =========================================================
 # DATABASE
