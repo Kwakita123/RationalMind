@@ -560,91 +560,48 @@ def dashboard():
         latest_reflection=latest_reflection
     )
 
-@app.route("/signup", methods=["GET","POST"])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
 
     if request.method == "POST":
 
         username = request.form.get("username")
-
         email = request.form.get("email")
-
         password = hashlib.sha256(
             request.form.get("password").encode()
         ).hexdigest()
 
-
         connection = sqlite3.connect(DATABASE)
 
+        try:
 
-        connection.execute("""
-            INSERT INTO users
-            (username,email,password)
+            connection.execute("""
+                INSERT INTO users
+                (username, email, password)
+                VALUES (?, ?, ?)
+            """,
+            (
+                username,
+                email,
+                password
+            ))
 
-            VALUES (?,?,?)
+            connection.commit()
 
-        """,
-        (
-            username,
-            email,
-            password
-        ))
+        except sqlite3.IntegrityError:
 
+            connection.close()
 
-        connection.commit()
+            return render_template(
+                "signup.html",
+                error="An account with this email already exists."
+            )
 
         connection.close()
-
 
         return redirect("/login")
 
-
     return render_template("signup.html")
-
-@app.route("/login", methods=["GET","POST"])
-def login():
-
-    if request.method == "POST":
-
-        email = request.form.get("email")
-
-        password = hashlib.sha256(
-            request.form.get("password").encode()
-        ).hexdigest()
-
-
-        connection = sqlite3.connect(DATABASE)
-
-
-        user = connection.execute("""
-            SELECT id,username
-            FROM users
-
-            WHERE email=?
-            AND password=?
-
-        """,
-        (
-            email,
-            password
-        )).fetchone()
-
-
-        connection.close()
-
-
-        if user:
-
-            session["user_id"] = user[0]
-
-            session["username"] = user[1]
-
-
-            return redirect("/dashboard")
-
-
-    return render_template("login.html")
-
 @app.route("/logout")
 def logout():
 
