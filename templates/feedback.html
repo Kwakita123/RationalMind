@@ -6,17 +6,26 @@ Feedback | RationalMind
 
 {% block content %}
 
-<main class="feedback-container">
+<main class="page-container">
 
-    <p class="eyebrow">YOUR EXPERIENCE</p>
+```
+<section class="dashboard-header">
 
-    <h1>How was RationalMind?</h1>
+    <p class="eyebrow">
+        YOUR EXPERIENCE
+    </p>
+
+    <h1>
+        How was RationalMind?
+    </h1>
 
     {% if submitted %}
 
         <div class="feedback-success">
 
-            <h2>Thank you.</h2>
+            <h2>
+                Thank you.
+            </h2>
 
             <p>
                 Your feedback will help improve RationalMind.
@@ -24,6 +33,12 @@ Feedback | RationalMind
 
             <a href="/dashboard">
                 Return to Dashboard
+            </a>
+
+            <br><br>
+
+            <a href="/feedback-results">
+                View Feedback Results
             </a>
 
         </div>
@@ -36,10 +51,13 @@ Feedback | RationalMind
         </p>
 
         {% if error %}
+
             <p class="feedback-error">
                 {{ error }}
             </p>
+
         {% endif %}
+
 
         <form method="POST">
 
@@ -47,34 +65,52 @@ Feedback | RationalMind
                 How helpful was RationalMind?
             </label>
 
+
             <div class="rating-options">
 
                 <label>
-                    <input type="radio" name="rating" value="1">
+                    <input
+                        type="radio"
+                        name="rating"
+                        value="1"
+                        required>
                     1
                 </label>
 
                 <label>
-                    <input type="radio" name="rating" value="2">
+                    <input
+                        type="radio"
+                        name="rating"
+                        value="2">
                     2
                 </label>
 
                 <label>
-                    <input type="radio" name="rating" value="3">
+                    <input
+                        type="radio"
+                        name="rating"
+                        value="3">
                     3
                 </label>
 
                 <label>
-                    <input type="radio" name="rating" value="4">
+                    <input
+                        type="radio"
+                        name="rating"
+                        value="4">
                     4
                 </label>
 
                 <label>
-                    <input type="radio" name="rating" value="5">
+                    <input
+                        type="radio"
+                        name="rating"
+                        value="5">
                     5
                 </label>
 
             </div>
+
 
             <label for="comment">
                 What did you think? (optional)
@@ -87,6 +123,7 @@ Feedback | RationalMind
                 placeholder="Tell us what was useful or confusing..."
             ></textarea>
 
+
             <button type="submit">
                 Submit Feedback
             </button>
@@ -94,6 +131,9 @@ Feedback | RationalMind
         </form>
 
     {% endif %}
+
+</section>
+```
 
 </main>
 
