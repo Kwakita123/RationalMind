@@ -124,6 +124,10 @@ def init_db():
 
     connection = sqlite3.connect(DATABASE)
 
+    # -----------------------------------------------------
+    # USERS
+    # -----------------------------------------------------
+
     connection.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -132,6 +136,10 @@ def init_db():
             password TEXT NOT NULL
         )
     """)
+
+    # -----------------------------------------------------
+    # REFLECTIONS
+    # -----------------------------------------------------
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS reflections (
@@ -148,6 +156,10 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    # -----------------------------------------------------
+    # DECISIONS
+    # -----------------------------------------------------
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS decisions (
@@ -171,10 +183,15 @@ def init_db():
         )
     """)
 
+    # -----------------------------------------------------
+    # FEEDBACK
+    # -----------------------------------------------------
+
     connection.execute("""
         CREATE TABLE IF NOT EXISTS feedback (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
+            reflection_id INTEGER,
             rating INTEGER NOT NULL,
             comment TEXT,
             after_emotion TEXT,
@@ -195,15 +212,30 @@ def init_db():
 
     column_names = [column[1] for column in columns]
 
+    # Add reflection_id to existing databases
+    if "reflection_id" not in column_names:
+
+        connection.execute(
+            "ALTER TABLE feedback ADD COLUMN reflection_id INTEGER"
+        )
+
+    # Add after_emotion to existing databases
     if "after_emotion" not in column_names:
+
         connection.execute(
             "ALTER TABLE feedback ADD COLUMN after_emotion TEXT"
         )
 
+    # Add after_intensity to existing databases
     if "after_intensity" not in column_names:
+
         connection.execute(
             "ALTER TABLE feedback ADD COLUMN after_intensity INTEGER"
         )
+
+    # -----------------------------------------------------
+    # SAVE CHANGES
+    # -----------------------------------------------------
 
     connection.commit()
     connection.close()
@@ -795,71 +827,110 @@ def feedback():
 
     if request.method == "POST":
 
+        # -------------------------------------------------
+        # GET FEEDBACK INFORMATION
+        # -------------------------------------------------
+
         rating = request.form.get("rating")
-        comment = request.form.get(
-            "comment",
-            ""
-        ).strip()
+        comment = request.form.get("comment", "").strip()
 
         after_emotion = request.form.get("after_emotion")
-
-        if after_emotion == "Other":
-            after_emotion = request.form.get(
-                "other_emotion",
-                ""
-            ).strip()
-     
 
         after_intensity = request.form.get(
             "after_intensity"
         )
 
+        # -------------------------------------------------
+        # HANDLE "OTHER" EMOTION
+        # -------------------------------------------------
+
+        if after_emotion == "Other":
+
+            after_emotion = request.form.get(
+                "other_emotion",
+                ""
+            ).strip()
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
         if not rating:
+
             return render_template(
                 "feedback.html",
                 error="Please select a rating."
             )
 
         if not after_emotion:
+
             return render_template(
                 "feedback.html",
-                error="Please select how you are feeling now."
+                error="Please select or enter your emotion."
             )
 
         if not after_intensity:
-            return render_template(
-                "feedback.html",
-                error="Please select your feeling intensity."
-            )
-
-        try:
-            after_intensity = int(after_intensity)
-
-            if after_intensity < 1 or after_intensity > 10:
-                raise ValueError
-
-        except ValueError:
 
             return render_template(
                 "feedback.html",
-                error="Intensity must be between 1 and 10."
+                error="Please select your emotional intensity."
             )
+
+        # -------------------------------------------------
+        # FIND MOST RECENT REFLECTION
+        # -------------------------------------------------
 
         connection = get_db()
+
+        latest_reflection = connection.execute(
+            """
+            SELECT
+                id,
+                emotion,
+                intensity
+            FROM reflections
+            WHERE user_id = ?
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (session["user_id"],)
+        ).fetchone()
+
+        # -------------------------------------------------
+        # MAKE SURE A REFLECTION EXISTS
+        # -------------------------------------------------
+
+        if not latest_reflection:
+
+            connection.close()
+
+            return render_template(
+                "feedback.html",
+                error=(
+                    "Please complete a reflection "
+                    "before submitting feedback."
+                )
+            )
+
+        # -------------------------------------------------
+        # SAVE FEEDBACK
+        # -------------------------------------------------
 
         connection.execute(
             """
             INSERT INTO feedback (
                 user_id,
+                reflection_id,
                 rating,
                 comment,
                 after_emotion,
                 after_intensity
             )
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
             (
                 session["user_id"],
+                latest_reflection["id"],
                 rating,
                 comment,
                 after_emotion,
@@ -870,12 +941,22 @@ def feedback():
         connection.commit()
         connection.close()
 
+        # -------------------------------------------------
+        # SHOW SUCCESS PAGE
+        # -------------------------------------------------
+
         return render_template(
             "feedback.html",
             submitted=True
         )
 
-    return render_template("feedback.html")
+    # -----------------------------------------------------
+    # GET REQUEST
+    # -----------------------------------------------------
+
+    return render_template(
+        "feedback.html"
+    )
 
 
 # =========================================================
@@ -1122,6 +1203,300 @@ def feedback_results():
         average_change=average_change,
         improvement_percentage=improvement_percentage
     )
+
+@app.route("/creator")
+def creator():
+
+    if "user_id" not in session:
+        return redirect("/login")
+
+    # -------------------------------------------------
+    # CREATOR-ONLY ACCESS
+    # -------------------------------------------------
+
+    connection = get_db()
+
+    user = connection.execute(
+        """
+        SELECT email
+        FROM users
+        WHERE id = ?
+        """,
+        (session["user_id"],)
+    ).fetchone()
+
+    if not user or user["email"].strip().lower() != CREATOR_EMAIL:
+        connection.close()
+        return redirect("/dashboard")
+
+    # -------------------------------------------------
+    # TOTAL USERS
+    # -------------------------------------------------
+
+    total_users = connection.execute(
+        """
+        SELECT COUNT(*)
+        FROM users
+        """
+    ).fetchone()[0]
+
+    # -------------------------------------------------
+    # TOTAL REFLECTIONS
+    # -------------------------------------------------
+
+    total_reflections = connection.execute(
+        """
+        SELECT COUNT(*)
+        FROM reflections
+        """
+    ).fetchone()[0]
+
+    # -------------------------------------------------
+    # TOTAL FEEDBACK
+    # -------------------------------------------------
+
+    total_feedback = connection.execute(
+        """
+        SELECT COUNT(*)
+        FROM feedback
+        """
+    ).fetchone()[0]
+
+    # -------------------------------------------------
+    # AVERAGE RATING
+    # -------------------------------------------------
+
+    average_rating = connection.execute(
+        """
+        SELECT AVG(rating)
+        FROM feedback
+        """
+    ).fetchone()[0]
+
+    if average_rating is not None:
+        average_rating = round(
+            average_rating,
+            1
+        )
+
+    # -------------------------------------------------
+    # AVERAGE BEFORE INTENSITY
+    # -------------------------------------------------
+
+    average_before = connection.execute(
+        """
+        SELECT AVG(CAST(r.intensity AS REAL))
+        FROM feedback f
+        JOIN reflections r
+            ON f.reflection_id = r.id
+        WHERE r.intensity IS NOT NULL
+        """
+    ).fetchone()[0]
+
+    if average_before is not None:
+        average_before = round(
+            average_before,
+            1
+        )
+
+    # -------------------------------------------------
+    # AVERAGE AFTER INTENSITY
+    # -------------------------------------------------
+
+    average_after = connection.execute(
+        """
+        SELECT AVG(CAST(after_intensity AS REAL))
+        FROM feedback
+        WHERE after_intensity IS NOT NULL
+        """
+    ).fetchone()[0]
+
+    if average_after is not None:
+        average_after = round(
+            average_after,
+            1
+        )
+
+    # -------------------------------------------------
+    # AVERAGE INTENSITY CHANGE
+    # -------------------------------------------------
+
+    average_change = None
+
+    if (
+        average_before is not None
+        and average_after is not None
+    ):
+
+        average_change = round(
+            average_after - average_before,
+            1
+        )
+
+    # -------------------------------------------------
+    # NUMBER OF REFLECTIONS WITH LOWER INTENSITY
+    # -------------------------------------------------
+
+    lower_intensity = connection.execute(
+        """
+        SELECT COUNT(*)
+        FROM feedback f
+        JOIN reflections r
+            ON f.reflection_id = r.id
+        WHERE CAST(r.intensity AS REAL)
+              > CAST(f.after_intensity AS REAL)
+        """
+    ).fetchone()[0]
+
+    # -------------------------------------------------
+    # NUMBER OF REFLECTIONS WITH SAME INTENSITY
+    # -------------------------------------------------
+
+    same_intensity = connection.execute(
+        """
+        SELECT COUNT(*)
+        FROM feedback f
+        JOIN reflections r
+            ON f.reflection_id = r.id
+        WHERE CAST(r.intensity AS REAL)
+              = CAST(f.after_intensity AS REAL)
+        """
+    ).fetchone()[0]
+
+    # -------------------------------------------------
+    # NUMBER OF REFLECTIONS WITH HIGHER INTENSITY
+    # -------------------------------------------------
+
+    higher_intensity = connection.execute(
+        """
+        SELECT COUNT(*)
+        FROM feedback f
+        JOIN reflections r
+            ON f.reflection_id = r.id
+        WHERE CAST(r.intensity AS REAL)
+              < CAST(f.after_intensity AS REAL)
+        """
+    ).fetchone()[0]
+
+    # -------------------------------------------------
+    # EMOTIONAL TRANSITIONS
+    # -------------------------------------------------
+
+    transitions = connection.execute(
+        """
+        SELECT
+            r.emotion AS before_emotion,
+            f.after_emotion AS after_emotion,
+            COUNT(*) AS amount
+        FROM feedback f
+        JOIN reflections r
+            ON f.reflection_id = r.id
+        WHERE
+            r.emotion IS NOT NULL
+            AND f.after_emotion IS NOT NULL
+        GROUP BY
+            r.emotion,
+            f.after_emotion
+        ORDER BY amount DESC
+        """
+    ).fetchall()
+
+    # -------------------------------------------------
+    # MOST COMMON STARTING EMOTION
+    # -------------------------------------------------
+
+    starting_emotion = connection.execute(
+        """
+        SELECT
+            r.emotion,
+            COUNT(*) AS amount
+        FROM feedback f
+        JOIN reflections r
+            ON f.reflection_id = r.id
+        WHERE r.emotion IS NOT NULL
+        GROUP BY r.emotion
+        ORDER BY amount DESC
+        LIMIT 1
+        """
+    ).fetchone()
+
+    # -------------------------------------------------
+    # MOST COMMON ENDING EMOTION
+    # -------------------------------------------------
+
+    ending_emotion = connection.execute(
+        """
+        SELECT
+            after_emotion,
+            COUNT(*) AS amount
+        FROM feedback
+        WHERE after_emotion IS NOT NULL
+        GROUP BY after_emotion
+        ORDER BY amount DESC
+        LIMIT 1
+        """
+    ).fetchone()
+
+    # -------------------------------------------------
+    # RECENT FEEDBACK
+    # -------------------------------------------------
+
+    recent_feedback = connection.execute(
+        """
+        SELECT
+            f.rating,
+            f.comment,
+            f.after_emotion,
+            f.after_intensity,
+            f.created_at,
+            r.emotion AS before_emotion,
+            r.intensity AS before_intensity
+        FROM feedback f
+        LEFT JOIN reflections r
+            ON f.reflection_id = r.id
+        ORDER BY f.id DESC
+        LIMIT 20
+        """
+    ).fetchall()
+
+    connection.close()
+
+    # -------------------------------------------------
+    # SEND DATA TO CREATOR PAGE
+    # -------------------------------------------------
+
+    return render_template(
+        "creator.html",
+
+        total_users=total_users,
+
+        total_reflections=total_reflections,
+
+        total_feedback=total_feedback,
+
+        average_rating=average_rating,
+
+        average_before=average_before,
+
+        average_after=average_after,
+
+        average_change=average_change,
+
+        lower_intensity=lower_intensity,
+
+        same_intensity=same_intensity,
+
+        higher_intensity=higher_intensity,
+
+        transitions=transitions,
+
+        starting_emotion=starting_emotion,
+
+        ending_emotion=ending_emotion,
+
+        recent_feedback=recent_feedback
+    )
+
 
 
 # =========================================================
