@@ -1211,10 +1211,14 @@ def creator():
         return redirect("/login")
 
     # -------------------------------------------------
-    # CREATOR-ONLY ACCESS
+    # CONNECT TO DATABASE
     # -------------------------------------------------
 
     connection = get_db()
+
+    # -------------------------------------------------
+    # CREATOR-ONLY ACCESS
+    # -------------------------------------------------
 
     user = connection.execute(
         """
@@ -1225,7 +1229,13 @@ def creator():
         (session["user_id"],)
     ).fetchone()
 
-    if not user or user["email"].strip().lower() != CREATOR_EMAIL:
+    if not user:
+        connection.close()
+        return redirect("/dashboard")
+
+    creator_email = CREATOR_EMAIL.strip().lower()
+
+    if user["email"].strip().lower() != creator_email:
         connection.close()
         return redirect("/dashboard")
 
@@ -1274,10 +1284,7 @@ def creator():
     ).fetchone()[0]
 
     if average_rating is not None:
-        average_rating = round(
-            average_rating,
-            1
-        )
+        average_rating = round(average_rating, 1)
 
     # -------------------------------------------------
     # AVERAGE BEFORE INTENSITY
@@ -1285,19 +1292,14 @@ def creator():
 
     average_before = connection.execute(
         """
-        SELECT AVG(CAST(r.intensity AS REAL))
-        FROM feedback f
-        JOIN reflections r
-            ON f.reflection_id = r.id
-        WHERE r.intensity IS NOT NULL
+        SELECT AVG(CAST(intensity AS REAL))
+        FROM reflections
+        WHERE intensity IS NOT NULL
         """
     ).fetchone()[0]
 
     if average_before is not None:
-        average_before = round(
-            average_before,
-            1
-        )
+        average_before = round(average_before, 1)
 
     # -------------------------------------------------
     # AVERAGE AFTER INTENSITY
@@ -1312,10 +1314,7 @@ def creator():
     ).fetchone()[0]
 
     if average_after is not None:
-        average_after = round(
-            average_after,
-            1
-        )
+        average_after = round(average_after, 1)
 
     # -------------------------------------------------
     # AVERAGE INTENSITY CHANGE
@@ -1334,55 +1333,64 @@ def creator():
         )
 
     # -------------------------------------------------
-    # NUMBER OF REFLECTIONS WITH LOWER INTENSITY
+    # INTENSITY OUTCOMES
+    #
+    # We compare the user's before intensity
+    # with the after intensity.
+    #
+    # This version matches reflections to feedback
+    # using the same user and the closest previous
+    # reflection.
     # -------------------------------------------------
 
-    lower_intensity = connection.execute(
+    lower_intensity = 0
+    same_intensity = 0
+    higher_intensity = 0
+
+    comparison_rows = connection.execute(
         """
-        SELECT COUNT(*)
+        SELECT
+            f.after_intensity,
+            r.intensity
         FROM feedback f
         JOIN reflections r
-            ON f.reflection_id = r.id
-        WHERE CAST(r.intensity AS REAL)
-              > CAST(f.after_intensity AS REAL)
+            ON r.user_id = f.user_id
+            AND r.id = (
+                SELECT MAX(r2.id)
+                FROM reflections r2
+                WHERE r2.user_id = f.user_id
+                AND r2.id <= f.id
+            )
+        WHERE
+            f.after_intensity IS NOT NULL
+            AND r.intensity IS NOT NULL
         """
-    ).fetchone()[0]
+    ).fetchall()
 
-    # -------------------------------------------------
-    # NUMBER OF REFLECTIONS WITH SAME INTENSITY
-    # -------------------------------------------------
+    for row in comparison_rows:
 
-    same_intensity = connection.execute(
-        """
-        SELECT COUNT(*)
-        FROM feedback f
-        JOIN reflections r
-            ON f.reflection_id = r.id
-        WHERE CAST(r.intensity AS REAL)
-              = CAST(f.after_intensity AS REAL)
-        """
-    ).fetchone()[0]
+        try:
 
-    # -------------------------------------------------
-    # NUMBER OF REFLECTIONS WITH HIGHER INTENSITY
-    # -------------------------------------------------
+            before = float(row["intensity"])
+            after = float(row["after_intensity"])
 
-    higher_intensity = connection.execute(
-        """
-        SELECT COUNT(*)
-        FROM feedback f
-        JOIN reflections r
-            ON f.reflection_id = r.id
-        WHERE CAST(r.intensity AS REAL)
-              < CAST(f.after_intensity AS REAL)
-        """
-    ).fetchone()[0]
+            if after < before:
+                lower_intensity += 1
+
+            elif after == before:
+                same_intensity += 1
+
+            else:
+                higher_intensity += 1
+
+        except (TypeError, ValueError):
+            pass
 
     # -------------------------------------------------
     # EMOTIONAL TRANSITIONS
     # -------------------------------------------------
 
-    transitions = connection.execute(
+    transition_rows = connection.execute(
         """
         SELECT
             r.emotion AS before_emotion,
@@ -1390,16 +1398,27 @@ def creator():
             COUNT(*) AS amount
         FROM feedback f
         JOIN reflections r
-            ON f.reflection_id = r.id
+            ON r.user_id = f.user_id
+            AND r.id = (
+                SELECT MAX(r2.id)
+                FROM reflections r2
+                WHERE r2.user_id = f.user_id
+                AND r2.id <= f.id
+            )
         WHERE
             r.emotion IS NOT NULL
             AND f.after_emotion IS NOT NULL
+            AND TRIM(r.emotion) != ''
+            AND TRIM(f.after_emotion) != ''
         GROUP BY
             r.emotion,
             f.after_emotion
-        ORDER BY amount DESC
+        ORDER BY
+            amount DESC
         """
     ).fetchall()
+
+    transitions = transition_rows
 
     # -------------------------------------------------
     # MOST COMMON STARTING EMOTION
@@ -1408,13 +1427,13 @@ def creator():
     starting_emotion = connection.execute(
         """
         SELECT
-            r.emotion,
+            emotion,
             COUNT(*) AS amount
-        FROM feedback f
-        JOIN reflections r
-            ON f.reflection_id = r.id
-        WHERE r.emotion IS NOT NULL
-        GROUP BY r.emotion
+        FROM reflections
+        WHERE
+            emotion IS NOT NULL
+            AND TRIM(emotion) != ''
+        GROUP BY emotion
         ORDER BY amount DESC
         LIMIT 1
         """
@@ -1430,7 +1449,9 @@ def creator():
             after_emotion,
             COUNT(*) AS amount
         FROM feedback
-        WHERE after_emotion IS NOT NULL
+        WHERE
+            after_emotion IS NOT NULL
+            AND TRIM(after_emotion) != ''
         GROUP BY after_emotion
         ORDER BY amount DESC
         LIMIT 1
@@ -1453,8 +1474,15 @@ def creator():
             r.intensity AS before_intensity
         FROM feedback f
         LEFT JOIN reflections r
-            ON f.reflection_id = r.id
-        ORDER BY f.id DESC
+            ON r.user_id = f.user_id
+            AND r.id = (
+                SELECT MAX(r2.id)
+                FROM reflections r2
+                WHERE r2.user_id = f.user_id
+                AND r2.id <= f.id
+            )
+        ORDER BY
+            f.id DESC
         LIMIT 20
         """
     ).fetchall()
@@ -1496,7 +1524,6 @@ def creator():
 
         recent_feedback=recent_feedback
     )
-
 
 
 # =========================================================
