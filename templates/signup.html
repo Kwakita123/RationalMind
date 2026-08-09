@@ -48,7 +48,13 @@ required>
 Sign Up
 </button>
 
+{% if error %}
 
+<div class="error-message">
+    {{ error }}
+</div>
+
+{% endif %}
 </form>
 
 
