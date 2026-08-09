@@ -10,13 +10,207 @@ Feedback Results | RationalMind
 
 <h1>Feedback Results</h1>
 
-{% if average %} <h2>{{ average }} / 5</h2> <p>Average user rating</p>
-{% else %} <p>No feedback has been submitted yet.</p>
-{% endif %}
+<!-- Average Rating -->
 
 <section class="feedback-list">
 
 ```
+{% if average %}
+
+    <div class="feedback-success">
+
+        <h2>
+            {{ average }} / 5
+        </h2>
+
+        <p>
+            Average user rating
+        </p>
+
+    </div>
+
+{% else %}
+
+    <div class="feedback-success">
+
+        <p>
+            No feedback has been submitted yet.
+        </p>
+
+    </div>
+
+{% endif %}
+```
+
+</section>
+
+<!-- Emotional Impact -->
+
+{% if comparisons %}
+
+<section class="feedback-list">
+
+```
+<div class="feedback-success">
+
+    <h2>
+        Emotional Impact
+    </h2>
+
+    <p>
+        Average intensity before:
+        <strong>
+            {{ average_before }} / 10
+        </strong>
+    </p>
+
+    <p>
+        Average intensity after:
+        <strong>
+            {{ average_after }} / 10
+        </strong>
+    </p>
+
+
+    {% if average_change > 0 %}
+
+        <p>
+            Average intensity decreased by
+            <strong>
+                {{ average_change }} points
+            </strong>
+        </p>
+
+    {% elif average_change < 0 %}
+
+        <p>
+            Average intensity increased by
+            <strong>
+                {{ average_change|abs }} points
+            </strong>
+        </p>
+
+    {% else %}
+
+        <p>
+            Average intensity stayed the same.
+        </p>
+
+    {% endif %}
+
+
+    <p>
+        <strong>
+            {{ improvement_percentage }}%
+        </strong>
+        of users reported lower emotional intensity.
+    </p>
+
+</div>
+```
+
+</section>
+
+<!-- Individual Emotional Results -->
+
+<section class="feedback-list">
+
+```
+<h2>
+    Individual Results
+</h2>
+
+{% for item in comparisons %}
+
+    <div class="feedback-success">
+
+        <h3>
+            {{ item.before_emotion }}
+            →
+            {{ item.after_emotion }}
+        </h3>
+
+        <p>
+            Before:
+            <strong>
+                {{ item.before_intensity }} / 10
+            </strong>
+        </p>
+
+        <p>
+            After:
+            <strong>
+                {{ item.after_intensity }} / 10
+            </strong>
+        </p>
+
+
+        {% if item.change > 0 %}
+
+            <p>
+                Intensity decreased by
+                <strong>
+                    {{ item.change }} points.
+                </strong>
+            </p>
+
+        {% elif item.change < 0 %}
+
+            <p>
+                Intensity increased by
+                <strong>
+                    {{ item.change|abs }} points.
+                </strong>
+            </p>
+
+        {% else %}
+
+            <p>
+                Intensity stayed the same.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+{% endfor %}
+```
+
+</section>
+
+{% else %}
+
+<section class="feedback-list">
+
+```
+<div class="feedback-success">
+
+    <h2>
+        No emotional data yet.
+    </h2>
+
+    <p>
+        Emotional comparisons will appear here
+        after users complete a reflection and submit
+        feedback.
+    </p>
+
+</div>
+```
+
+</section>
+
+{% endif %}
+
+<!-- Written Feedback -->
+
+<section class="feedback-list">
+
+```
+<h2>
+    User Feedback
+</h2>
+
 {% for item in feedback %}
 
     <div class="feedback-success">
@@ -26,13 +220,17 @@ Feedback Results | RationalMind
         </h3>
 
         {% if item.comment %}
+
             <p>
                 "{{ item.comment }}"
             </p>
+
         {% else %}
+
             <p>
                 No written comment.
             </p>
+
         {% endif %}
 
         <small>
