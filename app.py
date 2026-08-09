@@ -1,5 +1,3 @@
-
-
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import hashlib
@@ -16,125 +14,112 @@ def get_db():
     connection.row_factory = sqlite3.Row
     return connection
 
+
 lessons = [
 
-# Emotional Intelligence
+    # Emotional Intelligence
 
-{
-"category": "Emotional Intelligence",
-"title": "Understanding Emotions",
-"description":
-"Emotions are signals that provide information about our experiences. They influence decisions, but they do not have to control our actions.",
-"question":
-"What information is this emotion providing?"
-},
+    {
+        "category": "Emotional Intelligence",
+        "title": "Understanding Emotions",
+        "description":
+        "Emotions are signals that provide information about our experiences. They influence decisions, but they do not have to control our actions.",
+        "question":
+        "What information is this emotion providing?"
+    },
 
+    {
+        "category": "Emotional Intelligence",
+        "title": "Emotional Regulation",
+        "description":
+        "Regulation does not mean eliminating emotions. It means creating enough space to respond intentionally.",
+        "question":
+        "How can I acknowledge this emotion without immediately reacting?"
+    },
 
-{
-"category": "Emotional Intelligence",
-"title": "Emotional Regulation",
-"description":
-"Regulation does not mean eliminating emotions. It means creating enough space to respond intentionally.",
-"question":
-"How can I acknowledge this emotion without immediately reacting?"
-},
+    # Psychology
 
+    {
+        "category": "Psychology",
+        "title": "Cognitive Biases",
+        "description":
+        "The human mind uses shortcuts to make decisions efficiently. These shortcuts can sometimes create inaccurate interpretations.",
+        "question":
+        "What assumptions might be influencing my perspective?"
+    },
 
+    {
+        "category": "Psychology",
+        "title": "Cognitive Distortions",
+        "description":
+        "People sometimes develop inaccurate thinking patterns such as all-or-nothing thinking or overgeneralization.",
+        "question":
+        "Am I viewing this situation more negatively than the evidence suggests?"
+    },
 
-# Psychology
+    # Philosophy
 
-{
-"category": "Psychology",
-"title": "Cognitive Biases",
-"description":
-"The human mind uses shortcuts to make decisions efficiently. These shortcuts can sometimes create inaccurate interpretations.",
-"question":
-"What assumptions might be influencing my perspective?"
-},
+    {
+        "category": "Philosophy",
+        "title": "Stoic Control",
+        "description":
+        "Stoicism emphasizes separating what we can control from what we cannot control.",
+        "question":
+        "What part of this situation is actually within my control?"
+    },
 
+    {
+        "category": "Philosophy",
+        "title": "Identity and Growth",
+        "description":
+        "Personal development requires seeing yourself as adaptable rather than defined permanently by past experiences.",
+        "question":
+        "What type of person am I trying to become?"
+    },
 
-{
-"category": "Psychology",
-"title": "Cognitive Distortions",
-"description":
-"People sometimes develop inaccurate thinking patterns such as all-or-nothing thinking or overgeneralization.",
-"question":
-"Am I viewing this situation more negatively than the evidence suggests?"
-},
+    # Decision Science
 
+    {
+        "category": "Decision Science",
+        "title": "Opportunity Cost",
+        "description":
+        "Every choice involves giving something else up. Understanding tradeoffs improves decision quality.",
+        "question":
+        "What am I choosing, and what am I sacrificing?"
+    },
 
+    {
+        "category": "Decision Science",
+        "title": "Long-Term Thinking",
+        "description":
+        "Good decisions consider consequences beyond immediate rewards or emotions.",
+        "question":
+        "How will this decision affect my future self?"
+    },
 
-# Philosophy
+    # Rational Thinking
 
-{
-"category": "Philosophy",
-"title": "Stoic Control",
-"description":
-"Stoicism emphasizes separating what we can control from what we cannot control.",
-"question":
-"What part of this situation is actually within my control?"
-},
-
-
-{
-"category": "Philosophy",
-"title": "Identity and Growth",
-"description":
-"Personal development requires seeing yourself as adaptable rather than defined permanently by past experiences.",
-"question":
-"What type of person am I trying to become?"
-},
-
-
-
-# Decision Science
-
-{
-"category": "Decision Science",
-"title": "Opportunity Cost",
-"description":
-"Every choice involves giving something else up. Understanding tradeoffs improves decision quality.",
-"question":
-"What am I choosing, and what am I sacrificing?"
-},
-
-
-{
-"category": "Decision Science",
-"title": "Long-Term Thinking",
-"description":
-"Good decisions consider consequences beyond immediate rewards or emotions.",
-"question":
-"How will this decision affect my future self?"
-},
-
-
-
-# Rational Thinking
-
-{
-"category": "Rational Thinking",
-"title": "Facts vs Interpretation",
-"description":
-"Events and our interpretations of events are different. Separating them improves clarity.",
-"question":
-"What happened, and what story did I create about it?"
-}
+    {
+        "category": "Rational Thinking",
+        "title": "Facts vs Interpretation",
+        "description":
+        "Events and our interpretations of events are different. Separating them improves clarity.",
+        "question":
+        "What happened, and what story did I create about it?"
+    }
 
 ]
+
 
 app = Flask(__name__)
 
 app.secret_key = "rationalmind_secret_key"
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATABASE = os.path.join(BASE_DIR, "database.db")
 
-
-
-# -----------------------------
+# =========================================================
 # DATABASE
-# -----------------------------
+# =========================================================
+
 def init_db():
 
     connection = sqlite3.connect(DATABASE)
@@ -163,27 +148,28 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
     connection.execute("""
-    CREATE TABLE IF NOT EXISTS decisions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        situation TEXT,
-        goal TEXT,
-        facts TEXT,
-        assumptions TEXT,
-        option_a TEXT,
-        benefits_a TEXT,
-        drawbacks_a TEXT,
-        option_b TEXT,
-        benefits_b TEXT,
-        drawbacks_b TEXT,
-        short_term TEXT,
-        long_term TEXT,
-        decision_choice TEXT,
-        reasoning TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-""")
+        CREATE TABLE IF NOT EXISTS decisions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            situation TEXT,
+            goal TEXT,
+            facts TEXT,
+            assumptions TEXT,
+            option_a TEXT,
+            benefits_a TEXT,
+            drawbacks_a TEXT,
+            option_b TEXT,
+            benefits_b TEXT,
+            drawbacks_b TEXT,
+            short_term TEXT,
+            long_term TEXT,
+            decision_choice TEXT,
+            reasoning TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS feedback (
@@ -191,12 +177,41 @@ def init_db():
             user_id INTEGER,
             rating INTEGER NOT NULL,
             comment TEXT,
+            after_emotion TEXT,
+            after_intensity INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
+    # -----------------------------------------------------
+    # DATABASE MIGRATION
+    # Adds new columns to existing feedback table
+    # without deleting old feedback.
+    # -----------------------------------------------------
+
+    columns = connection.execute(
+        "PRAGMA table_info(feedback)"
+    ).fetchall()
+
+    column_names = [column[1] for column in columns]
+
+    if "after_emotion" not in column_names:
+        connection.execute(
+            "ALTER TABLE feedback ADD COLUMN after_emotion TEXT"
+        )
+
+    if "after_intensity" not in column_names:
+        connection.execute(
+            "ALTER TABLE feedback ADD COLUMN after_intensity INTEGER"
+        )
+
     connection.commit()
     connection.close()
+
+
+# =========================================================
+# USER CONTEXT
+# =========================================================
 
 @app.context_processor
 def inject_user():
@@ -205,9 +220,11 @@ def inject_user():
         "logged_in": "user_id" in session,
         "username": session.get("username")
     }
-# -----------------------------
+
+
+# =========================================================
 # HOME
-# -----------------------------
+# =========================================================
 
 @app.route("/")
 def home():
@@ -215,9 +232,9 @@ def home():
     return render_template("index.html")
 
 
-# -----------------------------
+# =========================================================
 # EMOTIONAL CHECK-IN
-# -----------------------------
+# =========================================================
 
 @app.route("/check-in", methods=["GET", "POST"])
 def check_in():
@@ -247,7 +264,11 @@ def check_in():
             "counter_evidence": counter_evidence,
             "alternative": alternative,
             "response": response,
-            "insights": analyze_reflection(emotion,thought,response)
+            "insights": analyze_reflection(
+                emotion,
+                thought,
+                response
+            )
         }
 
     return render_template(
@@ -255,9 +276,10 @@ def check_in():
         reflection=reflection
     )
 
-# -----------------------------
+
+# =========================================================
 # RATIONAL DECISION
-# -----------------------------
+# =========================================================
 
 @app.route("/decision", methods=["GET", "POST"])
 def decision():
@@ -355,9 +377,11 @@ def decision():
         "decision.html",
         result=result
     )
-# -----------------------------
+
+
+# =========================================================
 # STRESS RESET
-# -----------------------------
+# =========================================================
 
 @app.route("/reset")
 def reset():
@@ -367,6 +391,11 @@ def reset():
 
     return render_template("reset.html")
 
+
+# =========================================================
+# EXPLORE
+# =========================================================
+
 @app.route("/explore")
 def explore():
 
@@ -375,9 +404,10 @@ def explore():
         lessons=lessons
     )
 
-# -----------------------------
+
+# =========================================================
 # DAILY REFLECTION
-# -----------------------------
+# =========================================================
 
 @app.route("/reflection", methods=["GET", "POST"])
 def reflection():
@@ -387,6 +417,8 @@ def reflection():
 
     message = None
 
+    connection = get_db()
+
     if request.method == "POST":
 
         situation = request.form.get("situation")
@@ -395,24 +427,23 @@ def reflection():
         thought = request.form.get("thought")
 
         supporting_evidence = request.form.get("evidence")
-        challenging_evidence = request.form.get("challenging_evidence")
+        challenging_evidence = request.form.get(
+            "challenging_evidence"
+        )
 
         alternative = request.form.get("alternative")
         response = request.form.get("response")
         insights = request.form.get("insights")
 
-        # Store both types of evidence together
         evidence = (
             "Supports: " + (supporting_evidence or "") +
-            "\n\nChallenges: " + (challenging_evidence or "")
+            "\n\nChallenges: " +
+            (challenging_evidence or "")
         )
-
-        connection = sqlite3.connect(DATABASE)
 
         connection.execute(
             """
-            INSERT INTO reflections
-            (
+            INSERT INTO reflections (
                 user_id,
                 situation,
                 emotion,
@@ -439,19 +470,13 @@ def reflection():
         )
 
         connection.commit()
-        connection.close()
 
         message = "Reflection saved."
-
-    # Get previous reflections
-
-    connection = sqlite3.connect(DATABASE)
-
-    connection.row_factory = sqlite3.Row
 
     entries = connection.execute(
         """
         SELECT
+            id,
             created_at,
             situation,
             emotion,
@@ -476,6 +501,11 @@ def reflection():
         message=message
     )
 
+
+# =========================================================
+# DASHBOARD
+# =========================================================
+
 @app.route("/dashboard")
 def dashboard():
 
@@ -485,7 +515,6 @@ def dashboard():
     connection = sqlite3.connect(DATABASE)
     connection.row_factory = sqlite3.Row
 
-    # Total reflections
     reflection_count = connection.execute(
         """
         SELECT COUNT(*)
@@ -495,7 +524,6 @@ def dashboard():
         (session["user_id"],)
     ).fetchone()[0]
 
-    # Recent reflections
     recent_reflections = connection.execute(
         """
         SELECT
@@ -516,7 +544,6 @@ def dashboard():
         (session["user_id"],)
     ).fetchall()
 
-    # Most common emotion
     emotion_result = connection.execute(
         """
         SELECT emotion, COUNT(*) AS amount
@@ -534,7 +561,6 @@ def dashboard():
     else:
         common_emotion = "Not enough data"
 
-    # Most recent reflection
     latest_reflection = connection.execute(
         """
         SELECT
@@ -560,6 +586,11 @@ def dashboard():
         latest_reflection=latest_reflection
     )
 
+
+# =========================================================
+# SIGNUP
+# =========================================================
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
 
@@ -567,6 +598,7 @@ def signup():
 
         username = request.form.get("username")
         email = request.form.get("email")
+
         password = hashlib.sha256(
             request.form.get("password").encode()
         ).hexdigest()
@@ -575,16 +607,18 @@ def signup():
 
         try:
 
-            connection.execute("""
+            connection.execute(
+                """
                 INSERT INTO users
                 (username, email, password)
                 VALUES (?, ?, ?)
-            """,
-            (
-                username,
-                email,
-                password
-            ))
+                """,
+                (
+                    username,
+                    email,
+                    password
+                )
+            )
 
             connection.commit()
 
@@ -603,7 +637,12 @@ def signup():
 
     return render_template("signup.html")
 
-@app.route("/login", methods=["GET","POST"])
+
+# =========================================================
+# LOGIN
+# =========================================================
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
 
     if request.method == "POST":
@@ -614,38 +653,36 @@ def login():
             request.form.get("password").encode()
         ).hexdigest()
 
-
         connection = sqlite3.connect(DATABASE)
 
-
-        user = connection.execute("""
-            SELECT id,username
+        user = connection.execute(
+            """
+            SELECT id, username
             FROM users
-
-            WHERE email=?
-            AND password=?
-
-        """,
-        (
-            email,
-            password
-        )).fetchone()
-
+            WHERE email = ?
+            AND password = ?
+            """,
+            (
+                email,
+                password
+            )
+        ).fetchone()
 
         connection.close()
-
 
         if user:
 
             session["user_id"] = user[0]
-
             session["username"] = user[1]
-
 
             return redirect("/dashboard")
 
-
     return render_template("login.html")
+
+
+# =========================================================
+# LOGOUT
+# =========================================================
 
 @app.route("/logout")
 def logout():
@@ -654,6 +691,11 @@ def logout():
 
     return redirect("/")
 
+
+# =========================================================
+# WELCOME
+# =========================================================
+
 @app.route("/welcome")
 def welcome():
 
@@ -661,22 +703,31 @@ def welcome():
         "welcome.html"
     )
 
+
+# =========================================================
+# FRAMEWORK
+# =========================================================
+
 @app.route("/framework")
 def framework():
 
     return render_template(
         "framework.html"
     )
+
+
+# =========================================================
+# HISTORY
+# =========================================================
+
 @app.route("/history")
 def history():
 
     if "user_id" not in session:
         return redirect("/login")
 
-    connection = sqlite3.connect(DATABASE)
-    connection.row_factory = sqlite3.Row
+    connection = get_db()
 
-    # Get reflections
     reflections = connection.execute(
         """
         SELECT
@@ -697,7 +748,6 @@ def history():
         (session["user_id"],)
     ).fetchall()
 
-    # Get decisions
     decisions = connection.execute(
         """
         SELECT
@@ -731,6 +781,12 @@ def history():
         reflections=reflections,
         decisions=decisions
     )
+
+
+# =========================================================
+# FEEDBACK
+# =========================================================
+
 @app.route("/feedback", methods=["GET", "POST"])
 def feedback():
 
@@ -740,7 +796,23 @@ def feedback():
     if request.method == "POST":
 
         rating = request.form.get("rating")
-        comment = request.form.get("comment", "").strip()
+        comment = request.form.get(
+            "comment",
+            ""
+        ).strip()
+
+        after_emotion = request.form.get("after_emotion")
+
+        if after_emotion == "Other":
+            after_emotion = request.form.get(
+                "other_emotion",
+                ""
+            ).strip()
+     
+
+        after_intensity = request.form.get(
+            "after_intensity"
+        )
 
         if not rating:
             return render_template(
@@ -748,18 +820,50 @@ def feedback():
                 error="Please select a rating."
             )
 
+        if not after_emotion:
+            return render_template(
+                "feedback.html",
+                error="Please select how you are feeling now."
+            )
+
+        if not after_intensity:
+            return render_template(
+                "feedback.html",
+                error="Please select your feeling intensity."
+            )
+
+        try:
+            after_intensity = int(after_intensity)
+
+            if after_intensity < 1 or after_intensity > 10:
+                raise ValueError
+
+        except ValueError:
+
+            return render_template(
+                "feedback.html",
+                error="Intensity must be between 1 and 10."
+            )
+
         connection = get_db()
 
         connection.execute(
             """
-            INSERT INTO feedback
-            (user_id, rating, comment)
-            VALUES (?, ?, ?)
+            INSERT INTO feedback (
+                user_id,
+                rating,
+                comment,
+                after_emotion,
+                after_intensity
+            )
+            VALUES (?, ?, ?, ?, ?)
             """,
             (
                 session["user_id"],
                 rating,
-                comment
+                comment,
+                after_emotion,
+                after_intensity
             )
         )
 
@@ -772,6 +876,11 @@ def feedback():
         )
 
     return render_template("feedback.html")
+
+
+# =========================================================
+# FEEDBACK RESULTS
+# =========================================================
 
 @app.route("/feedback-results")
 def feedback_results():
@@ -796,25 +905,121 @@ def feedback_results():
         """
     ).fetchone()[0]
 
+    # -----------------------------------------------------
+    # Emotional improvement statistics
+    # -----------------------------------------------------
+
+    comparison_data = connection.execute(
+        """
+        SELECT
+            feedback.id,
+            feedback.after_emotion,
+            feedback.after_intensity,
+            reflections.emotion AS before_emotion,
+            reflections.intensity AS before_intensity
+        FROM feedback
+
+        LEFT JOIN reflections
+        ON reflections.user_id = feedback.user_id
+
+        AND reflections.id = (
+            SELECT MAX(r.id)
+            FROM reflections r
+            WHERE r.user_id = feedback.user_id
+            AND r.id <= feedback.id
+        )
+
+        WHERE feedback.after_intensity IS NOT NULL
+        """
+    ).fetchall()
+
     connection.close()
 
     if average is not None:
         average = round(average, 1)
 
+    comparisons = []
+
+    for item in comparison_data:
+
+        before_intensity = item["before_intensity"]
+        after_intensity = item["after_intensity"]
+
+        try:
+            before_intensity = int(before_intensity)
+            after_intensity = int(after_intensity)
+        except (TypeError, ValueError):
+            continue
+
+        change = before_intensity - after_intensity
+
+        comparisons.append({
+            "before_emotion": item["before_emotion"],
+            "before_intensity": before_intensity,
+            "after_emotion": item["after_emotion"],
+            "after_intensity": after_intensity,
+            "change": change
+        })
+
+    if comparisons:
+
+        average_before = round(
+            sum(item["before_intensity"] for item in comparisons)
+            / len(comparisons),
+            1
+        )
+
+        average_after = round(
+            sum(item["after_intensity"] for item in comparisons)
+            / len(comparisons),
+            1
+        )
+
+        average_change = round(
+            average_before - average_after,
+            1
+        )
+
+        improved_count = sum(
+            1
+            for item in comparisons
+            if item["change"] > 0
+        )
+
+        improvement_percentage = round(
+            (improved_count / len(comparisons)) * 100
+        )
+
+    else:
+
+        average_before = None
+        average_after = None
+        average_change = None
+        improvement_percentage = None
+
     return render_template(
         "feedback_results.html",
         feedback=feedback,
-        average=average
+        average=average,
+        comparisons=comparisons,
+        average_before=average_before,
+        average_after=average_after,
+        average_change=average_change,
+        improvement_percentage=improvement_percentage
     )
-# -----------------------------
+
+
+# =========================================================
 # INITIALIZE DATABASE
-# -----------------------------
+# =========================================================
 
 init_db()
 
-# -----------------------------
+
+# =========================================================
 # RUN APPLICATION
-# -----------------------------
+# =========================================================
+
 if __name__ == "__main__":
 
     init_db()
