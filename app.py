@@ -114,7 +114,7 @@ lessons = [
 app = Flask(__name__)
 
 app.secret_key = "rationalmind_secret_key"
-
+CREATOR_EMAIL = os.environ.get("Kwakita1214@gmail.com")
 
 # =========================================================
 # DATABASE
@@ -890,6 +890,22 @@ def feedback_results():
 
     connection = get_db()
 
+    user = connection.execute(
+        """
+        SELECT email
+        FROM users
+        WHERE id = ?
+        """,
+        (session["user_id"],)
+    ).fetchone()
+
+    # Only the creator can view all feedback
+    if not user or user["email"] != CREATOR_EMAIL:
+
+        connection.close()
+
+        return redirect("/dashboard")
+
     feedback = connection.execute(
         """
         SELECT *
@@ -905,6 +921,105 @@ def feedback_results():
         """
     ).fetchone()[0]
 
+    comparison_data = connection.execute(
+        """
+        SELECT
+            feedback.id,
+            feedback.after_emotion,
+            feedback.after_intensity,
+            reflections.emotion AS before_emotion,
+            reflections.intensity AS before_intensity
+        FROM feedback
+
+        LEFT JOIN reflections
+        ON reflections.user_id = feedback.user_id
+
+        AND reflections.id = (
+            SELECT MAX(r.id)
+            FROM reflections r
+            WHERE r.user_id = feedback.user_id
+            AND r.id <= feedback.id
+        )
+
+        WHERE feedback.after_intensity IS NOT NULL
+        """
+    ).fetchall()
+
+    connection.close()
+
+    if average is not None:
+        average = round(average, 1)
+
+    comparisons = []
+
+    for item in comparison_data:
+
+        try:
+            before_intensity = int(item["before_intensity"])
+            after_intensity = int(item["after_intensity"])
+        except (TypeError, ValueError):
+            continue
+
+        change = before_intensity - after_intensity
+
+        comparisons.append({
+            "before_emotion": item["before_emotion"],
+            "before_intensity": before_intensity,
+            "after_emotion": item["after_emotion"],
+            "after_intensity": after_intensity,
+            "change": change
+        })
+
+    if comparisons:
+
+        average_before = round(
+            sum(
+                item["before_intensity"]
+                for item in comparisons
+            ) / len(comparisons),
+            1
+        )
+
+        average_after = round(
+            sum(
+                item["after_intensity"]
+                for item in comparisons
+            ) / len(comparisons),
+            1
+        )
+
+        average_change = round(
+            average_before - average_after,
+            1
+        )
+
+        improved_count = sum(
+            1
+            for item in comparisons
+            if item["change"] > 0
+        )
+
+        improvement_percentage = round(
+            (improved_count / len(comparisons)) * 100
+        )
+
+    else:
+
+        average_before = None
+        average_after = None
+        average_change = None
+        improvement_percentage = None
+
+    return render_template(
+        "feedback_results.html",
+        feedback=feedback,
+        average=average,
+        comparisons=comparisons,
+        average_before=average_before,
+        average_after=average_after,
+        average_change=average_change,
+        improvement_percentage=improvement_percentage
+    )
     # -----------------------------------------------------
     # Emotional improvement statistics
     # -----------------------------------------------------
