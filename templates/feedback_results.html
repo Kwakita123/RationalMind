@@ -6,49 +6,44 @@ Feedback Results | RationalMind
 
 {% block content %}
 
-<main class="feedback-container">
+<p class="eyebrow">CREATOR VIEW</p>
 
-    <p class="eyebrow">CREATOR VIEW</p>
+<h1>Feedback Results</h1>
 
-    <h1>Feedback Results</h1>
+{% if average %} <h2>{{ average }} / 5</h2> <p>Average user rating</p>
+{% else %} <p>No feedback has been submitted yet.</p>
+{% endif %}
 
-    {% if average %}
-        <h2>{{ average }} / 5</h2>
-        <p>Average user rating</p>
-    {% else %}
-        <p>No feedback has been submitted yet.</p>
-    {% endif %}
+<section class="feedback-list">
 
-    <section class="feedback-list">
+```
+{% for item in feedback %}
 
-        {% for item in feedback %}
+    <div class="feedback-success">
 
-            <div class="feedback-success">
+        <h3>
+            {{ item.rating }} / 5
+        </h3>
 
-                <h3>
-                    {{ item.rating }} / 5
-                </h3>
+        {% if item.comment %}
+            <p>
+                "{{ item.comment }}"
+            </p>
+        {% else %}
+            <p>
+                No written comment.
+            </p>
+        {% endif %}
 
-                {% if item.comment %}
-                    <p>
-                        "{{ item.comment }}"
-                    </p>
-                {% else %}
-                    <p>
-                        No written comment.
-                    </p>
-                {% endif %}
+        <small>
+            Submitted: {{ item.created_at }}
+        </small>
 
-                <small>
-                    Submitted: {{ item.created_at }}
-                </small>
+    </div>
 
-            </div>
+{% endfor %}
+```
 
-        {% endfor %}
-
-    </section>
-
-</main>
+</section>
 
 {% endblock %}
