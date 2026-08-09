@@ -1,36 +1,36 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <title>
-        {% block title %}
-        RationalMind
-        {% endblock %}
-    </title>
+<title>
+    {% block title %}
+    RationalMind
+    {% endblock %}
+</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+```
 
 </head>
 
-
 <body>
 
-
-<nav class="main-nav">
+```
+<nav class="navbar">
 
     <div class="logo">
-
         <a href="/">
             RationalMind
         </a>
-
     </div>
 
 
@@ -42,39 +42,44 @@
                 Dashboard
             </a>
 
-           <nav class="navbar">
+            <a href="/reflection">
+                Reflection
+            </a>
 
-<a href="/dashboard">
-Dashboard
-</a>
+            <a href="/decision">
+                Decisions
+            </a>
 
-<a href="/check-in">
-Reflect
-</a>
+            <a href="/history">
+                History
+            </a>
 
-<a href="/decision">
-Decide
-</a>
+            <a href="/explore">
+                Explore
+            </a>
 
-<a href="/reset">
-Reset
-</a>
+            <a href="/reset">
+                Reset
+            </a>
 
-<a href="/explore">
-Learn
-</a>
+            <a href="/feedback">
+                Feedback
+            </a>
 
-<a href="/logout">
-Logout
-</a>
+            <a href="/logout">
+                Logout
+            </a>
 
-<a href="/history">
-History
-</a>
-<a href="/feedback">
-Feedback
-</a>
-</nav>
+        {% else %}
+
+            <a href="/login">
+                Login
+            </a>
+
+            <a href="/signup">
+                Sign Up
+            </a>
+
         {% endif %}
 
     </div>
@@ -82,9 +87,13 @@ Feedback
 </nav>
 
 
-{% block content %}
-{% endblock %}
+<main>
 
+    {% block content %}
+    {% endblock %}
+
+</main>
+```
 
 </body>
 
