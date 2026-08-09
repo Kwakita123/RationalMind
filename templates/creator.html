@@ -1,4 +1,3 @@
-```html
 {% extends "base.html" %}
 
 {% block title %}
@@ -9,424 +8,846 @@ Creator Analytics | RationalMind
 
 <section class="dashboard-header">
 
-    <p class="eyebrow">
-        CREATOR VIEW
-    </p>
+```
+<p class="eyebrow">CREATOR VIEW</p>
 
-    <h1>
-        RationalMind Analytics
-    </h1>
+<h1>RationalMind Analytics</h1>
 
-    <p>
-        Anonymous aggregate data showing how users interact
-        with RationalMind and how their self-reported emotional
-        states change.
-    </p>
+<p>
+    Aggregate data showing how users interact with
+    RationalMind and how their self-reported emotional
+    states change.
+</p>
+```
 
 </section>
 
+<!-- ================================================= -->
 
-<!-- ============================================== -->
 <!-- OVERVIEW -->
-<!-- ============================================== -->
+
+<!-- ================================================= -->
 
 <section>
 
-    <h2>
-        Overview
-    </h2>
+```
+<h2>Overview</h2>
 
-    <div class="dashboard-grid">
+<div class="dashboard-grid">
 
-        <div class="feedback-success">
-
-            <h3>
-                {{ total_users }}
-            </h3>
-
-            <p>
-                Total Users
-            </p>
-
-        </div>
-
-
-        <div class="feedback-success">
-
-            <h3>
-                {{ total_reflections }}
-            </h3>
-
-            <p>
-                Total Reflections
-            </p>
-
-        </div>
-
-
-        <div class="feedback-success">
-
-            <h3>
-                {{ total_feedback }}
-            </h3>
-
-            <p>
-                Feedback Responses
-            </p>
-
-        </div>
-
-
-        <div class="feedback-success">
-
-            <h3>
-                {% if average_rating is not none %}
-                    {{ average_rating }} / 5
-                {% else %}
-                    —
-                {% endif %}
-            </h3>
-
-            <p>
-                Average Rating
-            </p>
-
-        </div>
-
+    <div class="feedback-success">
+        <h3>{{ total_users }}</h3>
+        <p>Total Users</p>
     </div>
 
-</section>
-
-
-<!-- ============================================== -->
-<!-- EMOTIONAL INTENSITY -->
-<!-- ============================================== -->
-
-<section>
-
-    <h2>
-        Emotional Intensity
-    </h2>
-
-    <p>
-        Average self-reported emotional intensity before
-        and after using RationalMind.
-    </p>
-
-
-    <div class="dashboard-grid">
-
-        <div class="feedback-success">
-
-            <h3>
-                {% if average_before is not none %}
-                    {{ average_before }} / 10
-                {% else %}
-                    —
-                {% endif %}
-            </h3>
-
-            <p>
-                Before
-            </p>
-
-        </div>
-
-
-        <div class="feedback-success">
-
-            <h3>
-                {% if average_after is not none %}
-                    {{ average_after }} / 10
-                {% else %}
-                    —
-                {% endif %}
-            </h3>
-
-            <p>
-                After
-            </p>
-
-        </div>
-
-
-        <div class="feedback-success">
-
-            <h3>
-                {% if average_change is not none %}
-
-                    {% if average_change > 0 %}
-                        +{{ average_change }}
-                    {% else %}
-                        {{ average_change }}
-                    {% endif %}
-
-                {% else %}
-                    —
-                {% endif %}
-            </h3>
-
-            <p>
-                Average Change
-            </p>
-
-        </div>
-
+    <div class="feedback-success">
+        <h3>{{ total_reflections }}</h3>
+        <p>Total Reflections</p>
     </div>
 
-
-    <!-- INTENSITY CHANGE -->
+    <div class="feedback-success">
+        <h3>{{ total_feedback }}</h3>
+        <p>Feedback Responses</p>
+    </div>
 
     <div class="feedback-success">
 
         <h3>
-            Intensity Change
+            {% if average_rating is not none %}
+                {{ average_rating }} / 5
+            {% else %}
+                —
+            {% endif %}
         </h3>
 
-        <p>
-            Lower intensity:
-            <strong>{{ lower_intensity }}</strong>
-        </p>
-
-        <p>
-            No major change:
-            <strong>{{ same_intensity }}</strong>
-        </p>
-
-        <p>
-            Higher intensity:
-            <strong>{{ higher_intensity }}</strong>
-        </p>
+        <p>Average Rating</p>
 
     </div>
 
+</div>
+```
+
 </section>
 
+<!-- ================================================= -->
 
-<!-- ============================================== -->
-<!-- EMOTIONAL TRANSITIONS -->
-<!-- ============================================== -->
+<!-- EMOTIONAL INTENSITY -->
+
+<!-- ================================================= -->
 
 <section>
 
-    <h2>
-        Emotional Transitions
-    </h2>
+```
+<h2>Emotional Intensity</h2>
+
+<p>
+    Average self-reported emotional intensity before
+    and after using RationalMind.
+</p>
+
+<div class="dashboard-grid">
+
+    <div class="feedback-success">
+
+        <h3>
+            {% if average_before is not none %}
+                {{ average_before }} / 10
+            {% else %}
+                —
+            {% endif %}
+        </h3>
+
+        <p>Before</p>
+
+    </div>
+
+
+    <div class="feedback-success">
+
+        <h3>
+            {% if average_after is not none %}
+                {{ average_after }} / 10
+            {% else %}
+                —
+            {% endif %}
+        </h3>
+
+        <p>After</p>
+
+    </div>
+
+
+    <div class="feedback-success">
+
+        <h3>
+
+            {% if average_change is not none %}
+
+                {% if average_change > 0 %}
+                    +{{ average_change }}
+                {% else %}
+                    {{ average_change }}
+                {% endif %}
+
+            {% else %}
+                —
+            {% endif %}
+
+        </h3>
+
+        <p>Average Change</p>
+
+    </div>
+
+</div>
+```
+
+</section>
+
+<!-- ================================================= -->
+
+<!-- GRAPH 1 -->
+
+<!-- ================================================= -->
+
+<section>
+
+```
+<h2>Emotional Intensity Before vs. After</h2>
+
+<p>
+    Average self-reported emotional intensity across
+    feedback responses.
+</p>
+
+<div class="feedback-success">
+
+    <canvas id="intensityChart"></canvas>
+
+</div>
+```
+
+</section>
+
+<!-- ================================================= -->
+
+<!-- INTENSITY OUTCOMES -->
+
+<!-- ================================================= -->
+
+<section>
+
+```
+<h2>Intensity Outcomes</h2>
+
+<div class="dashboard-grid">
+
+    <div class="feedback-success">
+
+        <h3>{{ lower_intensity }}</h3>
+
+        <p>Lower intensity</p>
+
+    </div>
+
+
+    <div class="feedback-success">
+
+        <h3>{{ same_intensity }}</h3>
+
+        <p>No change</p>
+
+    </div>
+
+
+    <div class="feedback-success">
+
+        <h3>{{ higher_intensity }}</h3>
+
+        <p>Higher intensity</p>
+
+    </div>
+
+</div>
+```
+
+</section>
+
+<!-- ================================================= -->
+
+<!-- GRAPH 2 -->
+
+<!-- ================================================= -->
+
+<section>
+
+```
+<h2>Reported Intensity Outcomes</h2>
+
+<div class="feedback-success">
+
+    <canvas id="outcomeChart"></canvas>
+
+</div>
+```
+
+</section>
+
+<!-- ================================================= -->
+
+<!-- EMOTIONAL TRANSITIONS -->
+
+<!-- ================================================= -->
+
+<section>
+
+```
+<h2>Emotional Transitions</h2>
+
+<p>
+    The most common self-reported emotional transitions
+    following a RationalMind reflection.
+</p>
+
+
+{% if transitions %}
+
+    <div class="feedback-list">
+
+        {% for transition in transitions %}
+
+            <div class="feedback-success">
+
+                <h3>
+                    {{ transition["before_emotion"] }}
+                    →
+                    {{ transition["after_emotion"] }}
+                </h3>
+
+                <p>
+                    {{ transition["amount"] }}
+                    occurrence{% if transition["amount"] != 1 %}s{% endif %}
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
 
     <p>
-        The most common self-reported emotional transitions
-        following a RationalMind reflection.
+        Not enough data yet.
     </p>
 
+{% endif %}
+```
 
-    {% if transitions %}
+</section>
 
-        <div class="feedback-list">
+<!-- ================================================= -->
 
-            {% for transition in transitions %}
+<!-- GRAPH 3 -->
 
-                <div class="feedback-success">
+<!-- ================================================= -->
 
-                    <h3>
+<section>
 
-                        {{ transition.before_emotion }}
+```
+<h2>Emotional Transition Patterns</h2>
 
-                        →
+<div class="feedback-success">
 
-                        {{ transition.after_emotion }}
+    <canvas id="transitionChart"></canvas>
 
-                    </h3>
+</div>
+```
+
+</section>
+
+<!-- ================================================= -->
+
+<!-- EMOTIONAL PATTERNS -->
+
+<!-- ================================================= -->
+
+<section>
+
+```
+<h2>Emotional Patterns</h2>
+
+<div class="dashboard-grid">
+
+
+    <div class="feedback-success">
+
+        <h3>
+            Most Common Starting Emotion
+        </h3>
+
+        {% if starting_emotion %}
+
+            <p>
+                {{ starting_emotion["emotion"] }}
+            </p>
+
+            <small>
+                {{ starting_emotion["amount"] }}
+                occurrence{% if starting_emotion["amount"] != 1 %}s{% endif %}
+            </small>
+
+        {% else %}
+
+            <p>
+                Not enough data.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="feedback-success">
+
+        <h3>
+            Most Common Ending Emotion
+        </h3>
+
+        {% if ending_emotion %}
+
+            <p>
+                {{ ending_emotion["after_emotion"] }}
+            </p>
+
+            <small>
+                {{ ending_emotion["amount"] }}
+                occurrence{% if ending_emotion["amount"] != 1 %}s{% endif %}
+            </small>
+
+        {% else %}
+
+            <p>
+                Not enough data.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+```
+
+</section>
+
+<!-- ================================================= -->
+
+<!-- RECENT FEEDBACK -->
+
+<!-- ================================================= -->
+
+<section>
+
+```
+<h2>Recent Feedback</h2>
+
+<p>
+    Feedback is shown without usernames or email addresses.
+</p>
+
+
+{% if recent_feedback %}
+
+    <div class="feedback-list">
+
+        {% for item in recent_feedback %}
+
+            <div class="feedback-success">
+
+                <h3>
+                    {{ item["rating"] }} / 5
+                </h3>
+
+
+                {% if item["before_emotion"] and item["after_emotion"] %}
 
                     <p>
-                        {{ transition.amount }} occurrence{% if transition.amount != 1 %}s{% endif %}
+                        {{ item["before_emotion"] }}
+                        →
+                        {{ item["after_emotion"] }}
                     </p>
 
-                </div>
-
-            {% endfor %}
-
-        </div>
-
-    {% else %}
-
-        <p>
-            Not enough data yet.
-        </p>
-
-    {% endif %}
-
-</section>
+                {% endif %}
 
 
-<!-- ============================================== -->
-<!-- COMMON EMOTIONS -->
-<!-- ============================================== -->
+                {% if item["before_intensity"] is not none
+                      and item["after_intensity"] is not none %}
 
-<section>
+                    <p>
+                        Intensity:
+                        {{ item["before_intensity"] }}
+                        →
+                        {{ item["after_intensity"] }}
+                    </p>
 
-    <h2>
-        Emotional Patterns
-    </h2>
+                {% endif %}
 
 
-    <div class="dashboard-grid">
+                {% if item["comment"] %}
 
-        <div class="feedback-success">
+                    <p>
+                        "{{ item["comment"] }}"
+                    </p>
 
-            <h3>
-                Most Common Starting Emotion
-            </h3>
+                {% endif %}
 
-            {% if starting_emotion %}
-
-                <p>
-                    {{ starting_emotion["emotion"] }}
-                </p>
 
                 <small>
-                    {{ starting_emotion["amount"] }}
-                    occurrence{% if starting_emotion["amount"] != 1 %}s{% endif %}
+                    {{ item["created_at"] }}
                 </small>
 
-            {% else %}
+            </div>
 
-                <p>
-                    Not enough data.
-                </p>
-
-            {% endif %}
-
-        </div>
-
-
-        <div class="feedback-success">
-
-            <h3>
-                Most Common Ending Emotion
-            </h3>
-
-            {% if ending_emotion %}
-
-                <p>
-                    {{ ending_emotion["after_emotion"] }}
-                </p>
-
-                <small>
-                    {{ ending_emotion["amount"] }}
-                    occurrence{% if ending_emotion["amount"] != 1 %}s{% endif %}
-                </small>
-
-            {% else %}
-
-                <p>
-                    Not enough data.
-                </p>
-
-            {% endif %}
-
-        </div>
+        {% endfor %}
 
     </div>
 
-</section>
-
-
-<!-- ============================================== -->
-<!-- RECENT FEEDBACK -->
-<!-- ============================================== -->
-
-<section>
-
-    <h2>
-        Recent Feedback
-    </h2>
+{% else %}
 
     <p>
-        Feedback is shown without usernames or email addresses.
+        No feedback has been submitted yet.
     </p>
 
-
-    {% if recent_feedback %}
-
-        <div class="feedback-list">
-
-            {% for item in recent_feedback %}
-
-                <div class="feedback-success">
-
-                    <h3>
-                        {{ item.rating }} / 5
-                    </h3>
-
-                    {% if item.before_emotion and item.after_emotion %}
-
-                        <p>
-                            {{ item.before_emotion }}
-                            →
-                            {{ item.after_emotion }}
-                        </p>
-
-                    {% endif %}
-
-
-                    {% if item.before_intensity and item.after_intensity %}
-
-                        <p>
-                            Intensity:
-                            {{ item.before_intensity }}
-                            →
-                            {{ item.after_intensity }}
-                        </p>
-
-                    {% endif %}
-
-
-                    {% if item.comment %}
-
-                        <p>
-                            "{{ item.comment }}"
-                        </p>
-
-                    {% endif %}
-
-
-                    <small>
-                        {{ item.created_at }}
-                    </small>
-
-                </div>
-
-            {% endfor %}
-
-        </div>
-
-    {% else %}
-
-        <p>
-            No feedback has been submitted yet.
-        </p>
-
-    {% endif %}
+{% endif %}
+```
 
 </section>
 
+<!-- ================================================= -->
 
-<!-- ============================================== -->
 <!-- DATA NOTE -->
-<!-- ============================================== -->
+
+<!-- ================================================= -->
 
 <section>
 
-    <p>
-        <small>
-            Data represents self-reported user experiences and
-            should not be interpreted as proof that RationalMind
-            caused changes in emotional state.
-        </small>
-    </p>
+```
+<p>
+
+    <small>
+
+        Data represents self-reported user experiences.
+        These results describe reported changes and do
+        not establish that RationalMind caused those changes.
+
+    </small>
+
+</p>
+```
 
 </section>
 
+<!-- ================================================= -->
+
+<!-- CHART DATA -->
+
+<!-- ================================================= -->
+
+<div
+    id="creator-chart-data"
+
+```
+data-average-before="{{ average_before if average_before is not none else 0 }}"
+
+data-average-after="{{ average_after if average_after is not none else 0 }}"
+
+data-lower="{{ lower_intensity }}"
+
+data-same="{{ same_intensity }}"
+
+data-higher="{{ higher_intensity }}"
+```
+
+>
+
+</div>
+
+<!-- ================================================= -->
+
+<!-- CHART.JS -->
+
+<!-- ================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const dataElement =
+        document.getElementById("creator-chart-data");
+
+
+    if (!dataElement) {
+        return;
+    }
+
+
+    /*
+     * -----------------------------------------------
+     * GET DATA FROM HTML
+     * -----------------------------------------------
+     */
+
+    const averageBefore =
+        Number(
+            dataElement.dataset.averageBefore
+        );
+
+
+    const averageAfter =
+        Number(
+            dataElement.dataset.averageAfter
+        );
+
+
+    const lowerIntensity =
+        Number(
+            dataElement.dataset.lower
+        );
+
+
+    const sameIntensity =
+        Number(
+            dataElement.dataset.same
+        );
+
+
+    const higherIntensity =
+        Number(
+            dataElement.dataset.higher
+        );
+
+
+    /*
+     * -----------------------------------------------
+     * GRAPH 1
+     * BEFORE VS AFTER INTENSITY
+     * -----------------------------------------------
+     */
+
+    const intensityCanvas =
+        document.getElementById(
+            "intensityChart"
+        );
+
+
+    if (intensityCanvas) {
+
+        new Chart(
+            intensityCanvas,
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels: [
+                        "Before",
+                        "After"
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Average Emotional Intensity",
+
+                            data: [
+                                averageBefore,
+                                averageAfter
+                            ]
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            max: 10,
+
+                            title: {
+
+                                display: true,
+
+                                text:
+                                    "Intensity (1–10)"
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+     * -----------------------------------------------
+     * GRAPH 2
+     * INTENSITY OUTCOMES
+     * -----------------------------------------------
+     */
+
+    const outcomeCanvas =
+        document.getElementById(
+            "outcomeChart"
+        );
+
+
+    if (outcomeCanvas) {
+
+        new Chart(
+            outcomeCanvas,
+            {
+
+                type: "doughnut",
+
+                data: {
+
+                    labels: [
+
+                        "Lower",
+
+                        "No Change",
+
+                        "Higher"
+
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Intensity Outcomes",
+
+                            data: [
+
+                                lowerIntensity,
+
+                                sameIntensity,
+
+                                higherIntensity
+
+                            ]
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+     * -----------------------------------------------
+     * GRAPH 3
+     * EMOTIONAL TRANSITIONS
+     *
+     * We create the transition data from the
+     * HTML elements instead of putting Jinja
+     * directly inside JavaScript.
+     * -----------------------------------------------
+     */
+
+    const transitionElements =
+        document.querySelectorAll(
+            ".transition-data"
+        );
+
+
+    const transitionLabels = [];
+
+    const transitionValues = [];
+
+
+    transitionElements.forEach(
+        function (element) {
+
+            transitionLabels.push(
+                element.dataset.label
+            );
+
+            transitionValues.push(
+                Number(
+                    element.dataset.amount
+                )
+            );
+
+        }
+    );
+
+
+    const transitionCanvas =
+        document.getElementById(
+            "transitionChart"
+        );
+
+
+    if (
+        transitionCanvas &&
+        transitionLabels.length > 0
+    ) {
+
+        new Chart(
+            transitionCanvas,
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels:
+                        transitionLabels,
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Number of Transitions",
+
+                            data:
+                                transitionValues
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    indexAxis: "y",
+
+                    responsive: true,
+
+                    scales: {
+
+                        x: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+
+                                precision: 0
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+});
+
+</script>
+
+<!-- ================================================= -->
+
+<!-- HIDDEN TRANSITION DATA -->
+
+<!-- ================================================= -->
+
+<div style="display: none;">
+
+```
+{% for transition in transitions %}
+
+    <div
+        class="transition-data"
+
+        data-label="{{ transition['before_emotion'] }} → {{ transition['after_emotion'] }}"
+
+        data-amount="{{ transition['amount'] }}"
+    ></div>
+
+{% endfor %}
+```
+
+</div>
 
 {% endblock %}
-```
