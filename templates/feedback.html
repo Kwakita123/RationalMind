@@ -13,333 +13,375 @@ Feedback | RationalMind
     </p>
 
     <h1>
-        How are you feeling now?
+        Feedback
     </h1>
 
-    {% if submitted %}
+    <p>
+        Feedback helps you reflect on how RationalMind affected
+        your emotional state and helps improve the experience.
+    </p>
 
-        <div class="feedback-success">
+</section>
 
-            <h2>
-                Thank you.
-            </h2>
 
-            <p>
-                Your feedback will help improve RationalMind.
-            </p>
+{% if submitted %}
 
-            <a href="/dashboard">
-                Return to Dashboard
-            </a>
+    <!-- ========================================= -->
+    <!-- SUCCESS -->
+    <!-- ========================================= -->
 
-            <br><br>
+    <div class="feedback-success">
 
-            <a href="/feedback-results">
-                View Feedback Results
-            </a>
+        <h2>
+            Thank you.
+        </h2>
+
+        <p>
+            Your feedback has been recorded and will help improve
+            RationalMind.
+        </p>
+
+        <a href="/dashboard">
+            Return to Dashboard
+        </a>
+
+        <br><br>
+
+        <a href="/feedback-results">
+            View Feedback Results
+        </a>
+
+    </div>
+
+
+{% elif already_submitted %}
+
+    <!-- ========================================= -->
+    <!-- ALREADY COMPLETED -->
+    <!-- ========================================= -->
+
+    <div class="feedback-info">
+
+        <h2>
+            Reflection feedback already completed
+        </h2>
+
+        <p>
+            You have already submitted feedback for your most
+            recent reflection.
+        </p>
+
+        <p>
+            Complete another reflection before submitting
+            additional feedback.
+        </p>
+
+        <a href="/reflection">
+            Start Another Reflection
+        </a>
+
+    </div>
+
+
+{% elif not can_submit %}
+
+    <!-- ========================================= -->
+    <!-- REFLECTION REQUIRED -->
+    <!-- ========================================= -->
+
+    <div class="feedback-info">
+
+        <h2>
+            Complete a reflection first
+        </h2>
+
+        <p>
+            Before you can submit feedback, you need to complete
+            a RationalMind reflection.
+        </p>
+
+        <p>
+            Your reflection gives you an opportunity to examine
+            what happened, identify your emotions, consider the
+            evidence, and choose a thoughtful response.
+        </p>
+
+        <p>
+            After completing your reflection, return here to
+            record how you are feeling afterward.
+        </p>
+
+        <a href="/reflection">
+            Go to Reflection
+        </a>
+
+    </div>
+
+
+{% else %}
+
+    <!-- ========================================= -->
+    <!-- FEEDBACK FORM -->
+    <!-- ========================================= -->
+
+    {% if error %}
+
+        <p class="feedback-error">
+            {{ error }}
+        </p>
+
+    {% endif %}
+
+
+    <form method="POST">
+
+        <label>
+            How are you feeling right now?
+        </label>
+
+        <p class="form-help">
+            Think about how you feel after completing your
+            reflection.
+        </p>
+
+
+        <div class="rating-options">
+
+            <label>
+                <input
+                    type="radio"
+                    name="after_emotion"
+                    value="Anxious"
+                    required>
+                😟 Anxious
+            </label>
+
+            <label>
+                <input
+                    type="radio"
+                    name="after_emotion"
+                    value="Sad">
+                😢 Sad
+            </label>
+
+            <label>
+                <input
+                    type="radio"
+                    name="after_emotion"
+                    value="Angry">
+                😡 Angry
+            </label>
+
+            <label>
+                <input
+                    type="radio"
+                    name="after_emotion"
+                    value="Neutral">
+                😐 Neutral
+            </label>
+
+            <label>
+                <input
+                    type="radio"
+                    name="after_emotion"
+                    value="Calm">
+                😌 Calm
+            </label>
+
+            <label>
+                <input
+                    type="radio"
+                    name="after_emotion"
+                    value="Happy">
+                😊 Happy
+            </label>
+
+            <label>
+                <input
+                    type="radio"
+                    name="after_emotion"
+                    value="Other"
+                    id="other-emotion-option">
+                Other
+            </label>
 
         </div>
 
-    {% else %}
 
-        <p>
-            Tell us how you feel after using RationalMind.
+        <div
+            id="other-emotion-container"
+            style="display: none;">
+
+            <label for="other_emotion">
+                What emotion are you feeling?
+            </label>
+
+            <input
+                type="text"
+                id="other_emotion"
+                name="other_emotion"
+                placeholder="Enter your emotion">
+
+        </div>
+
+
+        <label>
+            Is this emotion generally negative or positive?
+        </label>
+
+        <p class="form-help">
+            Choose the direction that best represents how
+            this emotion feels to you right now.
         </p>
 
-        {% if error %}
 
-            <p class="feedback-error">
-                {{ error }}
-            </p>
-
-        {% endif %}
-
-
-        <form method="POST">
-
-
-            <!-- ================================================= -->
-            <!-- EMOTION -->
-            <!-- ================================================= -->
+        <div class="rating-options">
 
             <label>
-                How are you feeling right now?
+                <input
+                    type="radio"
+                    name="after_emotion_direction"
+                    value="negative"
+                    required
+                    onchange="setAfterIntensityRange('negative')">
+                Negative
             </label>
 
-            <div class="rating-options">
+            <label>
+                <input
+                    type="radio"
+                    name="after_emotion_direction"
+                    value="positive"
+                    onchange="setAfterIntensityRange('positive')">
+                Positive
+            </label>
 
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion"
-                        value="Anxious"
-                        required
-                    >
-                    😟 Anxious
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion"
-                        value="Sad"
-                    >
-                    😢 Sad
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion"
-                        value="Angry"
-                    >
-                    😡 Angry
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion"
-                        value="Neutral"
-                    >
-                    😐 Neutral
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion"
-                        value="Calm"
-                    >
-                    😌 Calm
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion"
-                        value="Happy"
-                    >
-                    😊 Happy
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion"
-                        value="Other"
-                        id="other-emotion-option"
-                    >
-                    Other
-                </label>
-
-            </div>
+        </div>
 
 
-            <!-- ================================================= -->
-            <!-- OTHER EMOTION -->
-            <!-- ================================================= -->
+        <label for="after_intensity">
+            How intense is this feeling?
+        </label>
 
-            <div
-                id="other-emotion-container"
-                style="display: none;"
+        <p class="form-help">
+            -5 represents a very strongly negative emotional
+            state, while +5 represents a very strongly positive
+            emotional state.
+        </p>
+
+
+        <div class="intensity-container">
+
+            <span id="after-intensity-min">
+                -5
+            </span>
+
+            <input
+                type="range"
+                id="after_intensity"
+                name="after_intensity"
+                min="-5"
+                max="-1"
+                value="-3"
+                step="1"
+                disabled
+                oninput="updateAfterIntensityValue(this.value)"
             >
 
-                <label for="other_emotion">
-                    What emotion are you feeling?
-                </label>
+            <span id="after-intensity-max">
+                -1
+            </span>
 
-                <input
-                    type="text"
-                    id="other_emotion"
-                    name="other_emotion"
-                    placeholder="Enter your emotion"
-                >
-
-            </div>
+        </div>
 
 
-            <!-- ================================================= -->
-            <!-- EMOTION DIRECTION -->
-            <!-- ================================================= -->
+        <p>
+            Intensity:
 
-            <label>
-                Is this emotion generally negative or positive?
-            </label>
-
-            <p class="form-help">
-                Choose the direction that best represents how
-                this emotion feels to you right now.
-            </p>
-
-            <div class="rating-options">
-
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion_direction"
-                        value="negative"
-                        required
-                        onchange="setAfterIntensityRange('negative')"
-                    >
-                    Negative
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="after_emotion_direction"
-                        value="positive"
-                        onchange="setAfterIntensityRange('positive')"
-                    >
-                    Positive
-                </label>
-
-            </div>
+            <output id="after-intensity-value">
+                Select an emotion direction
+            </output>
+        </p>
 
 
-            <!-- ================================================= -->
-            <!-- EMOTIONAL INTENSITY -->
-            <!-- ================================================= -->
+        <label>
+            How helpful was RationalMind?
+        </label>
 
-            <label for="after_intensity">
-                How intense is this feeling?
-            </label>
-
-            <p class="form-help">
-                -5 represents a very strongly negative emotional
-                state, while +5 represents a very strongly positive
-                emotional state.
-            </p>
-
-            <div class="intensity-container">
-
-                <span id="after-intensity-min">
-                    -5
-                </span>
-
-                <input
-                    type="range"
-                    id="after_intensity"
-                    name="after_intensity"
-                    min="-5"
-                    max="-1"
-                    value="-3"
-                    step="1"
-                    disabled
-                    oninput="updateAfterIntensityValue(this.value)"
-                >
-
-                <span id="after-intensity-max">
-                    -1
-                </span>
-
-            </div>
-
-            <p>
-                Intensity:
-
-                <output id="after-intensity-value">
-                    Select an emotion direction
-                </output>
-            </p>
-
-
-            <!-- ================================================= -->
-            <!-- RATIONALMIND RATING -->
-            <!-- ================================================= -->
+        <div class="rating-options">
 
             <label>
-                How helpful was RationalMind?
+                <input
+                    type="radio"
+                    name="rating"
+                    value="1"
+                    required>
+                1
             </label>
 
-            <div class="rating-options">
-
-                <label>
-                    <input
-                        type="radio"
-                        name="rating"
-                        value="1"
-                        required
-                    >
-                    1
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="rating"
-                        value="2"
-                    >
-                    2
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="rating"
-                        value="3"
-                    >
-                    3
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="rating"
-                        value="4"
-                    >
-                    4
-                </label>
-
-                <label>
-                    <input
-                        type="radio"
-                        name="rating"
-                        value="5"
-                    >
-                    5
-                </label>
-
-            </div>
-
-
-            <!-- ================================================= -->
-            <!-- COMMENT -->
-            <!-- ================================================= -->
-
-            <label for="comment">
-                What did you think? (optional)
+            <label>
+                <input
+                    type="radio"
+                    name="rating"
+                    value="2">
+                2
             </label>
 
-            <textarea
-                id="comment"
-                name="comment"
-                rows="5"
-                placeholder="Tell us what was useful or confusing..."
-            ></textarea>
+            <label>
+                <input
+                    type="radio"
+                    name="rating"
+                    value="3">
+                3
+            </label>
+
+            <label>
+                <input
+                    type="radio"
+                    name="rating"
+                    value="4">
+                4
+            </label>
+
+            <label>
+                <input
+                    type="radio"
+                    name="rating"
+                    value="5">
+                5
+            </label>
+
+        </div>
 
 
-            <!-- ================================================= -->
-            <!-- SUBMIT -->
-            <!-- ================================================= -->
+        <label for="comment">
+            What did you think? (optional)
+        </label>
 
-            <button type="submit">
-                Submit Feedback
-            </button>
+        <textarea
+            id="comment"
+            name="comment"
+            rows="5"
+            placeholder="Tell us what was useful, confusing, or could be improved..."
+        ></textarea>
 
-        </form>
 
-    {% endif %}
+        <button type="submit">
+            Submit Feedback
+        </button>
+
+    </form>
+
+{% endif %}
 
 </section>
 
 
 <script>
 
-/* ========================================================= */
+/* ========================================= */
 /* OTHER EMOTION */
-/* ========================================================= */
+/* ========================================= */
 
 const emotionOptions =
     document.querySelectorAll(
@@ -374,14 +416,12 @@ emotionOptions.forEach(function(option) {
             otherEmotionContainer.style.display =
                 "block";
 
+            otherEmotionInput.focus();
+
             otherEmotionInput.required =
                 true;
 
-            otherEmotionInput.focus();
-
-        }
-
-        else {
+        } else {
 
             otherEmotionContainer.style.display =
                 "none";
@@ -391,7 +431,6 @@ emotionOptions.forEach(function(option) {
 
             otherEmotionInput.required =
                 false;
-
         }
 
     });
@@ -399,9 +438,9 @@ emotionOptions.forEach(function(option) {
 });
 
 
-/* ========================================================= */
-/* AFTER INTENSITY RANGE */
-/* ========================================================= */
+/* ========================================= */
+/* AFTER INTENSITY */
+/* ========================================= */
 
 function setAfterIntensityRange(direction) {
 
@@ -426,68 +465,42 @@ function setAfterIntensityRange(direction) {
         );
 
 
-    /* Enable slider */
-
     slider.disabled = false;
 
-
-    /* ===================================================== */
-    /* NEGATIVE */
-    /* ===================================================== */
 
     if (direction === "negative") {
 
         slider.min = "-5";
-
         slider.max = "-1";
-
         slider.value = "-3";
 
+        minimum.textContent = "-5";
+        maximum.textContent = "-1";
 
-        minimum.textContent =
-            "-5";
-
-        maximum.textContent =
-            "-1";
-
-
-        valueDisplay.textContent =
-            "-3";
+        valueDisplay.textContent = "-3";
 
     }
 
 
-    /* ===================================================== */
-    /* POSITIVE */
-    /* ===================================================== */
-
     else if (direction === "positive") {
 
         slider.min = "1";
-
         slider.max = "5";
-
         slider.value = "3";
 
+        minimum.textContent = "+1";
+        maximum.textContent = "+5";
 
-        minimum.textContent =
-            "+1";
-
-        maximum.textContent =
-            "+5";
-
-
-        valueDisplay.textContent =
-            "+3";
+        valueDisplay.textContent = "+3";
 
     }
 
 }
 
 
-/* ========================================================= */
-/* UPDATE INTENSITY DISPLAY */
-/* ========================================================= */
+/* ========================================= */
+/* DISPLAY INTENSITY */
+/* ========================================= */
 
 function updateAfterIntensityValue(value) {
 
@@ -502,9 +515,7 @@ function updateAfterIntensityValue(value) {
         valueDisplay.textContent =
             "+" + value;
 
-    }
-
-    else {
+    } else {
 
         valueDisplay.textContent =
             value;
