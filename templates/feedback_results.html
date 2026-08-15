@@ -6,242 +6,399 @@ Feedback Results | RationalMind
 
 {% block content %}
 
-<p class="eyebrow">CREATOR VIEW</p>
+<p class="eyebrow">
+    CREATOR VIEW
+</p>
 
-<h1>Feedback Results</h1>
+<h1>
+    Feedback Results
+</h1>
 
-<!-- Average Rating -->
+
+<!-- ===================================================== -->
+<!-- AVERAGE RATING -->
+<!-- ===================================================== -->
 
 <section class="feedback-list">
 
-```
-{% if average %}
+    {% if average is not none %}
 
-    <div class="feedback-success">
+        <div class="feedback-success">
 
-        <h2>
-            {{ average }} / 5
-        </h2>
+            <h2>
+                {{ average }} / 5
+            </h2>
 
-        <p>
-            Average user rating
-        </p>
+            <p>
+                Average user rating
+            </p>
 
-    </div>
+        </div>
 
-{% else %}
+    {% else %}
 
-    <div class="feedback-success">
+        <div class="feedback-success">
 
-        <p>
-            No feedback has been submitted yet.
-        </p>
+            <p>
+                No feedback has been submitted yet.
+            </p>
 
-    </div>
+        </div>
 
-{% endif %}
-```
+    {% endif %}
 
 </section>
 
-<!-- Emotional Impact -->
+
+<!-- ===================================================== -->
+<!-- EMOTIONAL IMPACT -->
+<!-- ===================================================== -->
 
 {% if comparisons %}
 
 <section class="feedback-list">
 
-```
-<div class="feedback-success">
-
-    <h2>
-        Emotional Impact
-    </h2>
-
-    <p>
-        Average intensity before:
-        <strong>
-            {{ average_before }} / 10
-        </strong>
-    </p>
-
-    <p>
-        Average intensity after:
-        <strong>
-            {{ average_after }} / 10
-        </strong>
-    </p>
-
-
-    {% if average_change > 0 %}
-
-        <p>
-            Average intensity decreased by
-            <strong>
-                {{ average_change }} points
-            </strong>
-        </p>
-
-    {% elif average_change < 0 %}
-
-        <p>
-            Average intensity increased by
-            <strong>
-                {{ average_change|abs }} points
-            </strong>
-        </p>
-
-    {% else %}
-
-        <p>
-            Average intensity stayed the same.
-        </p>
-
-    {% endif %}
-
-
-    <p>
-        <strong>
-            {{ improvement_percentage }}%
-        </strong>
-        of users reported lower emotional intensity.
-    </p>
-
-</div>
-```
-
-</section>
-
-<!-- Individual Emotional Results -->
-
-<section class="feedback-list">
-
-```
-<h2>
-    Individual Results
-</h2>
-
-{% for item in comparisons %}
-
     <div class="feedback-success">
 
-        <h3>
-            {{ item.before_emotion }}
-            →
-            {{ item.after_emotion }}
-        </h3>
+        <h2>
+            Emotional Impact
+        </h2>
+
+
+        <!-- AVERAGE BEFORE -->
 
         <p>
-            Before:
+            Average intensity before:
+
             <strong>
-                {{ item.before_intensity }} / 10
+                {% if average_before > 0 %}
+                    +{{ average_before }}
+                {% else %}
+                    {{ average_before }}
+                {% endif %}
             </strong>
+
         </p>
+
+
+        <!-- AVERAGE AFTER -->
 
         <p>
-            After:
+            Average intensity after:
+
             <strong>
-                {{ item.after_intensity }} / 10
+                {% if average_after > 0 %}
+                    +{{ average_after }}
+                {% else %}
+                    {{ average_after }}
+                {% endif %}
             </strong>
+
         </p>
 
 
-        {% if item.change > 0 %}
+        <!-- AVERAGE CHANGE -->
+
+        {% if average_change > 0 %}
 
             <p>
-                Intensity decreased by
+                Average emotional intensity
                 <strong>
-                    {{ item.change }} points.
+                    increased by {{ average_change }} points.
                 </strong>
             </p>
 
-        {% elif item.change < 0 %}
+        {% elif average_change < 0 %}
 
             <p>
-                Intensity increased by
+                Average emotional intensity
                 <strong>
-                    {{ item.change|abs }} points.
+                    decreased by {{ average_change|abs }} points.
                 </strong>
             </p>
 
         {% else %}
 
             <p>
-                Intensity stayed the same.
+                Average emotional intensity
+                <strong>
+                    stayed the same.
+                </strong>
+            </p>
+
+        {% endif %}
+
+
+        <!-- IMPROVEMENT -->
+
+        {% if improvement_percentage is not none %}
+
+            <p>
+
+                <strong>
+                    {{ improvement_percentage }}%
+                </strong>
+
+                of users reported lower emotional intensity.
+
             </p>
 
         {% endif %}
 
     </div>
 
-{% endfor %}
-```
-
 </section>
 
-{% else %}
+
+<!-- ===================================================== -->
+<!-- INDIVIDUAL EMOTIONAL RESULTS -->
+<!-- ===================================================== -->
 
 <section class="feedback-list">
 
-```
-<div class="feedback-success">
-
     <h2>
-        No emotional data yet.
+        Individual Results
     </h2>
 
-    <p>
-        Emotional comparisons will appear here
-        after users complete a reflection and submit
-        feedback.
-    </p>
 
-</div>
-```
+    {% for item in comparisons %}
+
+        <div class="feedback-success">
+
+            <!-- EMOTION TRANSITION -->
+
+            <h3>
+
+                {{ item.before_emotion }}
+
+                →
+
+                {{ item.after_emotion }}
+
+            </h3>
+
+
+            <!-- BEFORE -->
+
+            <p>
+
+                Before:
+
+                <strong>
+
+                    {% if item.before_intensity > 0 %}
+                        +{{ item.before_intensity }}
+                    {% else %}
+                        {{ item.before_intensity }}
+                    {% endif %}
+
+                </strong>
+
+            </p>
+
+
+            <!-- AFTER -->
+
+            <p>
+
+                After:
+
+                <strong>
+
+                    {% if item.after_intensity > 0 %}
+                        +{{ item.after_intensity }}
+                    {% else %}
+                        {{ item.after_intensity }}
+                    {% endif %}
+
+                </strong>
+
+            </p>
+
+
+            <!-- CHANGE -->
+
+            {% if item.change > 0 %}
+
+                <p>
+
+                    Emotional intensity
+
+                    <strong>
+                        decreased by
+                        {{ item.change }}
+                        points.
+                    </strong>
+
+                </p>
+
+            {% elif item.change < 0 %}
+
+                <p>
+
+                    Emotional intensity
+
+                    <strong>
+                        increased by
+                        {{ item.change|abs }}
+                        points.
+                    </strong>
+
+                </p>
+
+            {% else %}
+
+                <p>
+
+                    Emotional intensity
+
+                    <strong>
+                        stayed the same.
+                    </strong>
+
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    {% endfor %}
+
+</section>
+
+
+{% else %}
+
+
+<!-- ===================================================== -->
+<!-- NO EMOTIONAL DATA -->
+<!-- ===================================================== -->
+
+<section class="feedback-list">
+
+    <div class="feedback-success">
+
+        <h2>
+            No emotional data yet.
+        </h2>
+
+        <p>
+            Emotional comparisons will appear here
+            after users complete a reflection and submit
+            feedback.
+        </p>
+
+    </div>
 
 </section>
 
 {% endif %}
 
-<!-- Written Feedback -->
+
+<!-- ===================================================== -->
+<!-- WRITTEN FEEDBACK -->
+<!-- ===================================================== -->
 
 <section class="feedback-list">
 
-```
-<h2>
-    User Feedback
-</h2>
+    <h2>
+        User Feedback
+    </h2>
 
-{% for item in feedback %}
 
-    <div class="feedback-success">
+    {% if feedback %}
 
-        <h3>
-            {{ item.rating }} / 5
-        </h3>
+        {% for item in feedback %}
 
-        {% if item.comment %}
+            <div class="feedback-success">
+
+                <!-- RATING -->
+
+                <h3>
+                    {{ item.rating }} / 5
+                </h3>
+
+
+                <!-- COMMENT -->
+
+                {% if item.comment %}
+
+                    <p>
+                        "{{ item.comment }}"
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        No written comment.
+                    </p>
+
+                {% endif %}
+
+
+                <!-- AFTER EMOTION -->
+
+                {% if item.after_emotion %}
+
+                    <p>
+
+                        Feeling afterward:
+
+                        <strong>
+                            {{ item.after_emotion }}
+                        </strong>
+
+                    </p>
+
+                {% endif %}
+
+
+                <!-- AFTER INTENSITY -->
+
+                {% if item.after_intensity is not none %}
+
+                    <p>
+
+                        Intensity afterward:
+
+                        <strong>
+
+                            {% if item.after_intensity > 0 %}
+                                +{{ item.after_intensity }}
+                            {% else %}
+                                {{ item.after_intensity }}
+                            {% endif %}
+
+                        </strong>
+
+                    </p>
+
+                {% endif %}
+
+
+                <!-- DATE -->
+
+                <small>
+                    Submitted: {{ item.created_at }}
+                </small>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="feedback-success">
 
             <p>
-                "{{ item.comment }}"
+                No written feedback has been submitted yet.
             </p>
 
-        {% else %}
+        </div>
 
-            <p>
-                No written comment.
-            </p>
-
-        {% endif %}
-
-        <small>
-            Submitted: {{ item.created_at }}
-        </small>
-
-    </div>
-
-{% endfor %}
-```
+    {% endif %}
 
 </section>
+
 
 {% endblock %}
