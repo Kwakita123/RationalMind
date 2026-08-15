@@ -3508,3 +3508,101 @@ line-height: 1.6;
 .stat-card p {
     margin: 0;
 }
+/* =========================================
+   GLOBAL MOBILE IMPROVEMENTS
+========================================= */
+
+@media (max-width: 700px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    nav {
+        padding: 18px 20px;
+    }
+
+    .page-container,
+    .checkin-container,
+    .decision-container,
+    .reset-container,
+    .reflection-container,
+    .explore-container,
+    .dashboard-container,
+    .history-container,
+    .feedback-container {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+
+    .page-container h1 {
+        font-size: 38px;
+        line-height: 1.1;
+    }
+
+    .dashboard-header h1,
+    .reflection-header h1,
+    .decision-header h1,
+    .checkin-header h1,
+    .reset-header h1 {
+        line-height: 1.1;
+    }
+
+    .dashboard-header p:last-child,
+    .reflection-header p:last-child,
+    .decision-header p:last-child,
+    .checkin-header p:last-child,
+    .reset-header p:last-child {
+        font-size: 16px;
+    }
+
+    .page-container form {
+        gap: 8px;
+    }
+
+    .page-container input,
+    .page-container textarea,
+    .checkin-step input:not([type="range"]),
+    .checkin-step textarea,
+    .decision-step input,
+    .decision-step textarea,
+    .option-card input,
+    .option-card textarea {
+        font-size: 16px;
+    }
+
+    .reflection-entry,
+    .history-card,
+    .recent-card,
+    .stat-card,
+    .about-card {
+        width: 100%;
+    }
+
+    .practice-card,
+    .principle-card,
+    .insight-card,
+    .checkin-result,
+    .decision-result {
+        padding: 25px;
+    }
+
+    .rating-options {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .rating-options label {
+        width: 100%;
+    }
+
+    button,
+    .primary-button,
+    .secondary-button {
+        max-width: 100%;
+    }
+
+}
