@@ -1,62 +1,64 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
+{% block title %}
+Login | RationalMind
+{% endblock %}
 
-<title>Login | RationalMind</title>
+{% block content %}
 
-<link rel="stylesheet"
-href="{{ url_for('static', filename='style.css') }}">
+<section class="dashboard-header">
 
-</head>
+    <p class="eyebrow">
+        WELCOME BACK
+    </p>
 
+    <h1>
+        Login to RationalMind
+    </h1>
 
-<body>
+    {% if error %}
+        <p class="feedback-error">
+            {{ error }}
+        </p>
+    {% endif %}
 
+    <form method="POST">
 
-<div class="auth-container">
+        <label for="username">
+            Username
+        </label>
 
+        <input
+            type="text"
+            id="username"
+            name="username"
+            required
+        >
 
-<h1>
-Welcome Back
-</h1>
+        <label for="password">
+            Password
+        </label>
 
+        <input
+            type="password"
+            id="password"
+            name="password"
+            required
+        >
 
-<form method="POST">
+        <button type="submit">
+            Login
+        </button>
 
+    </form>
 
-<input
-name="email"
-placeholder="Email"
-required>
+    <p>
+        Don't have an account?
+        <a href="/signup">
+            Create an account
+        </a>
+    </p>
 
+</section>
 
-<input
-type="password"
-name="password"
-placeholder="Password"
-required>
-
-
-<button>
-Login
-</button>
-
-
-</form>
-
-
-<p>
-Don't have an account?
-<a href="/signup">
-Sign Up
-</a>
-</p>
-
-
-</div>
-
-
-</body>
-
-</html>
+{% endblock %}
