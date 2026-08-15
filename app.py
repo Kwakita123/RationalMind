@@ -2,12 +2,50 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 import hashlib
 import os
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from analysis import analyze_reflection
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, "database.db")
 
+# =========================================================
+# TIMEZONE
+# =========================================================
+
+# Illinois uses America/Chicago.
+# This automatically handles CST and CDT.
+ILLINOIS_TIMEZONE = ZoneInfo("America/Chicago")
+
+
+def convert_to_illinois_time(timestamp):
+
+    if not timestamp:
+        return timestamp
+
+    try:
+
+        # SQLite CURRENT_TIMESTAMP is stored in UTC.
+        utc_time = datetime.strptime(
+            timestamp,
+            "%Y-%m-%d %H:%M:%S"
+        ).replace(
+            tzinfo=timezone.utc
+        )
+
+        # Convert UTC → Illinois time.
+        local_time = utc_time.astimezone(
+            ILLINOIS_TIMEZONE
+        )
+
+        return local_time.strftime(
+            "%B %d, %Y at %I:%M %p"
+        )
+
+    except (ValueError, TypeError):
+
+        return timestamp
 
 def get_db():
     connection = sqlite3.connect(DATABASE)
@@ -262,6 +300,10 @@ def inject_user():
         "logged_in": "user_id" in session,
         "username": session.get("username")
     }
+@app.template_filter("illinois_time")
+def illinois_time_filter(timestamp):
+
+    return convert_to_illinois_time(timestamp)
 
 
 # =========================================================
@@ -477,17 +519,131 @@ def explore():
 # DAILY REFLECTION
 # =========================================================
 
+# =========================================================
+# DAILY REFLECTION
+# =========================================================
+
 @app.route("/reflection", methods=["GET", "POST"])
 def reflection():
 
     if "user_id" not in session:
         return redirect("/login")
 
-    message = None
-
     connection = get_db()
 
+    # =====================================================
+    # CHECK MOST RECENT REFLECTION
+    # =====================================================
+
+    latest_reflection = connection.execute(
+        """
+        SELECT
+            id
+        FROM reflections
+        WHERE user_id = ?
+        ORDER BY id DESC
+        LIMIT 1
+        """,
+        (session["user_id"],)
+    ).fetchone()
+
+
+    # =====================================================
+    # DETERMINE WHETHER FEEDBACK IS REQUIRED
+    # =====================================================
+
+    feedback_required = False
+
+    if latest_reflection:
+
+        existing_feedback = connection.execute(
+            """
+            SELECT
+                id
+            FROM feedback
+            WHERE reflection_id = ?
+            LIMIT 1
+            """,
+            (latest_reflection["id"],)
+        ).fetchone()
+
+        if not existing_feedback:
+
+            feedback_required = True
+
+
+    # =====================================================
+    # PREVENT ANOTHER REFLECTION
+    # UNTIL FEEDBACK IS SUBMITTED
+    # =====================================================
+
+    if request.method == "GET" and feedback_required:
+
+        connection.close()
+
+        return render_template(
+            "reflection.html",
+            entries=[],
+            message=None,
+            feedback_required=True
+        )
+
+
+    # =====================================================
+    # POST — SAVE NEW REFLECTION
+    # =====================================================
+
     if request.method == "POST":
+
+        # -------------------------------------------------
+        # EXTRA SECURITY CHECK
+        # -------------------------------------------------
+        # Check again in case the user tries to bypass
+        # the page restriction.
+        # -------------------------------------------------
+
+        latest_reflection = connection.execute(
+            """
+            SELECT
+                id
+            FROM reflections
+            WHERE user_id = ?
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (session["user_id"],)
+        ).fetchone()
+
+
+        if latest_reflection:
+
+            existing_feedback = connection.execute(
+                """
+                SELECT
+                    id
+                FROM feedback
+                WHERE reflection_id = ?
+                LIMIT 1
+                """,
+                (latest_reflection["id"],)
+            ).fetchone()
+
+
+            if not existing_feedback:
+
+                connection.close()
+
+                return render_template(
+                    "reflection.html",
+                    entries=[],
+                    message=None,
+                    feedback_required=True
+                )
+
+
+        # -------------------------------------------------
+        # GET FORM DATA
+        # -------------------------------------------------
 
         situation = request.form.get(
             "situation"
@@ -529,9 +685,10 @@ def reflection():
             "insights"
         )
 
-        # -------------------------------------------------
+
+        # =================================================
         # VALIDATE INTENSITY
-        # -------------------------------------------------
+        # =================================================
 
         try:
 
@@ -546,12 +703,14 @@ def reflection():
                 entries=[],
                 message=(
                     "Please select an emotion intensity."
-                )
+                ),
+                feedback_required=False
             )
 
-        # -------------------------------------------------
-        # VALIDATE DIRECTION
-        # -------------------------------------------------
+
+        # =================================================
+        # VALIDATE EMOTION DIRECTION
+        # =================================================
 
         if emotion_direction not in [
             "negative",
@@ -566,12 +725,14 @@ def reflection():
                 message=(
                     "Please select whether the emotion "
                     "is negative or positive."
-                )
+                ),
+                feedback_required=False
             )
 
-        # -------------------------------------------------
-        # VALIDATE SIGN
-        # -------------------------------------------------
+
+        # =================================================
+        # VALIDATE INTENSITY SIGN
+        # =================================================
 
         if emotion_direction == "negative":
 
@@ -585,8 +746,10 @@ def reflection():
                     message=(
                         "A negative emotion must have "
                         "an intensity between -5 and -1."
-                    )
+                    ),
+                    feedback_required=False
                 )
+
 
         elif emotion_direction == "positive":
 
@@ -600,12 +763,14 @@ def reflection():
                     message=(
                         "A positive emotion must have "
                         "an intensity between +1 and +5."
-                    )
+                    ),
+                    feedback_required=False
                 )
 
-        # -------------------------------------------------
+
+        # =================================================
         # COMBINE EVIDENCE
-        # -------------------------------------------------
+        # =================================================
 
         evidence = (
             "Supports: "
@@ -614,11 +779,12 @@ def reflection():
             + (challenging_evidence or "")
         )
 
-        # -------------------------------------------------
-        # SAVE REFLECTION
-        # -------------------------------------------------
 
-        connection.execute(
+        # =================================================
+        # SAVE REFLECTION
+        # =================================================
+
+        cursor = connection.execute(
             """
             INSERT INTO reflections (
                 user_id,
@@ -646,13 +812,22 @@ def reflection():
             )
         )
 
+
         connection.commit()
 
-        message = "Reflection saved."
+        connection.close()
 
-    # -----------------------------------------------------
-    # LOAD HISTORY
-    # -----------------------------------------------------
+
+        # =================================================
+        # SEND USER DIRECTLY TO FEEDBACK
+        # =================================================
+
+        return redirect("/feedback")
+
+
+    # =====================================================
+    # LOAD REFLECTION HISTORY
+    # =====================================================
 
     entries = connection.execute(
         """
@@ -674,18 +849,31 @@ def reflection():
         (session["user_id"],)
     ).fetchall()
 
+
     connection.close()
+
+
+    # =====================================================
+    # DISPLAY REFLECTION PAGE
+    # =====================================================
 
     return render_template(
         "reflection.html",
         entries=entries,
-        message=message
+        message=None,
+        feedback_required=False
     )
-
+# =========================================================
+# DASHBOARD
+# =========================================================
 
 # =========================================================
 # DASHBOARD
 # =========================================================
+
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 
 @app.route("/dashboard")
 def dashboard():
@@ -696,6 +884,16 @@ def dashboard():
     connection = sqlite3.connect(DATABASE)
     connection.row_factory = sqlite3.Row
 
+    # -----------------------------------------------------
+    # ILLINOIS TIMEZONE
+    # -----------------------------------------------------
+
+    illinois_timezone = ZoneInfo("America/Chicago")
+
+    # -----------------------------------------------------
+    # TOTAL REFLECTIONS
+    # -----------------------------------------------------
+
     reflection_count = connection.execute(
         """
         SELECT COUNT(*)
@@ -704,6 +902,10 @@ def dashboard():
         """,
         (session["user_id"],)
     ).fetchone()[0]
+
+    # -----------------------------------------------------
+    # RECENT REFLECTIONS
+    # -----------------------------------------------------
 
     recent_reflections = connection.execute(
         """
@@ -725,6 +927,49 @@ def dashboard():
         (session["user_id"],)
     ).fetchall()
 
+    # -----------------------------------------------------
+    # CONVERT REFLECTION TIMES TO ILLINOIS TIME
+    # -----------------------------------------------------
+
+    converted_reflections = []
+
+    for reflection in recent_reflections:
+
+        reflection_data = dict(reflection)
+
+        if reflection_data["created_at"]:
+
+            try:
+
+                utc_time = datetime.strptime(
+                    reflection_data["created_at"],
+                    "%Y-%m-%d %H:%M:%S"
+                ).replace(
+                    tzinfo=ZoneInfo("UTC")
+                )
+
+                illinois_time = utc_time.astimezone(
+                    illinois_timezone
+                )
+
+                reflection_data["created_at"] = (
+                    illinois_time.strftime(
+                        "%B %d, %Y at %I:%M %p"
+                    )
+                )
+
+            except (ValueError, TypeError):
+
+                pass
+
+        converted_reflections.append(
+            reflection_data
+        )
+
+    # -----------------------------------------------------
+    # MOST COMMON EMOTION
+    # -----------------------------------------------------
+
     emotion_result = connection.execute(
         """
         SELECT
@@ -741,13 +986,15 @@ def dashboard():
 
     if emotion_result:
 
-        common_emotion = emotion_result[
-            "emotion"
-        ]
+        common_emotion = emotion_result["emotion"]
 
     else:
 
         common_emotion = "Not enough data"
+
+    # -----------------------------------------------------
+    # LATEST REFLECTION
+    # -----------------------------------------------------
 
     latest_reflection = connection.execute(
         """
@@ -764,12 +1011,55 @@ def dashboard():
         (session["user_id"],)
     ).fetchone()
 
+    # -----------------------------------------------------
+    # CONVERT LATEST REFLECTION TIME
+    # -----------------------------------------------------
+
+    if latest_reflection:
+
+        latest_reflection = dict(
+            latest_reflection
+        )
+
+        if latest_reflection["created_at"]:
+
+            try:
+
+                utc_time = datetime.strptime(
+                    latest_reflection["created_at"],
+                    "%Y-%m-%d %H:%M:%S"
+                ).replace(
+                    tzinfo=ZoneInfo("UTC")
+                )
+
+                illinois_time = utc_time.astimezone(
+                    illinois_timezone
+                )
+
+                latest_reflection["created_at"] = (
+                    illinois_time.strftime(
+                        "%B %d, %Y at %I:%M %p"
+                    )
+                )
+
+            except (ValueError, TypeError):
+
+                pass
+
+    # -----------------------------------------------------
+    # CLOSE DATABASE
+    # -----------------------------------------------------
+
     connection.close()
+
+    # -----------------------------------------------------
+    # SEND DATA TO DASHBOARD
+    # -----------------------------------------------------
 
     return render_template(
         "dashboard.html",
         reflection_count=reflection_count,
-        recent_reflections=recent_reflections,
+        recent_reflections=converted_reflections,
         common_emotion=common_emotion,
         latest_reflection=latest_reflection
     )
@@ -922,6 +1212,10 @@ def framework():
 # HISTORY
 # =========================================================
 
+# =========================================================
+# HISTORY
+# =========================================================
+
 @app.route("/history")
 def history():
 
@@ -929,6 +1223,12 @@ def history():
         return redirect("/login")
 
     connection = get_db()
+
+    illinois_timezone = ZoneInfo("America/Chicago")
+
+    # -----------------------------------------------------
+    # REFLECTIONS
+    # -----------------------------------------------------
 
     reflections = connection.execute(
         """
@@ -949,6 +1249,49 @@ def history():
         """,
         (session["user_id"],)
     ).fetchall()
+
+    # -----------------------------------------------------
+    # CONVERT REFLECTION TIMES
+    # -----------------------------------------------------
+
+    converted_reflections = []
+
+    for reflection in reflections:
+
+        reflection_data = dict(reflection)
+
+        if reflection_data["created_at"]:
+
+            try:
+
+                utc_time = datetime.strptime(
+                    reflection_data["created_at"],
+                    "%Y-%m-%d %H:%M:%S"
+                ).replace(
+                    tzinfo=ZoneInfo("UTC")
+                )
+
+                illinois_time = utc_time.astimezone(
+                    illinois_timezone
+                )
+
+                reflection_data["created_at"] = (
+                    illinois_time.strftime(
+                        "%B %d, %Y at %I:%M %p"
+                    )
+                )
+
+            except (ValueError, TypeError):
+
+                pass
+
+        converted_reflections.append(
+            reflection_data
+        )
+
+    # -----------------------------------------------------
+    # DECISIONS
+    # -----------------------------------------------------
 
     decisions = connection.execute(
         """
@@ -976,14 +1319,64 @@ def history():
         (session["user_id"],)
     ).fetchall()
 
+    # -----------------------------------------------------
+    # CONVERT DECISION TIMES
+    # -----------------------------------------------------
+
+    converted_decisions = []
+
+    for decision in decisions:
+
+        decision_data = dict(decision)
+
+        if decision_data["created_at"]:
+
+            try:
+
+                utc_time = datetime.strptime(
+                    decision_data["created_at"],
+                    "%Y-%m-%d %H:%M:%S"
+                ).replace(
+                    tzinfo=ZoneInfo("UTC")
+                )
+
+                illinois_time = utc_time.astimezone(
+                    illinois_timezone
+                )
+
+                decision_data["created_at"] = (
+                    illinois_time.strftime(
+                        "%B %d, %Y at %I:%M %p"
+                    )
+                )
+
+            except (ValueError, TypeError):
+
+                pass
+
+        converted_decisions.append(
+            decision_data
+        )
+
+    # -----------------------------------------------------
+    # CLOSE DATABASE
+    # -----------------------------------------------------
+
     connection.close()
+
+    # -----------------------------------------------------
+    # SEND DATA TO HISTORY PAGE
+    # -----------------------------------------------------
 
     return render_template(
         "history.html",
-        reflections=reflections,
-        decisions=decisions
+        reflections=converted_reflections,
+        decisions=converted_decisions
     )
 
+# =========================================================
+# FEEDBACK
+# =========================================================
 
 # =========================================================
 # FEEDBACK
@@ -995,7 +1388,93 @@ def feedback():
     if "user_id" not in session:
         return redirect("/login")
 
+    connection = get_db()
+
+    # -----------------------------------------------------
+    # FIND MOST RECENT REFLECTION
+    # -----------------------------------------------------
+
+    latest_reflection = connection.execute(
+        """
+        SELECT
+            id,
+            emotion,
+            intensity
+        FROM reflections
+        WHERE user_id = ?
+        ORDER BY id DESC
+        LIMIT 1
+        """,
+        (session["user_id"],)
+    ).fetchone()
+
+    # -----------------------------------------------------
+    # CHECK WHETHER REFLECTION ALREADY HAS FEEDBACK
+    # -----------------------------------------------------
+
+    has_feedback = False
+
+    if latest_reflection:
+
+        existing_feedback = connection.execute(
+            """
+            SELECT id
+            FROM feedback
+            WHERE reflection_id = ?
+            LIMIT 1
+            """,
+            (latest_reflection["id"],)
+        ).fetchone()
+
+        if existing_feedback:
+
+            has_feedback = True
+
+    # =====================================================
+    # POST
+    # =====================================================
+
     if request.method == "POST":
+
+        # -------------------------------------------------
+        # NO REFLECTION
+        # -------------------------------------------------
+
+        if not latest_reflection:
+
+            connection.close()
+
+            return render_template(
+                "feedback.html",
+                can_submit=False,
+                error=(
+                    "Please complete a reflection "
+                    "before submitting feedback."
+                )
+            )
+
+        # -------------------------------------------------
+        # FEEDBACK ALREADY SUBMITTED
+        # -------------------------------------------------
+
+        if has_feedback:
+
+            connection.close()
+
+            return render_template(
+                "feedback.html",
+                can_submit=False,
+                error=(
+                    "You have already submitted feedback "
+                    "for your most recent reflection. "
+                    "Complete another reflection before "
+                    "submitting new feedback."
+                )
+            )
+
+        # -------------------------------------------------
+        # GET FORM DATA
+        # -------------------------------------------------
 
         rating = request.form.get(
             "rating"
@@ -1015,7 +1494,7 @@ def feedback():
         )
 
         # -------------------------------------------------
-        # HANDLE OTHER EMOTION
+        # OTHER EMOTION
         # -------------------------------------------------
 
         if after_emotion == "Other":
@@ -1031,66 +1510,35 @@ def feedback():
 
         if not rating:
 
+            connection.close()
+
             return render_template(
                 "feedback.html",
-                error=(
-                    "Please select a rating."
-                )
+                can_submit=True,
+                error="Please select a rating."
             )
 
         if not after_emotion:
-
-            return render_template(
-                "feedback.html",
-                error=(
-                    "Please select or enter "
-                    "your emotion."
-                )
-            )
-
-        if not after_intensity:
-
-            return render_template(
-                "feedback.html",
-                error=(
-                    "Please select your "
-                    "emotional intensity."
-                )
-            )
-
-        # -------------------------------------------------
-        # FIND MOST RECENT REFLECTION
-        # -------------------------------------------------
-
-        connection = get_db()
-
-        latest_reflection = connection.execute(
-            """
-            SELECT
-                id,
-                emotion,
-                intensity
-            FROM reflections
-            WHERE user_id = ?
-            ORDER BY id DESC
-            LIMIT 1
-            """,
-            (session["user_id"],)
-        ).fetchone()
-
-        # -------------------------------------------------
-        # MAKE SURE REFLECTION EXISTS
-        # -------------------------------------------------
-
-        if not latest_reflection:
 
             connection.close()
 
             return render_template(
                 "feedback.html",
+                can_submit=True,
                 error=(
-                    "Please complete a reflection "
-                    "before submitting feedback."
+                    "Please select or enter your emotion."
+                )
+            )
+
+        if not after_intensity:
+
+            connection.close()
+
+            return render_template(
+                "feedback.html",
+                can_submit=True,
+                error=(
+                    "Please select your emotional intensity."
                 )
             )
 
@@ -1121,17 +1569,55 @@ def feedback():
         )
 
         connection.commit()
+
         connection.close()
 
         return render_template(
             "feedback.html",
-            submitted=True
+            submitted=True,
+            can_submit=False
         )
 
-    return render_template(
-        "feedback.html"
-    )
+    # =====================================================
+    # GET
+    # =====================================================
 
+    connection.close()
+
+    # -----------------------------------------------------
+    # NO REFLECTION YET
+    # -----------------------------------------------------
+
+    if not latest_reflection:
+
+        return render_template(
+            "feedback.html",
+            can_submit=False
+        )
+
+    # -----------------------------------------------------
+    # REFLECTION ALREADY HAS FEEDBACK
+    # -----------------------------------------------------
+
+    if has_feedback:
+
+        return render_template(
+            "feedback.html",
+            can_submit=False,
+            already_submitted=True
+        )
+
+    # -----------------------------------------------------
+    # REFLECTION EXISTS AND NEEDS FEEDBACK
+    # -----------------------------------------------------
+
+    return render_template(
+        "feedback.html",
+        can_submit=True
+    )
+# =========================================================
+# FEEDBACK RESULTS
+# =========================================================
 
 # =========================================================
 # FEEDBACK RESULTS
@@ -1145,9 +1631,15 @@ def feedback_results():
 
     connection = get_db()
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
+    # ILLINOIS TIMEZONE
+    # -----------------------------------------------------
+
+    illinois_timezone = ZoneInfo("America/Chicago")
+
+    # -----------------------------------------------------
     # CREATOR-ONLY ACCESS
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     user = connection.execute(
         """
@@ -1168,11 +1660,11 @@ def feedback_results():
 
         return redirect("/dashboard")
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # ALL FEEDBACK
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
-    feedback = connection.execute(
+    feedback_rows = connection.execute(
         """
         SELECT *
         FROM feedback
@@ -1180,9 +1672,48 @@ def feedback_results():
         """
     ).fetchall()
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
+    # CONVERT FEEDBACK TIMES
+    # -----------------------------------------------------
+
+    feedback = []
+
+    for item in feedback_rows:
+
+        feedback_data = dict(item)
+
+        if feedback_data["created_at"]:
+
+            try:
+
+                utc_time = datetime.strptime(
+                    feedback_data["created_at"],
+                    "%Y-%m-%d %H:%M:%S"
+                ).replace(
+                    tzinfo=ZoneInfo("UTC")
+                )
+
+                illinois_time = utc_time.astimezone(
+                    illinois_timezone
+                )
+
+                feedback_data["created_at"] = (
+                    illinois_time.strftime(
+                        "%B %d, %Y at %I:%M %p"
+                    )
+                )
+
+            except (ValueError, TypeError):
+
+                pass
+
+        feedback.append(
+            feedback_data
+        )
+
+    # -----------------------------------------------------
     # AVERAGE RATING
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     average = connection.execute(
         """
@@ -1192,17 +1723,15 @@ def feedback_results():
     ).fetchone()[0]
 
     if average is not None:
+
         average = round(
             average,
             1
         )
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # BEFORE / AFTER
-    #
-    # IMPORTANT:
-    # Match using reflection_id.
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     comparison_data = connection.execute(
         """
@@ -1220,9 +1749,9 @@ def feedback_results():
         """
     ).fetchall()
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # BUILD COMPARISONS
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     comparisons = []
 
@@ -1242,16 +1771,6 @@ def feedback_results():
 
             continue
 
-        # ---------------------------------------------
-        # Calculate directional change
-        #
-        # For negative emotions:
-        # moving toward zero = improvement
-        #
-        # For positive emotions:
-        # moving higher = stronger positive state
-        # ---------------------------------------------
-
         before_emotion = (
             item["before_emotion"]
             or ""
@@ -1261,6 +1780,10 @@ def feedback_results():
             item["after_emotion"]
             or ""
         ).strip().lower()
+
+        # -------------------------------------------------
+        # CALCULATE CHANGE
+        # -------------------------------------------------
 
         if before_intensity < 0:
 
@@ -1277,6 +1800,7 @@ def feedback_results():
             )
 
         comparisons.append({
+
             "before_emotion":
                 item["before_emotion"],
 
@@ -1291,11 +1815,12 @@ def feedback_results():
 
             "change":
                 change
+
         })
 
-    # -------------------------------------------------
+    # -----------------------------------------------------
     # SUMMARY STATISTICS
-    # -------------------------------------------------
+    # -----------------------------------------------------
 
     if comparisons:
 
@@ -1305,7 +1830,8 @@ def feedback_results():
                     item["before_intensity"]
                 )
                 for item in comparisons
-            ) / len(comparisons),
+            )
+            / len(comparisons),
             1
         )
 
@@ -1315,7 +1841,8 @@ def feedback_results():
                     item["after_intensity"]
                 )
                 for item in comparisons
-            ) / len(comparisons),
+            )
+            / len(comparisons),
             1
         )
 
@@ -1345,7 +1872,15 @@ def feedback_results():
         average_change = None
         improvement_percentage = None
 
+    # -----------------------------------------------------
+    # CLOSE DATABASE
+    # -----------------------------------------------------
+
     connection.close()
+
+    # -----------------------------------------------------
+    # SEND DATA TO TEMPLATE
+    # -----------------------------------------------------
 
     return render_template(
         "feedback_results.html",
@@ -1367,7 +1902,6 @@ def feedback_results():
         )
     )
 
-
 # =========================================================
 # CREATOR DASHBOARD
 # =========================================================
@@ -1375,14 +1909,12 @@ def feedback_results():
 @app.route("/creator")
 def creator():
 
-   # =========================================================
-# CREATOR DASHBOARD
-# =========================================================
-
     if "user_id" not in session:
         return redirect("/login")
 
     connection = get_db()
+
+    illinois_timezone = ZoneInfo("America/Chicago")
 
     # -----------------------------------------------------
     # CREATOR-ONLY ACCESS
@@ -1666,7 +2198,7 @@ def creator():
     # RECENT FEEDBACK
     # -----------------------------------------------------
 
-    recent_feedback = connection.execute(
+    recent_feedback_rows = connection.execute(
         """
         SELECT
             f.rating,
@@ -1683,6 +2215,49 @@ def creator():
         LIMIT 20
         """
     ).fetchall()
+
+    # -----------------------------------------------------
+    # CONVERT FEEDBACK TIMES TO ILLINOIS TIME
+    # -----------------------------------------------------
+
+    recent_feedback = []
+
+    for feedback in recent_feedback_rows:
+
+        feedback_data = dict(feedback)
+
+        if feedback_data["created_at"]:
+
+            try:
+
+                utc_time = datetime.strptime(
+                    feedback_data["created_at"],
+                    "%Y-%m-%d %H:%M:%S"
+                ).replace(
+                    tzinfo=ZoneInfo("UTC")
+                )
+
+                illinois_time = utc_time.astimezone(
+                    illinois_timezone
+                )
+
+                feedback_data["created_at"] = (
+                    illinois_time.strftime(
+                        "%B %d, %Y at %I:%M %p"
+                    )
+                )
+
+            except (ValueError, TypeError):
+
+                pass
+
+        recent_feedback.append(
+            feedback_data
+        )
+
+    # -----------------------------------------------------
+    # CLOSE DATABASE
+    # -----------------------------------------------------
 
     connection.close()
 
@@ -1721,7 +2296,6 @@ def creator():
 
         recent_feedback=recent_feedback
     )
-
 # =========================================================
 # INITIALIZE DATABASE
 # =========================================================
