@@ -4343,3 +4343,333 @@ line-height: 1.6;
 .creator-nav-link:hover {
     background: #e2e2df;
 }
+css
+/* =========================================
+   LOGIN + SIGNUP — RESPONSIVE
+========================================= */
+
+.auth-container {
+    width: calc(100% - 40px);
+    max-width: 520px;
+    margin: 80px auto;
+    padding: 45px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.auth-container h1 {
+    font-size: 40px;
+    line-height: 1.15;
+    margin-bottom: 12px;
+}
+
+.auth-container p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.auth-container form {
+    width: 100%;
+}
+
+.auth-container label {
+    display: block;
+    text-align: left;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.auth-container input {
+    width: 100%;
+    min-height: 48px;
+    padding: 13px 14px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.auth-container input:focus {
+    outline: none;
+    border-color: #555;
+}
+
+.auth-container button {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    padding: 13px 20px;
+    background: #222;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.auth-container button:hover {
+    opacity: 0.85;
+}
+
+
+/* =========================================
+   PHONE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .auth-container {
+        width: calc(100% - 32px);
+        max-width: none;
+        margin: 40px auto;
+        padding: 30px 22px;
+        border-radius: 10px;
+    }
+
+    .auth-container h1 {
+        font-size: 34px;
+        line-height: 1.15;
+        margin-bottom: 12px;
+    }
+
+    .auth-container p {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 25px;
+    }
+
+    .auth-container input {
+        min-height: 50px;
+        padding: 13px;
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+
+    .auth-container button {
+        min-height: 50px;
+        font-size: 16px;
+        margin-top: 8px;
+    }
+
+}
+css
+/* =========================================
+   LOGIN + SIGNUP — LARGE, SPACIOUS DESIGN
+========================================= */
+
+.auth-container {
+    width: calc(100% - 40px);
+    max-width: 560px;
+
+    margin: 90px auto;
+
+    padding: 55px 50px;
+
+    background: white;
+
+    border: 1px solid #ddd;
+    border-radius: 14px;
+
+    text-align: center;
+}
+
+
+/* HEADING */
+
+.auth-container h1 {
+    font-size: 48px;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+
+    margin-bottom: 18px;
+}
+
+
+/* DESCRIPTION */
+
+.auth-container p {
+    color: #666;
+
+    font-size: 17px;
+    line-height: 1.7;
+
+    margin-bottom: 40px;
+}
+
+
+/* FORM */
+
+.auth-container form {
+    width: 100%;
+}
+
+
+/* LABELS */
+
+.auth-container label {
+    display: block;
+
+    text-align: left;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    margin-bottom: 10px;
+}
+
+
+/* INPUTS */
+
+.auth-container input {
+    width: 100%;
+    box-sizing: border-box;
+
+    min-height: 58px;
+
+    padding: 16px 17px;
+
+    margin-bottom: 25px;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    font-family: inherit;
+
+    font-size: 17px;
+
+    background: #fafafa;
+}
+
+
+.auth-container input:focus {
+    outline: none;
+
+    border-color: #555;
+
+    background: white;
+}
+
+
+/* BUTTON */
+
+.auth-container button {
+    width: 100%;
+
+    min-height: 58px;
+
+    margin-top: 10px;
+
+    margin-bottom: 25px;
+
+    padding: 15px 22px;
+
+    background: #222;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.auth-container button:hover {
+    opacity: 0.85;
+}
+
+
+/* =========================================
+   PHONE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .auth-container {
+        width: calc(100% - 28px);
+
+        max-width: none;
+
+        margin: 45px auto;
+
+        padding: 38px 24px;
+
+        border-radius: 12px;
+    }
+
+
+    /* BIGGER PHONE HEADING */
+
+    .auth-container h1 {
+        font-size: 40px;
+
+        line-height: 1.1;
+
+        letter-spacing: -1px;
+
+        margin-bottom: 16px;
+    }
+
+
+    /* BIGGER DESCRIPTION */
+
+    .auth-container p {
+        font-size: 16px;
+
+        line-height: 1.65;
+
+        margin-bottom: 32px;
+    }
+
+
+    /* LABELS */
+
+    .auth-container label {
+        font-size: 16px;
+
+        margin-bottom: 10px;
+    }
+
+
+    /* LARGE INPUT AREAS */
+
+    .auth-container input {
+        width: 100%;
+
+        min-height: 60px;
+
+        padding: 17px;
+
+        margin-bottom: 25px;
+
+        font-size: 17px;
+
+        border-radius: 8px;
+    }
+
+
+    /* LARGE BUTTON */
+
+    .auth-container button {
+        min-height: 60px;
+
+        padding: 16px 20px;
+
+        font-size: 17px;
+
+        border-radius: 8px;
+    }
+
+}
