@@ -4276,3 +4276,56 @@ line-height: 1.6;
         background: #eeeeeb;
     }
 }
+/* =========================================
+   LOGIN / SIGNUP — RESPONSIVE
+========================================= */
+
+.auth-container {
+    width: calc(100% - 40px);
+    max-width: 500px;
+    margin: 70px auto;
+    padding: 40px;
+}
+
+.auth-container input {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+}
+
+.auth-container button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .auth-container {
+        width: calc(100% - 32px);
+        max-width: none;
+
+        margin: 45px auto;
+        padding: 28px 20px;
+
+        border-radius: 10px;
+    }
+
+    .auth-container h1 {
+        font-size: 32px;
+        line-height: 1.2;
+    }
+
+    .auth-container input {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .auth-container button {
+        padding: 15px;
+        font-size: 16px;
+    }
+}
