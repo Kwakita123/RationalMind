@@ -1,100 +1,103 @@
+```html
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-```
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>
-    {% block title %}
-    RationalMind
-    {% endblock %}
-</title>
+    <title>
+        {% block title %}
+        RationalMind
+        {% endblock %}
+    </title>
 
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}">
-```
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 
 </head>
 
 <body>
 
-```
-<nav class="navbar">
+    <nav class="navbar">
 
-    <div class="logo">
-        <a href="/">
-            RationalMind
-        </a>
-    </div>
-
-
-    <div class="nav-links">
-
-        {% if logged_in %}
-
-            <a href="/dashboard">
-                Dashboard
+        <div class="logo">
+            <a href="/">
+                RationalMind
             </a>
-
-            <a href="/reflection">
-                Reflection
-            </a>
-
-            <a href="/decision">
-                Decisions
-            </a>
-
-            <a href="/history">
-                History
-            </a>
-
-            <a href="/explore">
-                Explore
-            </a>
-
-            <a href="/reset">
-                Reset
-            </a>
-
-            <a href="/feedback">
-                Feedback
-            </a>
-
-            <a href="/logout">
-                Logout
-            </a>
-
-        {% else %}
-
-            <a href="/login">
-                Login
-            </a>
-
-            <a href="/signup">
-                Sign Up
-            </a>
-
-        {% endif %}
-
-    </div>
-
-</nav>
+        </div>
 
 
-<main>
+        <div class="nav-links">
 
-    {% block content %}
-    {% endblock %}
+            {% if logged_in %}
 
-</main>
-```
+                <a href="/dashboard">
+                    Dashboard
+                </a>
+
+                <a href="/reflection">
+                    Reflection
+                </a>
+
+                <a href="/decision">
+                    Decisions
+                </a>
+
+                <a href="/history">
+                    History
+                </a>
+
+                <a href="/explore">
+                    Explore
+                </a>
+
+                <a href="/reset">
+                    Reset
+                </a>
+
+                <a href="/feedback">
+                    Feedback
+                </a>
+
+                {% if is_creator %}
+                    <a href="/creator" class="creator-nav-link">
+                        Creator
+                    </a>
+                {% endif %}
+
+                <a href="/logout">
+                    Logout
+                </a>
+
+            {% else %}
+
+                <a href="/login">
+                    Login
+                </a>
+
+                <a href="/signup">
+                    Sign Up
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+
+    <main>
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
 
 </body>
 
 </html>
+```
