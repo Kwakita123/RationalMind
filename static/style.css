@@ -3606,3 +3606,24 @@ line-height: 1.6;
     }
 
 }
+@media (max-width: 700px) {
+
+    .main-nav {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 15px 20px;
+    }
+
+    .main-nav .nav-links {
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px 14px;
+    }
+
+    .main-nav .nav-links a {
+        font-size: 12px;
+    }
+
+}
