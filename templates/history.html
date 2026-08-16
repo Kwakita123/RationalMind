@@ -8,414 +8,436 @@ History & Growth | RationalMind
 
 <main class="page-container">
 
-```
-<section class="dashboard-header">
+    <section class="dashboard-header">
 
-    <p class="eyebrow">
-        RATIONALMIND
-    </p>
+        <p class="eyebrow">
+            RATIONALMIND
+        </p>
 
-    <h1>
-        History & Growth
-    </h1>
+        <h1>
+            History & Growth
+        </h1>
 
-    <p>
-        Review your reflections and decisions over time.
-        Look back at how you thought, felt, reasoned,
-        and responded.
-    </p>
+        <p>
+            Review your reflections and decisions over time.
+            Look back at how you thought, felt, reasoned,
+            and responded.
+        </p>
 
-</section>
+    </section>
 
 
-<!-- REFLECTION HISTORY -->
+    <!-- ================================================= -->
+    <!-- PRIVACY NOTICE -->
+    <!-- ================================================= -->
 
-<section class="history-section">
+    <section class="privacy-notice">
 
-    <p class="eyebrow">
-        REFLECTIONS
-    </p>
+        <strong>
+            Your history is private.
+        </strong>
 
-    <h2>
-        Reflection History
-    </h2>
+        <p>
+            Your reflections, decisions, reasoning, and other
+            personal responses shown here are only available
+            to you. The creator cannot view the information
+            stored in your history, and it is not shared with
+            other users. Limited anonymous emotional data,
+            such as emotion and intensity, may be used to
+            understand overall patterns without identifying you.
+        </p>
 
-    {% if reflections %}
+    </section>
 
-        {% for reflection in reflections %}
 
-        <article class="recent-card">
+    <!-- REFLECTION HISTORY -->
 
-            <div class="date">
-                {{ reflection["created_at"] }}
-            </div>
+    <section class="history-section">
 
-            <h3>
-                Daily Reflection
-            </h3>
+        <p class="eyebrow">
+            REFLECTIONS
+        </p>
 
+        <h2>
+            Reflection History
+        </h2>
 
-            <div class="history-item">
+        {% if reflections %}
 
-                <strong>
-                    What happened?
-                </strong>
+            {% for reflection in reflections %}
 
-                <p>
-                    {{ reflection["situation"] }}
-                </p>
+            <article class="recent-card">
 
-            </div>
+                <div class="date">
+                    {{ reflection["created_at"] }}
+                </div>
 
+                <h3>
+                    Daily Reflection
+                </h3>
 
-            <div class="history-item">
 
-                <strong>
-                    What are you feeling?
-                </strong>
+                <div class="history-item">
 
-                <p>
-                    {{ reflection["emotion"] }}
-                </p>
-
-                <p>
-                    <strong>Intensity:</strong>
-                    {{ reflection["intensity"] }}
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <strong>
-                    What thought is behind the emotion?
-                </strong>
-
-                <p>
-                    {{ reflection["thought"] }}
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <strong>
-                    Evidence
-                </strong>
-
-                <p style="white-space: pre-line;">
-                    {{ reflection["evidence"] }}
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <strong>
-                    What else could be true?
-                </strong>
-
-                <p>
-                    {{ reflection["alternative"] }}
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <strong>
-                    What response aligns with your goals?
-                </strong>
-
-                <p>
-                    {{ reflection["response"] }}
-                </p>
-
-            </div>
-
-
-            {% if reflection["insights"] %}
-
-            <div class="history-item">
-
-                <strong>
-                    What did you learn?
-                </strong>
-
-                <p>
-                    {{ reflection["insights"] }}
-                </p>
-
-            </div>
-
-            {% endif %}
-
-        </article>
-
-        {% endfor %}
-
-    {% else %}
-
-        <div class="empty-card">
-
-            <p>
-                You haven't completed any reflections yet.
-            </p>
-
-            <a href="/reflection">
-                Start a Reflection
-            </a>
-
-        </div>
-
-    {% endif %}
-
-</section>
-
-
-<!-- DECISION HISTORY -->
-
-<section class="history-section">
-
-    <p class="eyebrow">
-        DECISIONS
-    </p>
-
-    <h2>
-        Decision History
-    </h2>
-
-    {% if decisions %}
-
-        {% for decision in decisions %}
-
-        <article class="recent-card">
-
-            <div class="date">
-                {{ decision["created_at"] }}
-            </div>
-
-            <h3>
-                Decision Analysis
-            </h3>
-
-
-            <div class="history-item">
-
-                <strong>
-                    What decision were you facing?
-                </strong>
-
-                <p>
-                    {{ decision["situation"] }}
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <strong>
-                    What was your actual goal?
-                </strong>
-
-                <p>
-                    {{ decision["goal"] }}
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <strong>
-                    What are the facts?
-                </strong>
-
-                <p>
-                    {{ decision["facts"] }}
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <strong>
-                    What assumptions were you making?
-                </strong>
-
-                <p>
-                    {{ decision["assumptions"] }}
-                </p>
-
-            </div>
-
-
-            <div class="decision-history-options">
-
-                <div class="option-card">
-
-                    <span class="step-number">
-                        OPTION A
-                    </span>
-
-                    <h3>
-                        {{ decision["option_a"] }}
-                    </h3>
+                    <strong>
+                        What happened?
+                    </strong>
 
                     <p>
-                        <strong>
-                            Potential Benefits
-                        </strong>
-                    </p>
-
-                    <p>
-                        {{ decision["benefits_a"] }}
-                    </p>
-
-                    <p>
-                        <strong>
-                            Potential Drawbacks
-                        </strong>
-                    </p>
-
-                    <p>
-                        {{ decision["drawbacks_a"] }}
+                        {{ reflection["situation"] }}
                     </p>
 
                 </div>
 
 
-                <div class="option-card">
+                <div class="history-item">
 
-                    <span class="step-number">
-                        OPTION B
-                    </span>
-
-                    <h3>
-                        {{ decision["option_b"] }}
-                    </h3>
+                    <strong>
+                        What are you feeling?
+                    </strong>
 
                     <p>
-                        <strong>
-                            Potential Benefits
-                        </strong>
+                        {{ reflection["emotion"] }}
                     </p>
 
                     <p>
-                        {{ decision["benefits_b"] }}
-                    </p>
-
-                    <p>
-                        <strong>
-                            Potential Drawbacks
-                        </strong>
-                    </p>
-
-                    <p>
-                        {{ decision["drawbacks_b"] }}
+                        <strong>Intensity:</strong>
+                        {{ reflection["intensity"] }}
                     </p>
 
                 </div>
 
-            </div>
+
+                <div class="history-item">
+
+                    <strong>
+                        What thought is behind the emotion?
+                    </strong>
+
+                    <p>
+                        {{ reflection["thought"] }}
+                    </p>
+
+                </div>
 
 
-            <div class="history-item">
+                <div class="history-item">
 
-                <strong>
-                    Short-Term Consequences
-                </strong>
+                    <strong>
+                        Evidence
+                    </strong>
+
+                    <p style="white-space: pre-line;">
+                        {{ reflection["evidence"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        What else could be true?
+                    </strong>
+
+                    <p>
+                        {{ reflection["alternative"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        What response aligns with your goals?
+                    </strong>
+
+                    <p>
+                        {{ reflection["response"] }}
+                    </p>
+
+                </div>
+
+
+                {% if reflection["insights"] %}
+
+                <div class="history-item">
+
+                    <strong>
+                        What did you learn?
+                    </strong>
+
+                    <p>
+                        {{ reflection["insights"] }}
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-card">
 
                 <p>
-                    {{ decision["short_term"] }}
+                    You haven't completed any reflections yet.
                 </p>
+
+                <a href="/reflection">
+                    Start a Reflection
+                </a>
 
             </div>
 
+        {% endif %}
 
-            <div class="history-item">
+    </section>
 
-                <strong>
-                    Long-Term Consequences
-                </strong>
+
+    <!-- DECISION HISTORY -->
+
+    <section class="history-section">
+
+        <p class="eyebrow">
+            DECISIONS
+        </p>
+
+        <h2>
+            Decision History
+        </h2>
+
+        {% if decisions %}
+
+            {% for decision in decisions %}
+
+            <article class="recent-card">
+
+                <div class="date">
+                    {{ decision["created_at"] }}
+                </div>
+
+                <h3>
+                    Decision Analysis
+                </h3>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        What decision were you facing?
+                    </strong>
+
+                    <p>
+                        {{ decision["situation"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        What was your actual goal?
+                    </strong>
+
+                    <p>
+                        {{ decision["goal"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        What are the facts?
+                    </strong>
+
+                    <p>
+                        {{ decision["facts"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        What assumptions were you making?
+                    </strong>
+
+                    <p>
+                        {{ decision["assumptions"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="decision-history-options">
+
+                    <div class="option-card">
+
+                        <span class="step-number">
+                            OPTION A
+                        </span>
+
+                        <h3>
+                            {{ decision["option_a"] }}
+                        </h3>
+
+                        <p>
+                            <strong>
+                                Potential Benefits
+                            </strong>
+                        </p>
+
+                        <p>
+                            {{ decision["benefits_a"] }}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Potential Drawbacks
+                            </strong>
+                        </p>
+
+                        <p>
+                            {{ decision["drawbacks_a"] }}
+                        </p>
+
+                    </div>
+
+
+                    <div class="option-card">
+
+                        <span class="step-number">
+                            OPTION B
+                        </span>
+
+                        <h3>
+                            {{ decision["option_b"] }}
+                        </h3>
+
+                        <p>
+                            <strong>
+                                Potential Benefits
+                            </strong>
+                        </p>
+
+                        <p>
+                            {{ decision["benefits_b"] }}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Potential Drawbacks
+                            </strong>
+                        </p>
+
+                        <p>
+                            {{ decision["drawbacks_b"] }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        Short-Term Consequences
+                    </strong>
+
+                    <p>
+                        {{ decision["short_term"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        Long-Term Consequences
+                    </strong>
+
+                    <p>
+                        {{ decision["long_term"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        Final Choice
+                    </strong>
+
+                    <p>
+                        {{ decision["decision_choice"] }}
+                    </p>
+
+                </div>
+
+
+                <div class="history-item">
+
+                    <strong>
+                        Why?
+                    </strong>
+
+                    <p>
+                        {{ decision["reasoning"] }}
+                    </p>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-card">
 
                 <p>
-                    {{ decision["long_term"] }}
+                    You haven't completed any decision analyses yet.
                 </p>
+
+                <a href="/decision">
+                    Analyze a Decision
+                </a>
 
             </div>
 
+        {% endif %}
 
-            <div class="history-item">
-
-                <strong>
-                    Final Choice
-                </strong>
-
-                <p>
-                    {{ decision["decision_choice"] }}
-                </p>
-
-            </div>
+    </section>
 
 
-            <div class="history-item">
+    <!-- PRINCIPLE -->
 
-                <strong>
-                    Why?
-                </strong>
+    <section class="principle-card">
 
-                <p>
-                    {{ decision["reasoning"] }}
-                </p>
+        <h2>
+            The RationalMind Principle
+        </h2>
 
-            </div>
+        <p>
+            You cannot control every event,
+            but you can improve how you understand
+            and respond to those events.
+        </p>
 
-        </article>
+    </section>
 
-        {% endfor %}
-
-    {% else %}
-
-        <div class="empty-card">
-
-            <p>
-                You haven't completed any decision analyses yet.
-            </p>
-
-            <a href="/decision">
-                Analyze a Decision
-            </a>
-
-        </div>
-
-    {% endif %}
-
-</section>
-
-
-<!-- PRINCIPLE -->
-
-<section class="principle-card">
-
-    <h2>
-        The RationalMind Principle
-    </h2>
-
-    <p>
-        You cannot control every event,
-        but you can improve how you understand
-        and respond to those events.
-    </p>
-
-</section>
-```
 
 </main>
 
