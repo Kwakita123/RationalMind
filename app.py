@@ -161,6 +161,14 @@ app = Flask(__name__)
 app.secret_key = "rationalmind_secret_key"
 
 CREATOR_USERNAME = "Koki Wakita".strip().lower()
+
+@app.context_processor
+def inject_creator_status():
+    username = session.get("username", "").strip().lower()
+
+    return {
+        "is_creator": username == CREATOR_USERNAME
+    }
 # =========================================================
 # DATABASE
 # =========================================================
