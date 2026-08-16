@@ -4172,3 +4172,107 @@ line-height: 1.6;
     }
 
 }
+/* =========================================
+   RATIONALMIND NAVIGATION
+========================================= */
+
+.navbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 20px 8%;
+    border-bottom: 1px solid #ddddda;
+    background: #f7f7f5;
+}
+
+.navbar .logo {
+    flex-shrink: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.navbar .logo a {
+    color: #202020;
+    text-decoration: none;
+}
+
+.navbar .nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 25px;
+}
+
+.navbar .nav-links a {
+    color: #555;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.navbar .nav-links a:hover {
+    color: #000;
+}
+
+
+/* =========================================
+   MOBILE NAVIGATION
+========================================= */
+
+@media (max-width: 700px) {
+
+    .navbar {
+        display: block;
+        padding: 15px 18px 12px;
+    }
+
+    .navbar .logo {
+        display: block;
+        margin-bottom: 13px;
+        text-align: center;
+    }
+
+    .navbar .nav-links {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        width: 100%;
+
+        gap: 10px;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        padding-bottom: 5px;
+
+        -webkit-overflow-scrolling: touch;
+
+        scrollbar-width: none;
+    }
+
+    .navbar .nav-links::-webkit-scrollbar {
+        display: none;
+    }
+
+    .navbar .nav-links a {
+        flex-shrink: 0;
+
+        padding: 7px 10px;
+
+        font-size: 13px;
+
+        white-space: nowrap;
+
+        border: 1px solid #ddd;
+        border-radius: 6px;
+
+        background: white;
+    }
+
+    .navbar .nav-links a:hover {
+        background: #eeeeeb;
+    }
+}
