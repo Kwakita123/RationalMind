@@ -1968,43 +1968,40 @@ def creator():
 
 
         # =====================================================
-        # OVERVIEW
+        # BASIC USAGE
         # =====================================================
 
         total_users = connection.execute(
-            """
-            SELECT COUNT(*)
-            FROM users
-            """
+            "SELECT COUNT(*) FROM users"
         ).fetchone()[0]
 
         total_reflections = connection.execute(
-            """
-            SELECT COUNT(*)
-            FROM reflections
-            """
+            "SELECT COUNT(*) FROM reflections"
         ).fetchone()[0]
 
         total_feedback = connection.execute(
-            """
-            SELECT COUNT(*)
-            FROM feedback
-            """
+            "SELECT COUNT(*) FROM feedback"
         ).fetchone()[0]
+
+
+        # =====================================================
+        # AVERAGE RATING
+        # =====================================================
 
         average_rating = connection.execute(
             """
             SELECT AVG(rating)
             FROM feedback
+            WHERE rating IS NOT NULL
             """
         ).fetchone()[0]
 
         if average_rating is not None:
-            average_rating = round(float(average_rating), 1)
+            average_rating = round(average_rating, 1)
 
 
         # =====================================================
-        # EMOTIONAL DATA
+        # EMOTIONAL COMPARISONS
         # =====================================================
 
         comparison_rows = connection.execute(
@@ -2012,8 +2009,8 @@ def creator():
             SELECT
                 r.emotion AS before_emotion,
                 r.intensity AS before_intensity,
-                f.after_emotion,
-                f.after_intensity
+                f.after_emotion AS after_emotion,
+                f.after_intensity AS after_intensity
             FROM feedback f
             JOIN reflections r
                 ON r.id = f.reflection_id
@@ -2025,156 +2022,106 @@ def creator():
 
 
         # =====================================================
-        # COUNTERS
+        # ANALYZE EMOTIONAL CHANGE
         # =====================================================
+
+        negative_before = []
+        negative_after = []
+
+        positive_before = []
+        positive_after = []
 
         improved_negative = 0
         improved_positive = 0
         unchanged = 0
         worsened = 0
 
-        negative_before_values = []
-        negative_after_values = []
-
-        positive_before_values = []
-        positive_after_values = []
-
-
-        # =====================================================
-        # PROCESS EMOTIONAL CHANGES
-        # =====================================================
+        comparisons = []
 
         for row in comparison_rows:
 
             try:
-
                 before = int(row["before_intensity"])
                 after = int(row["after_intensity"])
-
             except (TypeError, ValueError):
-
                 continue
+
+            before_emotion = (
+                row["before_emotion"] or ""
+            ).strip()
+
+            after_emotion = (
+                row["after_emotion"] or ""
+            ).strip()
 
 
             # -------------------------------------------------
-            # NEGATIVE STARTING EMOTION
+            # NEGATIVE EMOTION
             # -------------------------------------------------
 
             if before < 0:
 
-                before_magnitude = abs(before)
+                negative_before.append(abs(before))
+                negative_after.append(abs(after))
 
-                negative_before_values.append(
-                    before_magnitude
-                )
+                # Moving toward zero = improvement
+                change = abs(before) - abs(after)
 
-                # If after is negative, closer to zero is better.
-                if after < 0:
-
-                    after_magnitude = abs(after)
-
-                    negative_after_values.append(
-                        after_magnitude
-                    )
-
-                    if after_magnitude < before_magnitude:
-                        improved_negative += 1
-
-                    elif after_magnitude == before_magnitude:
-                        unchanged += 1
-
-                    else:
-                        worsened += 1
-
-                # Negative → positive is also an improvement.
-                elif after > 0:
-
-                    negative_after_values.append(0)
-
+                if change > 0:
                     improved_negative += 1
+
+                elif change == 0:
+                    unchanged += 1
 
                 else:
-
-                    negative_after_values.append(0)
-
-                    improved_negative += 1
+                    worsened += 1
 
 
             # -------------------------------------------------
-            # POSITIVE STARTING EMOTION
+            # POSITIVE EMOTION
             # -------------------------------------------------
 
             elif before > 0:
 
-                positive_before_values.append(
-                    before
-                )
+                positive_before.append(before)
+                positive_after.append(after)
 
-                # Positive → positive:
-                # higher intensity is treated as improvement.
-                if after > 0:
+                # Increasing positive intensity = improvement
+                change = after - before
 
-                    positive_after_values.append(
-                        after
-                    )
+                if change > 0:
+                    improved_positive += 1
 
-                    if after > before:
-                        improved_positive += 1
-
-                    elif after == before:
-                        unchanged += 1
-
-                    else:
-                        worsened += 1
-
-                # Positive → negative is deterioration.
-                elif after < 0:
-
-                    positive_after_values.append(0)
-
-                    worsened += 1
+                elif change == 0:
+                    unchanged += 1
 
                 else:
-
-                    positive_after_values.append(0)
-
                     worsened += 1
 
 
+            comparisons.append({
+                "before": before,
+                "after": after,
+                "before_emotion": before_emotion,
+                "after_emotion": after_emotion
+            })
+
+
         # =====================================================
-        # AVERAGES
+        # NEGATIVE EMOTIONAL INTENSITY
         # =====================================================
 
-        if negative_before_values:
+        if negative_before:
 
             average_negative_before = round(
-                sum(negative_before_values)
-                / len(negative_before_values),
+                sum(negative_before) / len(negative_before),
                 1
             )
-
-        else:
-
-            average_negative_before = None
-
-
-        if negative_after_values:
 
             average_negative_after = round(
-                sum(negative_after_values)
-                / len(negative_after_values),
+                sum(negative_after) / len(negative_after),
                 1
             )
-
-        else:
-
-            average_negative_after = None
-
-
-        if (
-            average_negative_before is not None
-            and average_negative_after is not None
-        ):
 
             negative_change = round(
                 average_negative_before
@@ -2184,39 +2131,26 @@ def creator():
 
         else:
 
+            average_negative_before = None
+            average_negative_after = None
             negative_change = None
 
 
-        if positive_before_values:
+        # =====================================================
+        # POSITIVE EMOTIONAL INTENSITY
+        # =====================================================
+
+        if positive_before:
 
             average_positive_before = round(
-                sum(positive_before_values)
-                / len(positive_before_values),
+                sum(positive_before) / len(positive_before),
                 1
             )
-
-        else:
-
-            average_positive_before = None
-
-
-        if positive_after_values:
 
             average_positive_after = round(
-                sum(positive_after_values)
-                / len(positive_after_values),
+                sum(positive_after) / len(positive_after),
                 1
             )
-
-        else:
-
-            average_positive_after = None
-
-
-        if (
-            average_positive_before is not None
-            and average_positive_after is not None
-        ):
 
             positive_change = round(
                 average_positive_after
@@ -2226,32 +2160,31 @@ def creator():
 
         else:
 
+            average_positive_before = None
+            average_positive_after = None
             positive_change = None
 
 
         # =====================================================
-        # TOTAL OUTCOMES
+        # IMPROVEMENT PERCENTAGE
         # =====================================================
 
-        total_outcomes = (
+        total_comparisons = (
             improved_negative
             + improved_positive
             + unchanged
             + worsened
         )
 
-
-        if total_outcomes:
-
-            improvement_count = (
-                improved_negative
-                + improved_positive
-            )
+        if total_comparisons > 0:
 
             improvement_percentage = round(
                 (
-                    improvement_count
-                    / total_outcomes
+                    (
+                        improved_negative
+                        + improved_positive
+                    )
+                    / total_comparisons
                 ) * 100
             )
 
@@ -2281,21 +2214,19 @@ def creator():
             GROUP BY
                 TRIM(r.emotion),
                 TRIM(f.after_emotion)
-            ORDER BY
-                amount DESC
-            LIMIT 15
+            ORDER BY amount DESC
             """
         ).fetchall()
 
+        transitions = []
 
-        transitions = [
-            {
+        for row in transition_rows:
+
+            transitions.append({
                 "before": row["before_emotion"],
                 "after": row["after_emotion"],
                 "amount": row["amount"]
-            }
-            for row in transition_rows
-        ]
+            })
 
 
         # =====================================================
@@ -2339,7 +2270,57 @@ def creator():
 
 
         # =====================================================
-        # CLOSE CONNECTION
+        # RECENT FEEDBACK
+        # =====================================================
+
+        recent_feedback_rows = connection.execute(
+            """
+            SELECT
+                f.rating,
+                f.comment,
+                f.after_emotion,
+                f.after_intensity,
+                f.created_at,
+                r.emotion AS before_emotion,
+                r.intensity AS before_intensity
+            FROM feedback f
+            LEFT JOIN reflections r
+                ON r.id = f.reflection_id
+            ORDER BY f.id DESC
+            LIMIT 10
+            """
+        ).fetchall()
+
+        recent_feedback = []
+
+        for item in recent_feedback_rows:
+
+            feedback_data = dict(item)
+
+            if feedback_data["created_at"]:
+
+                created = feedback_data["created_at"]
+
+                if isinstance(created, datetime):
+
+                    feedback_data["created_at"] = (
+                        created
+                        .replace(tzinfo=ZoneInfo("UTC"))
+                        .astimezone(
+                            ZoneInfo("America/Chicago")
+                        )
+                        .strftime(
+                            "%B %d, %Y at %I:%M %p"
+                        )
+                    )
+
+            recent_feedback.append(
+                feedback_data
+            )
+
+
+        # =====================================================
+        # RETURN DASHBOARD
         # =====================================================
 
         return render_template(
@@ -2350,25 +2331,50 @@ def creator():
             total_feedback=total_feedback,
             average_rating=average_rating,
 
-            average_negative_before=average_negative_before,
-            average_negative_after=average_negative_after,
-            negative_change=negative_change,
+            average_negative_before=
+                average_negative_before,
 
-            average_positive_before=average_positive_before,
-            average_positive_after=average_positive_after,
-            positive_change=positive_change,
+            average_negative_after=
+                average_negative_after,
 
-            improved_negative=improved_negative,
-            improved_positive=improved_positive,
-            unchanged=unchanged,
-            worsened=worsened,
+            negative_change=
+                negative_change,
 
-            improvement_percentage=improvement_percentage,
+            average_positive_before=
+                average_positive_before,
 
-            transitions=transitions,
+            average_positive_after=
+                average_positive_after,
 
-            starting_emotion=starting_emotion,
-            ending_emotion=ending_emotion
+            positive_change=
+                positive_change,
+
+            improvement_percentage=
+                improvement_percentage,
+
+            improved_negative=
+                improved_negative,
+
+            improved_positive=
+                improved_positive,
+
+            unchanged=
+                unchanged,
+
+            worsened=
+                worsened,
+
+            transitions=
+                transitions,
+
+            starting_emotion=
+                starting_emotion,
+
+            ending_emotion=
+                ending_emotion,
+
+            recent_feedback=
+                recent_feedback
         )
 
     finally:
