@@ -1,35 +1,47 @@
-<form method="POST">
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <h1>Create Account</h1>
+
+    <p>Start building a more rational mind.</p>
 
     {% if error %}
-        <p class="feedback-error">
-            {{ error }}
-        </p>
+        <p class="feedback-error">{{ error }}</p>
     {% endif %}
 
-    <label for="username">
-        Username
-    </label>
+    <form method="POST">
 
-    <input
-        type="text"
-        id="username"
-        name="username"
-        required
-    >
+        <label for="username">Username</label>
 
-    <label for="password">
-        Password
-    </label>
+        <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter your username"
+            required
+        >
 
-    <input
-        type="password"
-        id="password"
-        name="password"
-        required
-    >
+        <label for="password">Password</label>
 
-    <button type="submit">
-        Create Account
-    </button>
+        <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a password"
+            required
+        >
 
-</form>
+        <button type="submit">
+            Create Account
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
+```
