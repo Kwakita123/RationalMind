@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3
+import psycopg
+from datetime import datetime, timezone
 import hashlib
 import os
 from datetime import datetime, timezone
@@ -7,8 +8,10 @@ from zoneinfo import ZoneInfo
 from analysis import analyze_reflection
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATABASE = os.path.join(BASE_DIR, "database.db")
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set.")
 
 # =========================================================
 # TIMEZONE
@@ -47,9 +50,37 @@ def convert_to_illinois_time(timestamp):
 
         return timestamp
 
+class HybridRow(dict):
+    """A PostgreSQL row that supports both row["column"] and row[0]."""
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return list(self.values())[key]
+        return super().__getitem__(key)
+
+
+def hybrid_row(cursor):
+    columns = [column.name for column in cursor.description]
+
+    def make_row(values):
+        data = dict(zip(columns, values))
+
+        # PostgreSQL returns TIMESTAMP values as datetime objects.
+        # The existing RationalMind code expects SQLite-style strings.
+        for key, value in data.items():
+            if key == "created_at" and isinstance(value, datetime):
+                data[key] = value.strftime("%Y-%m-%d %H:%M:%S")
+
+        return HybridRow(data)
+
+    return make_row
+
+
 def get_db():
-    connection = sqlite3.connect(DATABASE)
-    connection.row_factory = sqlite3.Row
+    connection = psycopg.connect(
+        DATABASE_URL,
+        row_factory=hybrid_row
+    )
     return connection
 
 
@@ -67,7 +98,7 @@ lessons = [
         "description":
         "Emotions are signals that provide information about our experiences. They influence decisions, but they do not have to control our actions.",
         "question":
-        "What information is this emotion providing?"
+        "What information is this emotion providing%s"
     },
 
     {
@@ -76,7 +107,7 @@ lessons = [
         "description":
         "Regulation does not mean eliminating emotions. It means creating enough space to respond intentionally.",
         "question":
-        "How can I acknowledge this emotion without immediately reacting?"
+        "How can I acknowledge this emotion without immediately reacting%s"
     },
 
     # Psychology
@@ -87,7 +118,7 @@ lessons = [
         "description":
         "The human mind uses shortcuts to make decisions efficiently. These shortcuts can sometimes create inaccurate interpretations.",
         "question":
-        "What assumptions might be influencing my perspective?"
+        "What assumptions might be influencing my perspective%s"
     },
 
     {
@@ -96,7 +127,7 @@ lessons = [
         "description":
         "People sometimes develop inaccurate thinking patterns such as all-or-nothing thinking or overgeneralization.",
         "question":
-        "Am I viewing this situation more negatively than the evidence suggests?"
+        "Am I viewing this situation more negatively than the evidence suggests%s"
     },
 
     # Philosophy
@@ -107,7 +138,7 @@ lessons = [
         "description":
         "Stoicism emphasizes separating what we can control from what we cannot control.",
         "question":
-        "What part of this situation is actually within my control?"
+        "What part of this situation is actually within my control%s"
     },
 
     {
@@ -116,7 +147,7 @@ lessons = [
         "description":
         "Personal development requires seeing yourself as adaptable rather than defined permanently by past experiences.",
         "question":
-        "What type of person am I trying to become?"
+        "What type of person am I trying to become%s"
     },
 
     # Decision Science
@@ -127,7 +158,7 @@ lessons = [
         "description":
         "Every choice involves giving something else up. Understanding tradeoffs improves decision quality.",
         "question":
-        "What am I choosing, and what am I sacrificing?"
+        "What am I choosing, and what am I sacrificing%s"
     },
 
     {
@@ -136,7 +167,7 @@ lessons = [
         "description":
         "Good decisions consider consequences beyond immediate rewards or emotions.",
         "question":
-        "How will this decision affect my future self?"
+        "How will this decision affect my future self%s"
     },
 
     # Rational Thinking
@@ -147,7 +178,7 @@ lessons = [
         "description":
         "Events and our interpretations of events are different. Separating them improves clarity.",
         "question":
-        "What happened, and what story did I create about it?"
+        "What happened, and what story did I create about it%s"
     }
 
 ]
@@ -158,7 +189,7 @@ lessons = [
 # =========================================================
 app = Flask(__name__)
 
-app.secret_key = "rationalmind_secret_key"
+app.secret_key = os.environ.get("SECRET_KEY", "rationalmind_secret_key")
 
 CREATOR_USERNAME = "Koki Wakita".strip().lower()
 
@@ -175,127 +206,113 @@ def inject_creator_status():
 
 def init_db():
 
-    connection = sqlite3.connect(DATABASE)
+    connection = get_db()
 
-    # -----------------------------------------------------
-    # USERS
-    # -----------------------------------------------------
+    try:
 
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
+        # -----------------------------------------------------
+        # USERS
+        # -----------------------------------------------------
 
-    # -----------------------------------------------------
-    # REFLECTIONS
-    # -----------------------------------------------------
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+                username TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL
+            )
+        """)
 
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS reflections (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            situation TEXT,
-            emotion TEXT,
-            intensity TEXT,
-            thought TEXT,
-            evidence TEXT,
-            alternative TEXT,
-            response TEXT,
-            insights TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
+        # -----------------------------------------------------
+        # REFLECTIONS
+        # -----------------------------------------------------
 
-    # -----------------------------------------------------
-    # DECISIONS
-    # -----------------------------------------------------
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS reflections (
+                id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+                user_id INTEGER,
+                situation TEXT,
+                emotion TEXT,
+                intensity TEXT,
+                thought TEXT,
+                evidence TEXT,
+                alternative TEXT,
+                response TEXT,
+                insights TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
 
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS decisions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            situation TEXT,
-            goal TEXT,
-            facts TEXT,
-            assumptions TEXT,
-            option_a TEXT,
-            benefits_a TEXT,
-            drawbacks_a TEXT,
-            option_b TEXT,
-            benefits_b TEXT,
-            drawbacks_b TEXT,
-            short_term TEXT,
-            long_term TEXT,
-            decision_choice TEXT,
-            reasoning TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
+        # -----------------------------------------------------
+        # DECISIONS
+        # -----------------------------------------------------
 
-    # -----------------------------------------------------
-    # FEEDBACK
-    # -----------------------------------------------------
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS decisions (
+                id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+                user_id INTEGER,
+                situation TEXT,
+                goal TEXT,
+                facts TEXT,
+                assumptions TEXT,
+                option_a TEXT,
+                benefits_a TEXT,
+                drawbacks_a TEXT,
+                option_b TEXT,
+                benefits_b TEXT,
+                drawbacks_b TEXT,
+                short_term TEXT,
+                long_term TEXT,
+                decision_choice TEXT,
+                reasoning TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
 
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS feedback (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            reflection_id INTEGER,
-            rating INTEGER NOT NULL,
-            comment TEXT,
-            after_emotion TEXT,
-            after_intensity INTEGER,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
+        # -----------------------------------------------------
+        # FEEDBACK
+        # -----------------------------------------------------
 
-    # -----------------------------------------------------
-    # DATABASE MIGRATION
-    # -----------------------------------------------------
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS feedback (
+                id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+                user_id INTEGER,
+                reflection_id INTEGER,
+                rating INTEGER NOT NULL,
+                comment TEXT,
+                after_emotion TEXT,
+                after_intensity INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
 
-    columns = connection.execute(
-        "PRAGMA table_info(feedback)"
-    ).fetchall()
+        # -----------------------------------------------------
+        # POSTGRESQL MIGRATION
+        # -----------------------------------------------------
 
-    column_names = [
-        column[1]
-        for column in columns
-    ]
-
-    if "reflection_id" not in column_names:
-
-        connection.execute(
-            """
+        connection.execute("""
             ALTER TABLE feedback
-            ADD COLUMN reflection_id INTEGER
-            """
-        )
+            ADD COLUMN IF NOT EXISTS reflection_id INTEGER
+        """)
 
-    if "after_emotion" not in column_names:
-
-        connection.execute(
-            """
+        connection.execute("""
             ALTER TABLE feedback
-            ADD COLUMN after_emotion TEXT
-            """
-        )
+            ADD COLUMN IF NOT EXISTS after_emotion TEXT
+        """)
 
-    if "after_intensity" not in column_names:
-
-        connection.execute(
-            """
+        connection.execute("""
             ALTER TABLE feedback
-            ADD COLUMN after_intensity INTEGER
-            """
-        )
+            ADD COLUMN IF NOT EXISTS after_intensity INTEGER
+        """)
 
-    connection.commit()
-    connection.close()
+        connection.commit()
 
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
 
 # =========================================================
 # USER CONTEXT
@@ -427,7 +444,7 @@ def decision():
             "reasoning"
         )
 
-        connection = sqlite3.connect(DATABASE)
+        connection = get_db()
 
         connection.execute(
             """
@@ -448,7 +465,7 @@ def decision():
                 decision_choice,
                 reasoning
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
                 session["user_id"],
@@ -548,7 +565,7 @@ def reflection():
         SELECT
             id
         FROM reflections
-        WHERE user_id = ?
+        WHERE user_id = %s
         ORDER BY id DESC
         LIMIT 1
         """,
@@ -569,7 +586,7 @@ def reflection():
             SELECT
                 id
             FROM feedback
-            WHERE reflection_id = ?
+            WHERE reflection_id = %s
             LIMIT 1
             """,
             (latest_reflection["id"],)
@@ -615,7 +632,7 @@ def reflection():
             SELECT
                 id
             FROM reflections
-            WHERE user_id = ?
+            WHERE user_id = %s
             ORDER BY id DESC
             LIMIT 1
             """,
@@ -630,7 +647,7 @@ def reflection():
                 SELECT
                     id
                 FROM feedback
-                WHERE reflection_id = ?
+                WHERE reflection_id = %s
                 LIMIT 1
                 """,
                 (latest_reflection["id"],)
@@ -805,7 +822,7 @@ def reflection():
                 response,
                 insights
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
                 session["user_id"],
@@ -851,7 +868,7 @@ def reflection():
             response,
             insights
         FROM reflections
-        WHERE user_id = ?
+        WHERE user_id = %s
         ORDER BY id DESC
         """,
         (session["user_id"],)
@@ -889,8 +906,7 @@ def dashboard():
     if "user_id" not in session:
         return redirect("/login")
 
-    connection = sqlite3.connect(DATABASE)
-    connection.row_factory = sqlite3.Row
+    connection = get_db()
 
     # -----------------------------------------------------
     # ILLINOIS TIMEZONE
@@ -906,7 +922,7 @@ def dashboard():
         """
         SELECT COUNT(*)
         FROM reflections
-        WHERE user_id = ?
+        WHERE user_id = %s
         """,
         (session["user_id"],)
     ).fetchone()[0]
@@ -928,7 +944,7 @@ def dashboard():
             response,
             insights
         FROM reflections
-        WHERE user_id = ?
+        WHERE user_id = %s
         ORDER BY id DESC
         LIMIT 5
         """,
@@ -984,7 +1000,7 @@ def dashboard():
             emotion,
             COUNT(*) AS amount
         FROM reflections
-        WHERE user_id = ?
+        WHERE user_id = %s
         GROUP BY emotion
         ORDER BY amount DESC
         LIMIT 1
@@ -1012,7 +1028,7 @@ def dashboard():
             emotion,
             insights
         FROM reflections
-        WHERE user_id = ?
+        WHERE user_id = %s
         ORDER BY id DESC
         LIMIT 1
         """,
@@ -1091,7 +1107,7 @@ def signup():
             request.form.get("password").encode()
         ).hexdigest()
 
-        connection = sqlite3.connect(DATABASE)
+        connection = get_db()
 
         try:
 
@@ -1099,7 +1115,7 @@ def signup():
                 """
                 INSERT INTO users
                 (username, email, password)
-                VALUES (?, ?, ?)
+                VALUES (%s, %s, %s)
                 """,
                 (
                     username,
@@ -1110,7 +1126,7 @@ def signup():
 
             connection.commit()
 
-        except sqlite3.IntegrityError:
+        except psycopg.IntegrityError:
 
             connection.close()
 
@@ -1150,14 +1166,14 @@ def login():
             password_input.encode()
         ).hexdigest()
 
-        connection = sqlite3.connect(DATABASE)
+        connection = get_db()
 
         user = connection.execute(
             """
             SELECT id, username
             FROM users
-            WHERE username = ?
-            AND password = ?
+            WHERE username = %s
+            AND password = %s
             """,
             (
                 username,
@@ -1252,7 +1268,7 @@ def history():
             response,
             insights
         FROM reflections
-        WHERE user_id = ?
+        WHERE user_id = %s
         ORDER BY id DESC
         """,
         (session["user_id"],)
@@ -1321,7 +1337,7 @@ def history():
             decision_choice,
             reasoning
         FROM decisions
-        WHERE user_id = ?
+        WHERE user_id = %s
         ORDER BY id DESC
         """,
         (session["user_id"],)
@@ -1409,7 +1425,7 @@ def feedback():
             emotion,
             intensity
         FROM reflections
-        WHERE user_id = ?
+        WHERE user_id = %s
         ORDER BY id DESC
         LIMIT 1
         """,
@@ -1428,7 +1444,7 @@ def feedback():
             """
             SELECT id
             FROM feedback
-            WHERE reflection_id = ?
+            WHERE reflection_id = %s
             LIMIT 1
             """,
             (latest_reflection["id"],)
@@ -1564,7 +1580,7 @@ def feedback():
                 after_emotion,
                 after_intensity
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """,
             (
                 session["user_id"],
@@ -1653,7 +1669,7 @@ def feedback_results():
         """
         SELECT username
         FROM users
-        WHERE id = ?
+        WHERE id = %s
         """,
         (session["user_id"],)
     ).fetchone()
@@ -1932,7 +1948,7 @@ def creator():
         """
         SELECT username
         FROM users
-        WHERE id = ?
+        WHERE id = %s
         """,
         (session["user_id"],)
     ).fetchone()
