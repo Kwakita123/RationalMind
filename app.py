@@ -82,6 +82,7 @@ def hybrid_row(cursor):
 
     return make_row
 
+
 def get_db():
     connection = psycopg.connect(
         DATABASE_URL,
@@ -1944,388 +1945,435 @@ def creator():
 
     connection = get_db()
 
-    illinois_timezone = ZoneInfo("America/Chicago")
-
-    # -----------------------------------------------------
-    # CREATOR-ONLY ACCESS
-    # -----------------------------------------------------
-
-    user = connection.execute(
-        """
-        SELECT username
-        FROM users
-        WHERE id = %s
-        """,
-        (session["user_id"],)
-    ).fetchone()
-
-    if not user:
-
-        connection.close()
-
-        return redirect("/dashboard")
-
-    creator_username = CREATOR_USERNAME.strip().lower()
-
-    if user["username"].strip().lower() != creator_username:
-
-        connection.close()
-
-        return redirect("/dashboard")
-
-    # -----------------------------------------------------
-    # TOTAL USERS
-    # -----------------------------------------------------
-
-    total_users = connection.execute(
-        """
-        SELECT COUNT(*)
-        FROM users
-        """
-    ).fetchone()[0]
-
-    # -----------------------------------------------------
-    # TOTAL REFLECTIONS
-    # -----------------------------------------------------
-
-    total_reflections = connection.execute(
-        """
-        SELECT COUNT(*)
-        FROM reflections
-        """
-    ).fetchone()[0]
-
-    # -----------------------------------------------------
-    # TOTAL FEEDBACK
-    # -----------------------------------------------------
-
-    total_feedback = connection.execute(
-        """
-        SELECT COUNT(*)
-        FROM feedback
-        """
-    ).fetchone()[0]
-
-    # -----------------------------------------------------
-    # AVERAGE RATING
-    # -----------------------------------------------------
-
-    average_rating = connection.execute(
-        """
-        SELECT AVG(rating)
-        FROM feedback
-        """
-    ).fetchone()[0]
-
-    if average_rating is not None:
-
-        average_rating = round(
-            average_rating,
-            1
-        )
-
-    # -----------------------------------------------------
-    # INTENSITY COMPARISONS
-    # -----------------------------------------------------
-
-    comparison_rows = connection.execute(
-        """
-        SELECT
-            f.id,
-            f.after_emotion,
-            f.after_intensity,
-            r.emotion AS before_emotion,
-            r.intensity AS before_intensity
-        FROM feedback f
-        JOIN reflections r
-            ON r.id = f.reflection_id
-        WHERE
-            f.after_intensity IS NOT NULL
-            AND r.intensity IS NOT NULL
-        """
-    ).fetchall()
-
-    # -----------------------------------------------------
-    # CALCULATE INTENSITY OUTCOMES
-    # -----------------------------------------------------
-
-    lower_intensity = 0
-    same_intensity = 0
-    higher_intensity = 0
-
-    comparison_data = []
-
-    for row in comparison_rows:
-
-        try:
-
-            before = int(
-                row["before_intensity"]
-            )
-
-            after = int(
-                row["after_intensity"]
-            )
-
-        except (TypeError, ValueError):
-
-            continue
-
-        # Negative emotions:
-        # closer to zero = improvement
-
-        if before < 0:
-
-            change = (
-                abs(before)
-                - abs(after)
-            )
-
-        # Positive emotions:
-        # higher positive value = improvement
-
-        else:
-
-            change = (
-                after
-                - before
-            )
-
-        if change > 0:
-
-            lower_intensity += 1
-
-        elif change == 0:
-
-            same_intensity += 1
-
-        else:
-
-            higher_intensity += 1
-
-        comparison_data.append({
-
-            "before":
-                before,
-
-            "after":
-                after,
-
-            "change":
-                change,
-
-            "before_emotion":
-                row["before_emotion"],
-
-            "after_emotion":
-                row["after_emotion"]
-
-        })
-
-    # -----------------------------------------------------
-    # AVERAGE BEFORE / AFTER
-    # -----------------------------------------------------
-
-    if comparison_data:
-
-        average_before = round(
-            sum(
-                abs(item["before"])
-                for item in comparison_data
-            )
-            / len(comparison_data),
-            1
-        )
-
-        average_after = round(
-            sum(
-                abs(item["after"])
-                for item in comparison_data
-            )
-            / len(comparison_data),
-            1
-        )
-
-        average_change = round(
-            average_before
-            - average_after,
-            1
-        )
-
-    else:
-
-        average_before = None
-        average_after = None
-        average_change = None
-
-    # -----------------------------------------------------
-    # EMOTIONAL TRANSITIONS
-    # -----------------------------------------------------
-
-    transition_rows = connection.execute(
-        """
-        SELECT
-            r.emotion AS before_emotion,
-            f.after_emotion AS after_emotion,
-            COUNT(*) AS amount
-        FROM feedback f
-        JOIN reflections r
-            ON r.id = f.reflection_id
-        WHERE
-            r.emotion IS NOT NULL
-            AND f.after_emotion IS NOT NULL
-            AND TRIM(r.emotion) != ''
-            AND TRIM(f.after_emotion) != ''
-        GROUP BY
-            r.emotion,
-            f.after_emotion
-        ORDER BY
-            amount DESC
-        """
-    ).fetchall()
-
-    transitions = transition_rows
-
-    # -----------------------------------------------------
-    # MOST COMMON STARTING EMOTION
-    # -----------------------------------------------------
-
-    starting_emotion = connection.execute(
-        """
-        SELECT
-            emotion,
-            COUNT(*) AS amount
-        FROM reflections
-        WHERE
-            emotion IS NOT NULL
-            AND TRIM(emotion) != ''
-        GROUP BY emotion
-        ORDER BY amount DESC
-        LIMIT 1
-        """
-    ).fetchone()
-
-    # -----------------------------------------------------
-    # MOST COMMON ENDING EMOTION
-    # -----------------------------------------------------
-
-    ending_emotion = connection.execute(
-        """
-        SELECT
-            after_emotion,
-            COUNT(*) AS amount
-        FROM feedback
-        WHERE
-            after_emotion IS NOT NULL
-            AND TRIM(after_emotion) != ''
-        GROUP BY after_emotion
-        ORDER BY amount DESC
-        LIMIT 1
-        """
-    ).fetchone()
-
-    # -----------------------------------------------------
-    # RECENT FEEDBACK
-    # -----------------------------------------------------
-
-    recent_feedback_rows = connection.execute(
-        """
-        SELECT
-            f.rating,
-            f.comment,
-            f.after_emotion,
-            f.after_intensity,
-            f.created_at,
-            r.emotion AS before_emotion,
-            r.intensity AS before_intensity
-        FROM feedback f
-        LEFT JOIN reflections r
-            ON r.id = f.reflection_id
-        ORDER BY f.id DESC
-        LIMIT 20
-        """
-    ).fetchall()
-
-    # -----------------------------------------------------
-    # CONVERT FEEDBACK TIMES TO ILLINOIS TIME
-    # -----------------------------------------------------
-
-    recent_feedback = []
-
-    for feedback in recent_feedback_rows:
-
-        feedback_data = dict(feedback)
-
-        if feedback_data["created_at"]:
+    try:
+
+        # =====================================================
+        # CREATOR-ONLY ACCESS
+        # =====================================================
+
+        user = connection.execute(
+            """
+            SELECT username
+            FROM users
+            WHERE id = %s
+            """,
+            (session["user_id"],)
+        ).fetchone()
+
+        if not user:
+            return redirect("/dashboard")
+
+        if user["username"].strip().lower() != CREATOR_USERNAME:
+            return redirect("/dashboard")
+
+
+        # =====================================================
+        # OVERVIEW
+        # =====================================================
+
+        total_users = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM users
+            """
+        ).fetchone()[0]
+
+        total_reflections = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM reflections
+            """
+        ).fetchone()[0]
+
+        total_feedback = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM feedback
+            """
+        ).fetchone()[0]
+
+        average_rating = connection.execute(
+            """
+            SELECT AVG(rating)
+            FROM feedback
+            """
+        ).fetchone()[0]
+
+        if average_rating is not None:
+            average_rating = round(float(average_rating), 1)
+
+
+        # =====================================================
+        # EMOTIONAL DATA
+        # =====================================================
+
+        comparison_rows = connection.execute(
+            """
+            SELECT
+                r.emotion AS before_emotion,
+                r.intensity AS before_intensity,
+                f.after_emotion,
+                f.after_intensity
+            FROM feedback f
+            JOIN reflections r
+                ON r.id = f.reflection_id
+            WHERE
+                r.intensity IS NOT NULL
+                AND f.after_intensity IS NOT NULL
+            """
+        ).fetchall()
+
+
+        # =====================================================
+        # COUNTERS
+        # =====================================================
+
+        improved_negative = 0
+        improved_positive = 0
+        unchanged = 0
+        worsened = 0
+
+        negative_before_values = []
+        negative_after_values = []
+
+        positive_before_values = []
+        positive_after_values = []
+
+
+        # =====================================================
+        # PROCESS EMOTIONAL CHANGES
+        # =====================================================
+
+        for row in comparison_rows:
 
             try:
 
-                utc_time = datetime.strptime(
-                    feedback_data["created_at"],
-                    "%Y-%m-%d %H:%M:%S"
-                ).replace(
-                    tzinfo=ZoneInfo("UTC")
+                before = int(row["before_intensity"])
+                after = int(row["after_intensity"])
+
+            except (TypeError, ValueError):
+
+                continue
+
+
+            # -------------------------------------------------
+            # NEGATIVE STARTING EMOTION
+            # -------------------------------------------------
+
+            if before < 0:
+
+                before_magnitude = abs(before)
+
+                negative_before_values.append(
+                    before_magnitude
                 )
 
-                illinois_time = utc_time.astimezone(
-                    illinois_timezone
-                )
+                # If after is negative, closer to zero is better.
+                if after < 0:
 
-                feedback_data["created_at"] = (
-                    illinois_time.strftime(
-                        "%B %d, %Y at %I:%M %p"
+                    after_magnitude = abs(after)
+
+                    negative_after_values.append(
+                        after_magnitude
                     )
+
+                    if after_magnitude < before_magnitude:
+                        improved_negative += 1
+
+                    elif after_magnitude == before_magnitude:
+                        unchanged += 1
+
+                    else:
+                        worsened += 1
+
+                # Negative → positive is also an improvement.
+                elif after > 0:
+
+                    negative_after_values.append(0)
+
+                    improved_negative += 1
+
+                else:
+
+                    negative_after_values.append(0)
+
+                    improved_negative += 1
+
+
+            # -------------------------------------------------
+            # POSITIVE STARTING EMOTION
+            # -------------------------------------------------
+
+            elif before > 0:
+
+                positive_before_values.append(
+                    before
                 )
 
-            except (ValueError, TypeError):
+                # Positive → positive:
+                # higher intensity is treated as improvement.
+                if after > 0:
 
-                pass
+                    positive_after_values.append(
+                        after
+                    )
 
-        recent_feedback.append(
-            feedback_data
+                    if after > before:
+                        improved_positive += 1
+
+                    elif after == before:
+                        unchanged += 1
+
+                    else:
+                        worsened += 1
+
+                # Positive → negative is deterioration.
+                elif after < 0:
+
+                    positive_after_values.append(0)
+
+                    worsened += 1
+
+                else:
+
+                    positive_after_values.append(0)
+
+                    worsened += 1
+
+
+        # =====================================================
+        # AVERAGES
+        # =====================================================
+
+        if negative_before_values:
+
+            average_negative_before = round(
+                sum(negative_before_values)
+                / len(negative_before_values),
+                1
+            )
+
+        else:
+
+            average_negative_before = None
+
+
+        if negative_after_values:
+
+            average_negative_after = round(
+                sum(negative_after_values)
+                / len(negative_after_values),
+                1
+            )
+
+        else:
+
+            average_negative_after = None
+
+
+        if (
+            average_negative_before is not None
+            and average_negative_after is not None
+        ):
+
+            negative_change = round(
+                average_negative_before
+                - average_negative_after,
+                1
+            )
+
+        else:
+
+            negative_change = None
+
+
+        if positive_before_values:
+
+            average_positive_before = round(
+                sum(positive_before_values)
+                / len(positive_before_values),
+                1
+            )
+
+        else:
+
+            average_positive_before = None
+
+
+        if positive_after_values:
+
+            average_positive_after = round(
+                sum(positive_after_values)
+                / len(positive_after_values),
+                1
+            )
+
+        else:
+
+            average_positive_after = None
+
+
+        if (
+            average_positive_before is not None
+            and average_positive_after is not None
+        ):
+
+            positive_change = round(
+                average_positive_after
+                - average_positive_before,
+                1
+            )
+
+        else:
+
+            positive_change = None
+
+
+        # =====================================================
+        # TOTAL OUTCOMES
+        # =====================================================
+
+        total_outcomes = (
+            improved_negative
+            + improved_positive
+            + unchanged
+            + worsened
         )
 
-    # -----------------------------------------------------
-    # CLOSE DATABASE
-    # -----------------------------------------------------
 
-    connection.close()
+        if total_outcomes:
 
-    # -----------------------------------------------------
-    # SEND DATA TO CREATOR PAGE
-    # -----------------------------------------------------
+            improvement_count = (
+                improved_negative
+                + improved_positive
+            )
 
-    return render_template(
-        "creator.html",
+            improvement_percentage = round(
+                (
+                    improvement_count
+                    / total_outcomes
+                ) * 100
+            )
 
-        total_users=total_users,
+        else:
 
-        total_reflections=total_reflections,
+            improvement_percentage = None
 
-        total_feedback=total_feedback,
 
-        average_rating=average_rating,
+        # =====================================================
+        # EMOTIONAL TRANSITIONS
+        # =====================================================
 
-        average_before=average_before,
+        transition_rows = connection.execute(
+            """
+            SELECT
+                TRIM(r.emotion) AS before_emotion,
+                TRIM(f.after_emotion) AS after_emotion,
+                COUNT(*) AS amount
+            FROM feedback f
+            JOIN reflections r
+                ON r.id = f.reflection_id
+            WHERE
+                r.emotion IS NOT NULL
+                AND f.after_emotion IS NOT NULL
+                AND TRIM(r.emotion) != ''
+                AND TRIM(f.after_emotion) != ''
+            GROUP BY
+                TRIM(r.emotion),
+                TRIM(f.after_emotion)
+            ORDER BY
+                amount DESC
+            LIMIT 15
+            """
+        ).fetchall()
 
-        average_after=average_after,
 
-        average_change=average_change,
+        transitions = [
+            {
+                "before": row["before_emotion"],
+                "after": row["after_emotion"],
+                "amount": row["amount"]
+            }
+            for row in transition_rows
+        ]
 
-        lower_intensity=lower_intensity,
 
-        same_intensity=same_intensity,
+        # =====================================================
+        # MOST COMMON STARTING EMOTION
+        # =====================================================
 
-        higher_intensity=higher_intensity,
+        starting_emotion = connection.execute(
+            """
+            SELECT
+                TRIM(emotion) AS emotion,
+                COUNT(*) AS amount
+            FROM reflections
+            WHERE
+                emotion IS NOT NULL
+                AND TRIM(emotion) != ''
+            GROUP BY TRIM(emotion)
+            ORDER BY amount DESC
+            LIMIT 1
+            """
+        ).fetchone()
 
-        transitions=transitions,
 
-        starting_emotion=starting_emotion,
+        # =====================================================
+        # MOST COMMON ENDING EMOTION
+        # =====================================================
 
-        ending_emotion=ending_emotion,
+        ending_emotion = connection.execute(
+            """
+            SELECT
+                TRIM(after_emotion) AS emotion,
+                COUNT(*) AS amount
+            FROM feedback
+            WHERE
+                after_emotion IS NOT NULL
+                AND TRIM(after_emotion) != ''
+            GROUP BY TRIM(after_emotion)
+            ORDER BY amount DESC
+            LIMIT 1
+            """
+        ).fetchone()
 
-        recent_feedback=recent_feedback
-    )
+
+        # =====================================================
+        # CLOSE CONNECTION
+        # =====================================================
+
+        return render_template(
+            "creator.html",
+
+            total_users=total_users,
+            total_reflections=total_reflections,
+            total_feedback=total_feedback,
+            average_rating=average_rating,
+
+            average_negative_before=average_negative_before,
+            average_negative_after=average_negative_after,
+            negative_change=negative_change,
+
+            average_positive_before=average_positive_before,
+            average_positive_after=average_positive_after,
+            positive_change=positive_change,
+
+            improved_negative=improved_negative,
+            improved_positive=improved_positive,
+            unchanged=unchanged,
+            worsened=worsened,
+
+            improvement_percentage=improvement_percentage,
+
+            transitions=transitions,
+
+            starting_emotion=starting_emotion,
+            ending_emotion=ending_emotion
+        )
+
+    finally:
+
+        connection.close()
 # =========================================================
 # INITIALIZE DATABASE
 # =========================================================
