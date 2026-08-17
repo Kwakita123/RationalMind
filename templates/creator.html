@@ -17,9 +17,9 @@ Creator Analytics | RationalMind
     </h1>
 
     <p>
-        Aggregate data showing how users interact with
-        RationalMind and how their self-reported emotional
-        states change.
+        Aggregate, self-reported data showing how users
+        interact with RationalMind and how their reported
+        emotional states change over time.
     </p>
 
 </section>
@@ -31,9 +31,7 @@ Creator Analytics | RationalMind
 
 <section>
 
-    <h2>
-        Overview
-    </h2>
+    <h2>Overview</h2>
 
     <div class="dashboard-grid">
 
@@ -62,9 +60,7 @@ Creator Analytics | RationalMind
                 {% endif %}
             </h3>
 
-            <p>
-                Average Rating
-            </p>
+            <p>Average Rating</p>
 
         </div>
 
@@ -74,74 +70,160 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- EMOTIONAL INTENSITY -->
+<!-- EMOTIONAL IMPACT -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>
-        Emotional Intensity
-    </h2>
+    <h2>Emotional Impact</h2>
 
     <p>
-        Average self-reported emotional intensity before
-        and after using RationalMind.
+        Emotional intensity is interpreted according to
+        the direction reported by the user.
+        Negative emotions are represented from -5 to -1,
+        while positive emotions are represented from +1 to +5.
     </p>
+
 
     <div class="dashboard-grid">
 
+
+        <!-- NEGATIVE EMOTIONS -->
+
         <div class="feedback-success">
 
             <h3>
-                {% if average_before is not none %}
-                    {{ average_before }}
-                {% else %}
-                    —
-                {% endif %}
+                Negative Emotional Intensity
             </h3>
 
-            <p>
-                Before
-            </p>
+            {% if average_negative_before is not none %}
 
-        </div>
+                <p>
+                    Before:
+                    <strong>
+                        {{ average_negative_before }}
+                    </strong>
+                </p>
 
-        <div class="feedback-success">
+                <p>
+                    After:
+                    <strong>
+                        {{ average_negative_after }}
+                    </strong>
+                </p>
 
-            <h3>
-                {% if average_after is not none %}
-                    {{ average_after }}
-                {% else %}
-                    —
-                {% endif %}
-            </h3>
+                {% if negative_change is not none %}
 
-            <p>
-                After
-            </p>
+                    {% if negative_change > 0 %}
 
-        </div>
+                        <p>
+                            ↓ {{ negative_change }}
+                            average reduction
+                        </p>
 
-        <div class="feedback-success">
+                    {% elif negative_change == 0 %}
 
-            <h3>
+                        <p>
+                            No average change
+                        </p>
 
-                {% if average_change is not none %}
-
-                    {% if average_change > 0 %}
-                        +{{ average_change }}
                     {% else %}
-                        {{ average_change }}
+
+                        <p>
+                            ↑ {{ negative_change|abs }}
+                            average increase
+                        </p>
+
                     {% endif %}
 
+                {% endif %}
+
+            {% else %}
+
+                <p>
+                    Not enough data yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- POSITIVE EMOTIONS -->
+
+        <div class="feedback-success">
+
+            <h3>
+                Positive Emotional Intensity
+            </h3>
+
+            {% if average_positive_before is not none %}
+
+                <p>
+                    Before:
+                    <strong>
+                        {{ average_positive_before }}
+                    </strong>
+                </p>
+
+                <p>
+                    After:
+                    <strong>
+                        {{ average_positive_after }}
+                    </strong>
+                </p>
+
+                {% if positive_change is not none %}
+
+                    {% if positive_change > 0 %}
+
+                        <p>
+                            ↑ {{ positive_change }}
+                            average increase
+                        </p>
+
+                    {% elif positive_change == 0 %}
+
+                        <p>
+                            No average change
+                        </p>
+
+                    {% else %}
+
+                        <p>
+                            ↓ {{ positive_change|abs }}
+                            average decrease
+                        </p>
+
+                    {% endif %}
+
+                {% endif %}
+
+            {% else %}
+
+                <p>
+                    Not enough data yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- IMPROVEMENT -->
+
+        <div class="feedback-success">
+
+            <h3>
+                {% if improvement_percentage is not none %}
+                    {{ improvement_percentage }}%
                 {% else %}
                     —
                 {% endif %}
-
             </h3>
 
             <p>
-                Average Change
+                Reports showing improvement
             </p>
 
         </div>
@@ -152,73 +234,68 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- GRAPH 1 -->
+<!-- OUTCOMES -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>
-        Emotional Intensity Before vs. After
-    </h2>
+    <h2>Reported Emotional Outcomes</h2>
 
     <p>
-        Average self-reported emotional intensity across
-        feedback responses.
+        Each comparison is classified according to the
+        direction of the reported emotional change.
     </p>
-
-    <div class="feedback-success">
-
-        <canvas id="intensityChart"></canvas>
-
-    </div>
-
-</section>
-
-
-<!-- ================================================= -->
-<!-- INTENSITY OUTCOMES -->
-<!-- ================================================= -->
-
-<section>
-
-    <h2>
-        Intensity Outcomes
-    </h2>
 
     <div class="dashboard-grid">
 
+
         <div class="feedback-success">
 
             <h3>
-                {{ lower_intensity }}
+                {{ improved_negative }}
             </h3>
 
             <p>
-                Lower intensity
+                Reduced negative intensity
             </p>
 
         </div>
 
+
         <div class="feedback-success">
 
             <h3>
-                {{ same_intensity }}
+                {{ improved_positive }}
             </h3>
 
             <p>
-                No change
+                Increased positive intensity
             </p>
 
         </div>
 
+
         <div class="feedback-success">
 
             <h3>
-                {{ higher_intensity }}
+                {{ unchanged }}
             </h3>
 
             <p>
-                Higher intensity
+                No meaningful change
+            </p>
+
+        </div>
+
+
+        <div class="feedback-success">
+
+            <h3>
+                {{ worsened }}
+            </h3>
+
+            <p>
+                Reported deterioration
             </p>
 
         </div>
@@ -229,38 +306,18 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- GRAPH 2 -->
+<!-- EMOTION TRANSITIONS -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>
-        Reported Intensity Outcomes
-    </h2>
-
-    <div class="feedback-success">
-
-        <canvas id="outcomeChart"></canvas>
-
-    </div>
-
-</section>
-
-
-<!-- ================================================= -->
-<!-- EMOTIONAL TRANSITIONS -->
-<!-- ================================================= -->
-
-<section>
-
-    <h2>
-        Emotional Transitions
-    </h2>
+    <h2>Emotion Transitions</h2>
 
     <p>
-        The most common self-reported emotional transitions
-        following a RationalMind reflection.
+        Most frequently reported emotional states before
+        and after completing a RationalMind reflection.
     </p>
+
 
     {% if transitions %}
 
@@ -271,14 +328,18 @@ Creator Analytics | RationalMind
                 <div class="feedback-success">
 
                     <h3>
-                        {{ transition["before_emotion"] }}
+                        {{ transition["before"] }}
                         →
-                        {{ transition["after_emotion"] }}
+                        {{ transition["after"] }}
                     </h3>
 
                     <p>
                         {{ transition["amount"] }}
-                        occurrence{% if transition["amount"] != 1 %}s{% endif %}
+                        {% if transition["amount"] == 1 %}
+                            report
+                        {% else %}
+                            reports
+                        {% endif %}
                     </p>
 
                 </div>
@@ -299,35 +360,17 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- GRAPH 3 -->
-<!-- ================================================= -->
-
-<section>
-
-    <h2>
-        Emotional Transition Patterns
-    </h2>
-
-    <div class="feedback-success">
-
-        <canvas id="transitionChart"></canvas>
-
-    </div>
-
-</section>
-
-
-<!-- ================================================= -->
 <!-- EMOTIONAL PATTERNS -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>
-        Emotional Patterns
-    </h2>
+    <h2>Emotional Patterns</h2>
 
     <div class="dashboard-grid">
+
+
+        <!-- STARTING -->
 
         <div class="feedback-success">
 
@@ -338,24 +381,32 @@ Creator Analytics | RationalMind
             {% if starting_emotion %}
 
                 <p>
-                    {{ starting_emotion["emotion"] }}
+                    <strong>
+                        {{ starting_emotion["emotion"] }}
+                    </strong>
                 </p>
 
                 <small>
                     {{ starting_emotion["amount"] }}
-                    occurrence{% if starting_emotion["amount"] != 1 %}s{% endif %}
+                    {% if starting_emotion["amount"] == 1 %}
+                        report
+                    {% else %}
+                        reports
+                    {% endif %}
                 </small>
 
             {% else %}
 
                 <p>
-                    Not enough data.
+                    Not enough data yet.
                 </p>
 
             {% endif %}
 
         </div>
 
+
+        <!-- ENDING -->
 
         <div class="feedback-success">
 
@@ -366,18 +417,24 @@ Creator Analytics | RationalMind
             {% if ending_emotion %}
 
                 <p>
-                    {{ ending_emotion["after_emotion"] }}
+                    <strong>
+                        {{ ending_emotion["emotion"] }}
+                    </strong>
                 </p>
 
                 <small>
                     {{ ending_emotion["amount"] }}
-                    occurrence{% if ending_emotion["amount"] != 1 %}s{% endif %}
+                    {% if ending_emotion["amount"] == 1 %}
+                        report
+                    {% else %}
+                        reports
+                    {% endif %}
                 </small>
 
             {% else %}
 
                 <p>
-                    Not enough data.
+                    Not enough data yet.
                 </p>
 
             {% endif %}
@@ -390,84 +447,39 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- RECENT FEEDBACK -->
+<!-- PRIVACY -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>
-        Recent Feedback
-    </h2>
+    <h2>Privacy & Data</h2>
 
-    <p>
-        Feedback is shown without usernames or email addresses.
-    </p>
-
-    {% if recent_feedback %}
-
-        <div class="feedback-list">
-
-            {% for item in recent_feedback %}
-
-                <div class="feedback-success">
-
-                    <h3>
-                        {{ item["rating"] }} / 5
-                    </h3>
-
-                    {% if item["before_emotion"] and item["after_emotion"] %}
-
-                        <p>
-                            {{ item["before_emotion"] }}
-                            →
-                            {{ item["after_emotion"] }}
-                        </p>
-
-                    {% endif %}
-
-                    {% if item["before_intensity"] is not none
-                          and item["after_intensity"] is not none %}
-
-                        <p>
-                            Intensity:
-                            {{ item["before_intensity"] }}
-                            →
-                            {{ item["after_intensity"] }}
-                        </p>
-
-                    {% endif %}
-
-                    {% if item["comment"] %}
-
-                        <p>
-                            "{{ item["comment"] }}"
-                        </p>
-
-                    {% endif %}
-
-                    <small>
-                        {{ item["created_at"] }}
-                    </small>
-
-                </div>
-
-            {% endfor %}
-
-        </div>
-
-    {% else %}
+    <div class="feedback-success">
 
         <p>
-            No feedback has been submitted yet.
+            Creator analytics are designed to use
+            aggregate and anonymous information.
         </p>
 
-    {% endif %}
+        <p>
+            Usernames, email addresses, and individual
+            reflection content are not displayed in this
+            dashboard.
+        </p>
+
+        <p>
+            Emotional information shown here represents
+            self-reported data collected for aggregate
+            analysis.
+        </p>
+
+    </div>
 
 </section>
 
 
 <!-- ================================================= -->
-<!-- DATA NOTE -->
+<!-- RESEARCH LIMITATION -->
 <!-- ================================================= -->
 
 <section>
@@ -476,333 +488,16 @@ Creator Analytics | RationalMind
 
         <small>
 
-            Data represents self-reported user experiences.
-            These results describe reported changes and do
-            not establish that RationalMind caused those changes.
+            <strong>Important:</strong>
+            These results represent self-reported user
+            experiences. They describe patterns in the
+            collected data and do not establish that
+            RationalMind caused the reported changes.
 
         </small>
 
     </p>
 
 </section>
-
-
-<!-- ================================================= -->
-<!-- CHART DATA -->
-<!-- ================================================= -->
-
-<div
-    id="creator-chart-data"
-    data-average-before="{{ average_before if average_before is not none else 0 }}"
-    data-average-after="{{ average_after if average_after is not none else 0 }}"
-    data-lower="{{ lower_intensity }}"
-    data-same="{{ same_intensity }}"
-    data-higher="{{ higher_intensity }}"
-></div>
-
-
-<!-- ================================================= -->
-<!-- CHART.JS -->
-<!-- ================================================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const dataElement =
-        document.getElementById(
-            "creator-chart-data"
-        );
-
-    if (!dataElement) {
-        return;
-    }
-
-
-    /* ================================ */
-    /* GET DATA */
-    /* ================================ */
-
-    const averageBefore =
-        Number(
-            dataElement.dataset.averageBefore
-        );
-
-    const averageAfter =
-        Number(
-            dataElement.dataset.averageAfter
-        );
-
-    const lowerIntensity =
-        Number(
-            dataElement.dataset.lower
-        );
-
-    const sameIntensity =
-        Number(
-            dataElement.dataset.same
-        );
-
-    const higherIntensity =
-        Number(
-            dataElement.dataset.higher
-        );
-
-
-    /* ================================ */
-    /* GRAPH 1 */
-    /* ================================ */
-
-    const intensityCanvas =
-        document.getElementById(
-            "intensityChart"
-        );
-
-    if (intensityCanvas) {
-
-        new Chart(
-            intensityCanvas,
-            {
-
-                type: "bar",
-
-                data: {
-
-                    labels: [
-                        "Before",
-                        "After"
-                    ],
-
-                    datasets: [
-
-                        {
-
-                            label:
-                                "Average Emotional Intensity",
-
-                            data: [
-                                averageBefore,
-                                averageAfter
-                            ]
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    scales: {
-
-                        y: {
-
-                            beginAtZero: true,
-
-                            min: -5,
-
-                            max: 5,
-
-                            title: {
-
-                                display: true,
-
-                                text:
-                                    "Emotional Intensity"
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* ================================ */
-    /* GRAPH 2 */
-    /* ================================ */
-
-    const outcomeCanvas =
-        document.getElementById(
-            "outcomeChart"
-        );
-
-    if (outcomeCanvas) {
-
-        new Chart(
-            outcomeCanvas,
-            {
-
-                type: "doughnut",
-
-                data: {
-
-                    labels: [
-                        "Lower",
-                        "No Change",
-                        "Higher"
-                    ],
-
-                    datasets: [
-
-                        {
-
-                            label:
-                                "Intensity Outcomes",
-
-                            data: [
-                                lowerIntensity,
-                                sameIntensity,
-                                higherIntensity
-                            ]
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive: true
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* ================================ */
-    /* GRAPH 3 */
-    /* ================================ */
-
-    const transitionElements =
-        document.querySelectorAll(
-            ".transition-data"
-        );
-
-    const transitionLabels = [];
-
-    const transitionValues = [];
-
-
-    transitionElements.forEach(
-        function (element) {
-
-            transitionLabels.push(
-                element.dataset.label
-            );
-
-            transitionValues.push(
-                Number(
-                    element.dataset.amount
-                )
-            );
-
-        }
-    );
-
-
-    const transitionCanvas =
-        document.getElementById(
-            "transitionChart"
-        );
-
-
-    if (
-        transitionCanvas &&
-        transitionLabels.length > 0
-    ) {
-
-        new Chart(
-            transitionCanvas,
-            {
-
-                type: "bar",
-
-                data: {
-
-                    labels:
-                        transitionLabels,
-
-                    datasets: [
-
-                        {
-
-                            label:
-                                "Number of Transitions",
-
-                            data:
-                                transitionValues
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    indexAxis: "y",
-
-                    responsive: true,
-
-                    scales: {
-
-                        x: {
-
-                            beginAtZero: true,
-
-                            ticks: {
-
-                                precision: 0
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-        );
-
-    }
-
-});
-
-</script>
-
-
-<!-- ================================================= -->
-<!-- HIDDEN TRANSITION DATA -->
-<!-- ================================================= -->
-
-<div style="display: none;">
-
-    {% for transition in transitions %}
-
-        <div
-            class="transition-data"
-            data-label="{{ transition['before_emotion'] }} → {{ transition['after_emotion'] }}"
-            data-amount="{{ transition['amount'] }}"
-        ></div>
-
-    {% endfor %}
-
-</div>
 
 {% endblock %}
