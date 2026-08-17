@@ -9,24 +9,24 @@ Creator Analytics | RationalMind
 <section class="dashboard-header">
 
     <p class="eyebrow">
-        CREATOR VIEW
+        CREATOR ANALYTICS
     </p>
 
     <h1>
-        RationalMind Analytics
+        RationalMind Insights
     </h1>
 
     <p>
-        Aggregate, self-reported data showing how users
-        interact with RationalMind and how their reported
-        emotional states change over time.
+        A high-level view of how RationalMind is being used
+        and how users report their emotional states changing
+        after reflection.
     </p>
 
 </section>
 
 
 <!-- ================================================= -->
-<!-- OVERVIEW -->
+<!-- 1. OVERVIEW -->
 <!-- ================================================= -->
 
 <section>
@@ -54,13 +54,13 @@ Creator Analytics | RationalMind
 
             <h3>
                 {% if average_rating is not none %}
-                    {{ average_rating }} / 5
+                    {{ average_rating }}/5
                 {% else %}
                     —
                 {% endif %}
             </h3>
 
-            <p>Average Rating</p>
+            <p>Average User Rating</p>
 
         </div>
 
@@ -70,160 +70,194 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- EMOTIONAL IMPACT -->
+<!-- 2. KEY SIGNAL -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>Emotional Impact</h2>
+    <h2>Key Signal</h2>
+
+    <div class="feedback-success">
+
+        {% if improvement_percentage is not none %}
+
+            <h3>
+                {{ improvement_percentage }}%
+            </h3>
+
+            <p>
+                of completed before/after comparisons
+                showed an improvement in reported
+                emotional intensity.
+            </p>
+
+        {% else %}
+
+            <h3>—</h3>
+
+            <p>
+                More feedback is needed before an
+                improvement pattern can be calculated.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- 3. NEGATIVE EMOTIONAL CHANGE -->
+<!-- ================================================= -->
+
+<section>
+
+    <h2>Negative Emotional Intensity</h2>
 
     <p>
-        Emotional intensity is interpreted according to
-        the direction reported by the user.
-        Negative emotions are represented from -5 to -1,
-        while positive emotions are represented from +1 to +5.
+        For negative emotions, improvement means the
+        reported intensity moved closer to zero.
     </p>
 
-
     <div class="dashboard-grid">
-
-
-        <!-- NEGATIVE EMOTIONS -->
 
         <div class="feedback-success">
 
             <h3>
-                Negative Emotional Intensity
+                {% if average_negative_before is not none %}
+                    {{ average_negative_before }}
+                {% else %}
+                    —
+                {% endif %}
             </h3>
 
-            {% if average_negative_before is not none %}
+            <p>
+                Average before
+            </p>
 
-                <p>
-                    Before:
-                    <strong>
-                        {{ average_negative_before }}
-                    </strong>
-                </p>
+        </div>
 
-                <p>
-                    After:
-                    <strong>
-                        {{ average_negative_after }}
-                    </strong>
-                </p>
+
+        <div class="feedback-success">
+
+            <h3>
+                {% if average_negative_after is not none %}
+                    {{ average_negative_after }}
+                {% else %}
+                    —
+                {% endif %}
+            </h3>
+
+            <p>
+                Average after
+            </p>
+
+        </div>
+
+
+        <div class="feedback-success">
+
+            <h3>
 
                 {% if negative_change is not none %}
 
                     {% if negative_change > 0 %}
-
-                        <p>
-                            ↓ {{ negative_change }}
-                            average reduction
-                        </p>
-
+                        ↓ {{ negative_change }}
                     {% elif negative_change == 0 %}
-
-                        <p>
-                            No average change
-                        </p>
-
+                        0
                     {% else %}
-
-                        <p>
-                            ↑ {{ negative_change|abs }}
-                            average increase
-                        </p>
-
+                        ↑ {{ negative_change|abs }}
                     {% endif %}
 
+                {% else %}
+                    —
                 {% endif %}
 
-            {% else %}
-
-                <p>
-                    Not enough data yet.
-                </p>
-
-            {% endif %}
-
-        </div>
-
-
-        <!-- POSITIVE EMOTIONS -->
-
-        <div class="feedback-success">
-
-            <h3>
-                Positive Emotional Intensity
             </h3>
 
-            {% if average_positive_before is not none %}
-
-                <p>
-                    Before:
-                    <strong>
-                        {{ average_positive_before }}
-                    </strong>
-                </p>
-
-                <p>
-                    After:
-                    <strong>
-                        {{ average_positive_after }}
-                    </strong>
-                </p>
-
-                {% if positive_change is not none %}
-
-                    {% if positive_change > 0 %}
-
-                        <p>
-                            ↑ {{ positive_change }}
-                            average increase
-                        </p>
-
-                    {% elif positive_change == 0 %}
-
-                        <p>
-                            No average change
-                        </p>
-
-                    {% else %}
-
-                        <p>
-                            ↓ {{ positive_change|abs }}
-                            average decrease
-                        </p>
-
-                    {% endif %}
-
-                {% endif %}
-
-            {% else %}
-
-                <p>
-                    Not enough data yet.
-                </p>
-
-            {% endif %}
+            <p>
+                Change toward lower intensity
+            </p>
 
         </div>
 
+    </div>
 
-        <!-- IMPROVEMENT -->
+</section>
+
+
+<!-- ================================================= -->
+<!-- 4. POSITIVE EMOTIONAL CHANGE -->
+<!-- ================================================= -->
+
+<section>
+
+    <h2>Positive Emotional Intensity</h2>
+
+    <p>
+        For positive emotions, improvement means the
+        reported intensity increased.
+    </p>
+
+    <div class="dashboard-grid">
 
         <div class="feedback-success">
 
             <h3>
-                {% if improvement_percentage is not none %}
-                    {{ improvement_percentage }}%
+                {% if average_positive_before is not none %}
+                    {{ average_positive_before }}
                 {% else %}
                     —
                 {% endif %}
             </h3>
 
             <p>
-                Reports showing improvement
+                Average before
+            </p>
+
+        </div>
+
+
+        <div class="feedback-success">
+
+            <h3>
+                {% if average_positive_after is not none %}
+                    {{ average_positive_after }}
+                {% else %}
+                    —
+                {% endif %}
+            </h3>
+
+            <p>
+                Average after
+            </p>
+
+        </div>
+
+
+        <div class="feedback-success">
+
+            <h3>
+
+                {% if positive_change is not none %}
+
+                    {% if positive_change > 0 %}
+                        ↑ {{ positive_change }}
+                    {% elif positive_change == 0 %}
+                        0
+                    {% else %}
+                        ↓ {{ positive_change|abs }}
+                    {% endif %}
+
+                {% else %}
+                    —
+                {% endif %}
+
+            </h3>
+
+            <p>
+                Change in positive intensity
             </p>
 
         </div>
@@ -234,29 +268,26 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- OUTCOMES -->
+<!-- 5. OUTCOMES -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>Reported Emotional Outcomes</h2>
+    <h2>Reported Outcomes</h2>
 
     <p>
-        Each comparison is classified according to the
-        direction of the reported emotional change.
+        Each completed comparison is classified based
+        on the direction of the reported change.
     </p>
 
     <div class="dashboard-grid">
 
-
         <div class="feedback-success">
 
-            <h3>
-                {{ improved_negative }}
-            </h3>
+            <h3>{{ improved_negative }}</h3>
 
             <p>
-                Reduced negative intensity
+                Negative intensity reduced
             </p>
 
         </div>
@@ -264,12 +295,10 @@ Creator Analytics | RationalMind
 
         <div class="feedback-success">
 
-            <h3>
-                {{ improved_positive }}
-            </h3>
+            <h3>{{ improved_positive }}</h3>
 
             <p>
-                Increased positive intensity
+                Positive intensity increased
             </p>
 
         </div>
@@ -277,12 +306,10 @@ Creator Analytics | RationalMind
 
         <div class="feedback-success">
 
-            <h3>
-                {{ unchanged }}
-            </h3>
+            <h3>{{ unchanged }}</h3>
 
             <p>
-                No meaningful change
+                No change
             </p>
 
         </div>
@@ -290,12 +317,10 @@ Creator Analytics | RationalMind
 
         <div class="feedback-success">
 
-            <h3>
-                {{ worsened }}
-            </h3>
+            <h3>{{ worsened }}</h3>
 
             <p>
-                Reported deterioration
+                Reported worsening
             </p>
 
         </div>
@@ -306,18 +331,17 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- EMOTION TRANSITIONS -->
+<!-- 6. EMOTIONAL TRANSITIONS -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>Emotion Transitions</h2>
+    <h2>Emotional Transition Patterns</h2>
 
     <p>
-        Most frequently reported emotional states before
-        and after completing a RationalMind reflection.
+        These are the most frequently reported changes
+        from one emotional state to another.
     </p>
-
 
     {% if transitions %}
 
@@ -360,7 +384,7 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- EMOTIONAL PATTERNS -->
+<!-- 7. COMMON EMOTIONS -->
 <!-- ================================================= -->
 
 <section>
@@ -368,9 +392,6 @@ Creator Analytics | RationalMind
     <h2>Emotional Patterns</h2>
 
     <div class="dashboard-grid">
-
-
-        <!-- STARTING -->
 
         <div class="feedback-success">
 
@@ -388,25 +409,19 @@ Creator Analytics | RationalMind
 
                 <small>
                     {{ starting_emotion["amount"] }}
-                    {% if starting_emotion["amount"] == 1 %}
-                        report
-                    {% else %}
-                        reports
-                    {% endif %}
+                    report{% if starting_emotion["amount"] != 1 %}s{% endif %}
                 </small>
 
             {% else %}
 
                 <p>
-                    Not enough data yet.
+                    Not enough data.
                 </p>
 
             {% endif %}
 
         </div>
 
-
-        <!-- ENDING -->
 
         <div class="feedback-success">
 
@@ -424,17 +439,13 @@ Creator Analytics | RationalMind
 
                 <small>
                     {{ ending_emotion["amount"] }}
-                    {% if ending_emotion["amount"] == 1 %}
-                        report
-                    {% else %}
-                        reports
-                    {% endif %}
+                    report{% if ending_emotion["amount"] != 1 %}s{% endif %}
                 </small>
 
             {% else %}
 
                 <p>
-                    Not enough data yet.
+                    Not enough data.
                 </p>
 
             {% endif %}
@@ -447,30 +458,180 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- PRIVACY -->
+<!-- 8. RECENT FEEDBACK -->
 <!-- ================================================= -->
 
 <section>
 
-    <h2>Privacy & Data</h2>
+    <h2>Recent Feedback</h2>
+
+    <p>
+        Recent feedback is displayed without usernames,
+        email addresses, or individual reflection content.
+    </p>
+
+    {% if recent_feedback %}
+
+        <div class="feedback-list">
+
+            {% for item in recent_feedback %}
+
+                <div class="feedback-success">
+
+                    <h3>
+                        {{ item["rating"] }}/5
+                    </h3>
+
+                    {% if item["before_emotion"]
+                          and item["after_emotion"] %}
+
+                        <p>
+                            <strong>Emotion:</strong>
+                            {{ item["before_emotion"] }}
+                            →
+                            {{ item["after_emotion"] }}
+                        </p>
+
+                    {% endif %}
+
+
+                    {% if item["before_intensity"] is not none
+                          and item["after_intensity"] is not none %}
+
+                        <p>
+                            <strong>Intensity:</strong>
+                            {{ item["before_intensity"] }}
+                            →
+                            {{ item["after_intensity"] }}
+                        </p>
+
+                    {% endif %}
+
+
+                    {% if item["comment"] %}
+
+                        <p>
+                            "{{ item["comment"] }}"
+                        </p>
+
+                    {% endif %}
+
+
+                    <small>
+                        {{ item["created_at"] }}
+                    </small>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p>
+            No feedback has been submitted yet.
+        </p>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- 9. WHAT THIS CAN TELL YOU -->
+<!-- ================================================= -->
+
+<section>
+
+    <h2>Growth Signals</h2>
+
+    <div class="feedback-success">
+
+        {% if total_feedback == 0 %}
+
+            <h3>
+                Collect more feedback
+            </h3>
+
+            <p>
+                Once users complete reflections and submit
+                feedback, this section will become more
+                informative.
+            </p>
+
+        {% elif improvement_percentage is not none
+              and improvement_percentage >= 70 %}
+
+            <h3>
+                Strong reported improvement signal
+            </h3>
+
+            <p>
+                A large proportion of completed comparisons
+                currently show improvement in reported
+                emotional intensity. Continue collecting
+                data before drawing stronger conclusions.
+            </p>
+
+        {% elif improvement_percentage is not none
+              and improvement_percentage >= 50 %}
+
+            <h3>
+                Mixed but promising signal
+            </h3>
+
+            <p>
+                More comparisons currently show improvement
+                than deterioration. Increasing the number of
+                responses will make this pattern more reliable.
+            </p>
+
+        {% else %}
+
+            <h3>
+                Opportunity for investigation
+            </h3>
+
+            <p>
+                The current data does not yet show a strong
+                improvement pattern. This can help identify
+                which parts of the reflection experience may
+                need further testing or improvement.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- 10. PRIVACY -->
+<!-- ================================================= -->
+
+<section>
+
+    <h2>Privacy & Interpretation</h2>
 
     <div class="feedback-success">
 
         <p>
-            Creator analytics are designed to use
-            aggregate and anonymous information.
+            Creator analytics use aggregate,
+            self-reported information.
         </p>
 
         <p>
-            Usernames, email addresses, and individual
-            reflection content are not displayed in this
-            dashboard.
+            Usernames and email addresses are not displayed
+            in this dashboard, and individual reflection
+            content is not presented as creator analytics.
         </p>
 
         <p>
-            Emotional information shown here represents
-            self-reported data collected for aggregate
-            analysis.
+            Emotional measurements represent users'
+            self-reported experiences and should not be
+            interpreted as clinical measurements.
         </p>
 
     </div>
@@ -479,7 +640,7 @@ Creator Analytics | RationalMind
 
 
 <!-- ================================================= -->
-<!-- RESEARCH LIMITATION -->
+<!-- 11. RESEARCH LIMITATION -->
 <!-- ================================================= -->
 
 <section>
@@ -488,11 +649,10 @@ Creator Analytics | RationalMind
 
         <small>
 
-            <strong>Important:</strong>
-            These results represent self-reported user
-            experiences. They describe patterns in the
-            collected data and do not establish that
-            RationalMind caused the reported changes.
+            <strong>Research limitation:</strong>
+            These results describe patterns in
+            self-reported data. They do not establish
+            that RationalMind caused the reported changes.
 
         </small>
 
