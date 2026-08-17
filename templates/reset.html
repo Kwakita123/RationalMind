@@ -1,286 +1,460 @@
+```html
 {% extends "base.html" %}
-
-{% block title %}
-Stress Reset | RationalMind
-{% endblock %}
 
 {% block content %}
 
-<main class="reset-container">
+<div class="reset-container">
+
+    <!-- HEADER -->
+
+    <div class="reset-header">
+
+        <p class="eyebrow">
+            STRESS RESET
+        </p>
+
+        <h1>
+            Pause. Breathe. Reset.
+        </h1>
+
+        <p>
+            When stress or strong emotions make it difficult
+            to think clearly, sometimes the best first step
+            is simply to pause.
+        </p>
+
+        <p>
+            Reset is designed to give you a short moment
+            to slow down, regain perspective, and return
+            to the situation with a clearer mind.
+        </p>
+
+    </div>
 
 
-<section class="reset-header">
+    <!-- PURPOSE -->
 
-    <p class="eyebrow">
-        MENTAL RESET
-    </p>
+    <div class="reset-principle">
 
+        <h2>
+            Why is there no submission?
+        </h2>
 
-    <h1>
-        Create space before you react.
-    </h1>
+        <p>
+            Reset is different from RationalMind's other
+            tools. The purpose is not to analyze what happened
+            or create a record of your experience.
+        </p>
 
+        <p>
+            When you're stressed, you may not need another
+            task to complete. You may simply need a moment
+            to step away, breathe, and regain control of
+            your attention.
+        </p>
 
-    <p>
-        When stress rises, your attention narrows.
-        This exercise helps you pause, regain awareness,
-        and choose your next action deliberately.
-    </p>
+        <p>
+            That's why Reset does not require you to submit
+            anything or save your responses. You can use
+            the exercises, finish when you feel ready,
+            and move on with your day.
+        </p>
 
-</section>
-
-
-
-<!-- ========================================= -->
-<!-- PRIVACY NOTICE -->
-<!-- ========================================= -->
-
-<section class="privacy-notice">
-
-    <p class="eyebrow">
-        PRIVACY & ANONYMITY
-    </p>
+    </div>
 
 
-    <h2>
-        Your information stays private.
-    </h2>
+    <!-- RESET STEPS -->
+
+    <div class="reset-card">
 
 
-    <p>
-        Information you enter during this reset exercise is not
-        viewable by the creator of RationalMind. The creator
-        cannot read your personal responses.
-    </p>
+        <!-- STEP 1 -->
+
+        <div class="reset-step">
+
+            <span>
+                STEP 01
+            </span>
+
+            <h2>
+                Identify what you can control
+            </h2>
+
+            <p>
+                Stress can become stronger when we focus
+                on things outside our control.
+            </p>
+
+            <div class="question">
+
+                <strong>
+                    Ask yourself:
+                </strong>
+
+                <p>
+                    What part of this situation can I
+                    actually influence right now?
+                </p>
+
+            </div>
+
+            <textarea
+                placeholder="Optional. You do not need to submit this."
+            ></textarea>
+
+        </div>
 
 
-    <p>
-        RationalMind is designed to give you a private space to
-        reflect, reset, and consider your next action.
-    </p>
 
-</section>
+        <!-- STEP 2 -->
 
+        <div class="reset-step">
 
+            <span>
+                STEP 02
+            </span>
 
-<section class="reset-card">
+            <h2>
+                Take a moment to breathe
+            </h2>
 
-
-<div class="reset-step">
-
-
-<span>
-01
-</span>
-
-
-<h2>
-Notice your current state.
-</h2>
+            <p>
+                Give yourself a short break from the
+                situation and focus your attention on
+                your breathing.
+            </p>
 
 
-<p>
-Take a moment to identify what is happening
-without judging yourself.
-</p>
+            <div class="breathing-box">
+
+                <h3 id="breathing-text">
+                    Ready?
+                </h3>
+
+                <div id="breathing-circle">
+                    <span id="breathing-timer"></span>
+                </div>
+
+                <button
+                    type="button"
+                    onclick="startBreathing()"
+                >
+                    Start Breathing
+                </button>
+
+            </div>
+
+        </div>
 
 
-<div class="question">
 
-<strong>
-What am I feeling right now?
-</strong>
+        <!-- STEP 3 -->
 
-<p>
-Stress, frustration, uncertainty, pressure,
-fatigue, or something else?
-</p>
+        <div class="reset-step">
+
+            <span>
+                STEP 03
+            </span>
+
+            <h2>
+                Ground yourself
+            </h2>
+
+            <p>
+                Bring your attention back to the present
+                moment instead of staying focused on the
+                stressful situation.
+            </p>
+
+            <div class="question">
+
+                <strong>
+                    Look around you.
+                </strong>
+
+                <p>
+                    Notice what you can see, hear, and
+                    physically feel around you.
+                </p>
+
+            </div>
+
+            <div
+                id="grounding-step"
+                style="text-align: center;"
+            >
+
+                <div class="grounding-number">
+                    1
+                </div>
+
+                <h3>
+                    Notice something around you.
+                </h3>
+
+                <p>
+                    Take your time. There is no need
+                    to submit anything.
+                </p>
+
+                <button
+                    type="button"
+                    onclick="nextGroundingStep()"
+                >
+                    Next
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- STEP 4 -->
+
+        <div class="reset-step">
+
+            <span>
+                STEP 04
+            </span>
+
+            <h2>
+                Separate yourself from the reaction
+            </h2>
+
+            <p>
+                You don't have to immediately act on
+                every thought or emotion you experience.
+            </p>
+
+            <div class="question">
+
+                <strong>
+                    Ask yourself:
+                </strong>
+
+                <p>
+                    What am I feeling right now, and
+                    do I need to act on it immediately?
+                </p>
+
+            </div>
+
+            <textarea
+                id="control-input"
+                placeholder="Optional. This is for your own reflection."
+            ></textarea>
+
+        </div>
+
+
+
+        <!-- FINAL STEP -->
+
+        <div class="reset-step">
+
+            <span>
+                STEP 05
+            </span>
+
+            <h2>
+                Decide what comes next
+            </h2>
+
+            <p>
+                After creating some space, ask yourself
+                what the most useful next step is.
+            </p>
+
+            <div class="question">
+
+                <strong>
+                    Remember:
+                </strong>
+
+                <p>
+                    You don't need to solve everything
+                    right now. Focus on the next
+                    reasonable step.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FINAL MESSAGE -->
+
+    <div class="reset-principle">
+
+        <h2>
+            Reset, don't react.
+        </h2>
+
+        <p>
+            The goal isn't to eliminate emotions or
+            pretend that stressful situations don't
+            matter. The goal is to create enough space
+            between the emotion and your response to
+            choose what you want to do next.
+        </p>
+
+        <p>
+            Nothing needs to be submitted. Nothing needs
+            to be saved. When you're ready, simply leave
+            the Reset tool and continue your day.
+        </p>
+
+    </div>
 
 </div>
 
 
-<textarea
-placeholder="Write your current state..."></textarea>
-
-
-</div>
-
-
-
-
-<div class="reset-step">
-
-
-<span>
-02
-</span>
-
-
-<h2>
-Slow your attention.
-</h2>
-
-
-<p>
-Follow this simple breathing cycle:
-</p>
-
-
-<div class="breathing-box">
-
-
-<h3 id="breathing-text">
-Ready
-</h3>
-
-
-<button
-onclick="startBreathing()">
-
-Begin Reset
-
-</button>
-
-
-</div>
-
-
-</div>
-
-
-
-
-<div class="reset-step">
-
-
-<span>
-03
-</span>
-
-
-<h2>
-Return with intention.
-</h2>
-
-
-<p>
-After creating space, decide what matters next.
-</p>
-
-
-<div class="question">
-
-<strong>
-What is one action I can take?
-</strong>
-
-
-<p>
-Focus on something within your control.
-</p>
-
-</div>
-
-
-<textarea
-placeholder="My next intentional action..."></textarea>
-
-
-</div>
-
-
-
-</section>
-
-
-
-<section class="reset-principle">
-
-
-<h2>
-The RationalMind Principle
-</h2>
-
-
-<p>
-You cannot always control your circumstances,
-but you can practice controlling your attention,
-interpretation, and response.
-</p>
-
-
-</section>
-
-
-
-</main>
-
-
+<!-- RESET JAVASCRIPT -->
 
 <script>
 
+let breathingRunning = false;
 
-function startBreathing(){
+function startBreathing() {
 
-let text = document.getElementById(
-"breathing-text"
-);
+    if (breathingRunning) {
+        return;
+    }
+
+    breathingRunning = true;
+
+    const circle = document.getElementById("breathing-circle");
+    const text = document.getElementById("breathing-text");
+    const timer = document.getElementById("breathing-timer");
+
+    const phases = [
+        {
+            name: "Breathe in",
+            seconds: 4,
+            scale: 1.35
+        },
+        {
+            name: "Hold",
+            seconds: 4,
+            scale: 1.35
+        },
+        {
+            name: "Breathe out",
+            seconds: 6,
+            scale: 1
+        }
+    ];
+
+    let phaseIndex = 0;
+    let remaining = phases[0].seconds;
+
+    function runPhase() {
+
+        const phase = phases[phaseIndex];
+
+        text.textContent = phase.name;
+
+        circle.style.transform =
+            `scale(${phase.scale})`;
+
+        remaining = phase.seconds;
+
+        timer.textContent =
+            remaining + " seconds";
+
+        const countdown = setInterval(() => {
+
+            remaining--;
+
+            timer.textContent =
+                remaining + " seconds";
+
+            if (remaining <= 0) {
+
+                clearInterval(countdown);
+
+                phaseIndex++;
+
+                if (phaseIndex >= phases.length) {
+
+                    phaseIndex = 0;
+
+                    /*
+                     * Repeat the breathing cycle
+                     * several times.
+                     */
+
+                }
+
+                runPhase();
+            }
+
+        }, 1000);
+    }
+
+    runPhase();
+}
 
 
-let steps = [
+const groundingSteps = [
 
-"Inhale",
+    "Notice something you can see.",
 
-"Hold",
+    "Notice something you can hear.",
 
-"Exhale",
+    "Notice something you can physically feel.",
 
-"Pause"
+    "Take one slow breath.",
+
+    "Ask yourself what you need right now."
 
 ];
 
+let groundingIndex = 0;
 
-let index = 0;
+function nextGroundingStep() {
 
+    const number =
+        document.querySelector(".grounding-number");
 
-text.innerHTML = steps[index];
+    const heading =
+        document.querySelector("#grounding-step h3");
 
+    const paragraph =
+        document.querySelector("#grounding-step p");
 
-let timer = setInterval(function(){
+    groundingIndex++;
 
+    if (groundingIndex >= groundingSteps.length) {
 
-index++;
+        groundingIndex = 0;
 
+        number.textContent = "✓";
 
-if(index >= steps.length){
+        heading.textContent =
+            "Grounding complete.";
 
-index = 0;
+        paragraph.textContent =
+            "Take a moment before returning to your day.";
+
+        return;
+    }
+
+    number.textContent =
+        groundingIndex + 1;
+
+    heading.textContent =
+        groundingSteps[groundingIndex];
+
+    paragraph.textContent =
+        "Take your time. There is no need to submit anything.";
 
 }
-
-
-text.innerHTML = steps[index];
-
-
-},4000);
-
-
-
-setTimeout(function(){
-
-clearInterval(timer);
-
-text.innerHTML="Reset Complete";
-
-
-},16000);
-
-
-}
-
 
 </script>
 
-
-
 {% endblock %}
+```
