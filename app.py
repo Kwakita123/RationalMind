@@ -60,21 +60,27 @@ class HybridRow(dict):
 
 
 def hybrid_row(cursor):
+
+    if cursor.description is None:
+        return lambda values: HybridRow()
+
     columns = [column.name for column in cursor.description]
 
     def make_row(values):
+
         data = dict(zip(columns, values))
 
-        # PostgreSQL returns TIMESTAMP values as datetime objects.
-        # The existing RationalMind code expects SQLite-style strings.
         for key, value in data.items():
+
             if key == "created_at" and isinstance(value, datetime):
-                data[key] = value.strftime("%Y-%m-%d %H:%M:%S")
+
+                data[key] = value.strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
 
         return HybridRow(data)
 
     return make_row
-
 
 def get_db():
     connection = psycopg.connect(
