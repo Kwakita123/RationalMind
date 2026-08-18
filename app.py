@@ -7,6 +7,10 @@ from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from analysis import analyze_reflection
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is not set.")
 # =========================================================
 # LANGUAGE / TRANSLATIONS
 # =========================================================
