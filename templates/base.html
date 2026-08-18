@@ -1,6 +1,5 @@
-```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language }}">
 
 <head>
 
@@ -25,9 +24,11 @@
     <nav class="navbar">
 
         <div class="logo">
+
             <a href="/">
                 RationalMind
             </a>
+
         </div>
 
 
@@ -36,54 +37,94 @@
             {% if logged_in %}
 
                 <a href="/dashboard">
-                    Dashboard
+                    {{ t["dashboard"] }}
                 </a>
 
                 <a href="/reflection">
-                    Reflection
+                    {{ t["reflection"] }}
                 </a>
 
                 <a href="/decision">
-                    Decisions
+                    {{ t["decisions"] }}
                 </a>
 
                 <a href="/history">
-                    History
+                    {{ t["history"] }}
                 </a>
 
                 <a href="/explore">
-                    Explore
+                    {{ t["explore"] }}
                 </a>
 
                 <a href="/reset">
-                    Reset
+                    {{ t["reset"] }}
                 </a>
 
                 <a href="/feedback">
-                    Feedback
+                    {{ t["feedback"] }}
                 </a>
+
 
                 {% if is_creator %}
-                    <a href="/creator" class="creator-nav-link">
-                        Creator
+
+                    <a href="/creator"
+                       class="creator-nav-link">
+
+                        {{ t["creator"] }}
+
                     </a>
+
                 {% endif %}
 
+
                 <a href="/logout">
-                    Logout
+                    {{ t["logout"] }}
                 </a>
+
 
             {% else %}
 
                 <a href="/login">
-                    Login
+                    {{ t["login"] }}
                 </a>
 
                 <a href="/signup">
-                    Sign Up
+                    {{ t["signup"] }}
                 </a>
 
             {% endif %}
+
+
+            <!-- LANGUAGE SELECTOR -->
+
+            <div class="language-selector">
+
+                <select
+                    onchange="window.location.href='/set-language/' + this.value"
+                >
+
+                    <option
+                        value="en"
+                        {% if language == "en" %}
+                            selected
+                        {% endif %}
+                    >
+                        English
+                    </option>
+
+
+                    <option
+                        value="ja"
+                        {% if language == "ja" %}
+                            selected
+                        {% endif %}
+                    >
+                        日本語
+                    </option>
+
+                </select>
+
+            </div>
 
         </div>
 
@@ -100,4 +141,3 @@
 </body>
 
 </html>
-```
