@@ -15,11 +15,18 @@ if not DATABASE_URL:
 # LANGUAGE / TRANSLATIONS
 # =========================================================
 
+# =========================================================
+# LANGUAGE / TRANSLATIONS
+# =========================================================
+
 TRANSLATIONS = {
 
     "en": {
 
-        # Navigation
+        # =================================================
+        # NAVIGATION
+        # =================================================
+
         "dashboard": "Dashboard",
         "reflection": "Reflection",
         "decisions": "Decisions",
@@ -32,52 +39,575 @@ TRANSLATIONS = {
         "login": "Login",
         "signup": "Sign Up",
 
-        # General
+        # =================================================
+        # GENERAL
+        # =================================================
+
         "welcome": "Welcome",
-        "recent_reflections": "Recent Reflections",
-        "total_reflections": "Total Reflections",
-        "common_emotion": "Most Common Emotion",
-        "latest_reflection": "Latest Reflection",
-        "no_data": "Not enough data yet.",
-
-        # Reflection
-        "situation": "Situation",
-        "emotion": "Emotion",
-        "intensity": "Emotional Intensity",
-        "thought": "Thought",
-        "evidence": "Evidence",
-        "alternative": "Alternative Perspective",
-        "response": "Response",
-        "insights": "Insights",
-
-        # Feedback
-        "feedback_responses": "Feedback Responses",
-        "rating": "Rating",
-        "comment": "Comment",
-        "after_emotion": "Emotion After",
-        "after_intensity": "Intensity After",
+        "continue": "Continue",
         "submit": "Submit",
+        "save": "Save",
+        "cancel": "Cancel",
+        "back": "Back",
+        "next": "Next",
+        "done": "Done",
+        "close": "Close",
+        "view": "View",
+        "learn_more": "Learn More",
+        "no_data": "Not enough data yet.",
+        "loading": "Loading...",
+        "optional": "Optional",
+        "required": "Required",
 
-        # Creator
-        "analytics": "Analytics",
-        "total_users": "Total Users",
-        "average_rating": "Average Rating",
-        "emotional_impact": "Emotional Impact",
-        "before": "Before",
-        "after": "After",
-        "average_change": "Average Change",
-        "improvement": "Improvement",
-        "emotional_patterns": "Emotional Patterns",
-        "starting_emotion": "Most Common Starting Emotion",
-        "ending_emotion": "Most Common Ending Emotion",
-        "privacy_data": "Privacy & Data",
+        # =================================================
+        # DASHBOARD
+        # =================================================
+
+        "rationalmind": "RATIONALMIND",
+
+        "dashboard_eyebrow":
+            "YOUR MENTAL SPACE",
+
+        "dashboard_title":
+            "Build awareness.<br>Make intentional choices.",
+
+        "dashboard_description":
+            "Your mind is shaped by your thoughts, emotions, and decisions. "
+            "RationalMind helps you understand those patterns and respond "
+            "with clarity.",
+
+        "what_is_rationalmind":
+            "WHAT IS RATIONALMIND?",
+
+        "rationalmind_heading":
+            "Think clearly. Understand yourself. Choose intentionally.",
+
+        "rationalmind_description":
+            "RationalMind is a personal reflection and decision-making "
+            "tool designed to help you examine your thoughts, understand "
+            "your emotions, and approach important choices with greater "
+            "awareness.",
+
+        "reflect":
+            "Reflect",
+
+        "reflect_description":
+            "Understand your experiences, emotions, thoughts, and reactions.",
+
+        "reason":
+            "Reason",
+
+        "reason_description":
+            "Separate facts from assumptions and consider different perspectives.",
+
+        "decide":
+            "Decide",
+
+        "decide_description":
+            "Compare options, consider tradeoffs, and make choices aligned "
+            "with your goals.",
+
+        "rationalmind_principle_short":
+            "RationalMind isn't about having perfect answers. "
+            "It's about developing a better understanding of how you think.",
+
+        "personal_insight":
+            "PERSONAL INSIGHT",
+
+        "awareness_creates_change":
+            "Awareness creates change.",
+
+        "reflection_completed":
+            "reflection exercises completed.",
+
+        "most_frequent_emotion":
+            "Your most frequent emotional state is:",
+
+        "observe_patterns":
+            "Continue observing patterns instead of judging them.",
+
+        "your_journey":
+            "YOUR JOURNEY",
+
+        "growth_dashboard":
+            "Growth Dashboard",
+
+        "growth_description":
+            "Track your reflections and build awareness of your thoughts, "
+            "emotions, and decisions.",
+
+        "reflections_completed":
+            "Reflections Completed",
+
+        "entries_recorded":
+            "Entries Recorded",
+
+        "latest_reflection":
+            "LATEST REFLECTION",
+
+        "insight":
+            "Insight",
+
+        "todays_practice":
+            "Today's Practice",
+
+        "todays_practice_description":
+            "Choose one activity to strengthen your awareness.",
+
+        "reflect_on_thoughts":
+            "Reflect on your thoughts",
+
+        "reset_attention":
+            "Reset your attention",
+
+        "analyze_decision":
+            "Analyze a decision",
+
+        "recent_reflections":
+            "Recent Reflections",
+
+        "complete_first_reflection":
+            "Complete your first reflection to begin tracking your growth.",
+
+        "your_privacy":
+            "YOUR PRIVACY",
+
+        "privacy_title":
+            "Your information stays personal.",
+
+        "privacy_description_1":
+            "The personal information you enter into RationalMind, "
+            "including your reflections, thoughts, decisions, history, "
+            "and other written responses, is not visible to me as "
+            "the creator.",
+
+        "privacy_description_2":
+            "I can only access limited, anonymous information used "
+            "to understand how the app is being used, such as general "
+            "emotional patterns and intensity data. Your personal "
+            "entries are not available for me to read.",
+
+        "rationalmind_principle":
+            "The RationalMind Principle",
+
+        "principle_description":
+            "You cannot control every event, but you can improve how "
+            "you understand and respond to those events.",
+
+        # =================================================
+        # REFLECTION
+        # =================================================
+
+        "reflection_title":
+            "Reflection",
+
+        "reflection_description":
+            "Take a moment to examine your experience before deciding "
+            "how to respond.",
+
+        "situation":
+            "Situation",
+
+        "situation_prompt":
+            "What happened?",
+
+        "emotion":
+            "Emotion",
+
+        "emotion_prompt":
+            "What emotion are you experiencing?",
+
+        "emotion_direction":
+            "Emotion Direction",
+
+        "negative":
+            "Negative",
+
+        "positive":
+            "Positive",
+
+        "intensity":
+            "Emotional Intensity",
+
+        "intensity_prompt":
+            "How intense is this emotion?",
+
+        "thought":
+            "Thought",
+
+        "thought_prompt":
+            "What thoughts are going through your mind?",
+
+        "evidence":
+            "Evidence",
+
+        "supporting_evidence":
+            "What evidence supports your interpretation?",
+
+        "challenging_evidence":
+            "What evidence challenges your interpretation?",
+
+        "alternative":
+            "Alternative Perspective",
+
+        "alternative_prompt":
+            "What is another way to view this situation?",
+
+        "response":
+            "Response",
+
+        "response_prompt":
+            "How would you like to respond?",
+
+        "insights":
+            "Insights",
+
+        "insights_prompt":
+            "What did you learn from this reflection?",
+
+        "complete_reflection":
+            "Complete Reflection",
+
+        "feedback_required":
+            "Please complete feedback for your previous reflection "
+            "before starting another reflection.",
+
+        "select_intensity":
+            "Please select an emotion intensity.",
+
+        "select_direction":
+            "Please select whether the emotion is negative or positive.",
+
+        "negative_intensity_error":
+            "A negative emotion must have an intensity between -5 and -1.",
+
+        "positive_intensity_error":
+            "A positive emotion must have an intensity between +1 and +5.",
+
+        # =================================================
+        # DECISIONS
+        # =================================================
+
+        "decision_title":
+            "Rational Decision",
+
+        "decision_description":
+            "Slow down, examine the evidence, and make a deliberate choice.",
+
+        "goal":
+            "Goal",
+
+        "facts":
+            "Facts",
+
+        "assumptions":
+            "Assumptions",
+
+        "option_a":
+            "Option A",
+
+        "option_b":
+            "Option B",
+
+        "benefits":
+            "Benefits",
+
+        "drawbacks":
+            "Drawbacks",
+
+        "short_term":
+            "Short-Term Consequences",
+
+        "long_term":
+            "Long-Term Consequences",
+
+        "decision_choice":
+            "Decision",
+
+        "reasoning":
+            "Reasoning",
+
+        "analyze_decision":
+            "Analyze Decision",
+
+        # =================================================
+        # HISTORY
+        # =================================================
+
+        "reflection_history":
+            "Reflection History",
+
+        "decision_history":
+            "Decision History",
+
+        "no_reflections":
+            "You haven't completed any reflections yet.",
+
+        "no_decisions":
+            "You haven't recorded any decisions yet.",
+
+        "date":
+            "Date",
+
+        # =================================================
+        # FEEDBACK
+        # =================================================
+
+        "feedback_title":
+            "Feedback",
+
+        "feedback_description":
+            "Reflect on how the experience affected you.",
+
+        "feedback_responses":
+            "Feedback Responses",
+
+        "rating":
+            "Rating",
+
+        "comment":
+            "Comment",
+
+        "comment_optional":
+            "Comment (Optional)",
+
+        "after_emotion":
+            "Emotion After",
+
+        "after_intensity":
+            "Intensity After",
+
+        "other":
+            "Other",
+
+        "submit_feedback":
+            "Submit Feedback",
+
+        "feedback_submitted":
+            "Thank you. Your feedback has been submitted.",
+
+        "already_submitted":
+            "You have already submitted feedback for your most recent "
+            "reflection. Complete another reflection before submitting "
+            "new feedback.",
+
+        "feedback_no_reflection":
+            "Please complete a reflection before submitting feedback.",
+
+        "select_rating":
+            "Please select a rating.",
+
+        "select_emotion":
+            "Please select or enter your emotion.",
+
+        "select_emotional_intensity":
+            "Please select your emotional intensity.",
+
+        # =================================================
+        # RESET
+        # =================================================
+
+        "reset_title":
+            "Reset",
+
+        "reset_description":
+            "Take a moment to step away from the situation and reset "
+            "your attention.",
+
+        "reset_purpose":
+            "The purpose of Reset is not to record another reflection. "
+            "It is a short space to pause, breathe, and regain perspective.",
+
+        "reset_no_submission":
+            "There is no submission button because this exercise is "
+            "designed for the moment itself rather than for creating "
+            "another entry in your history.",
+
+        # =================================================
+        # EXPLORE
+        # =================================================
+
+        "explore_title":
+            "Explore",
+
+        "explore_description":
+            "Explore ideas from psychology, philosophy, emotional "
+            "intelligence, decision science, and rational thinking.",
+
+        "emotional_intelligence":
+            "Emotional Intelligence",
+
+        "psychology":
+            "Psychology",
+
+        "philosophy":
+            "Philosophy",
+
+        "decision_science":
+            "Decision Science",
+
+        "rational_thinking":
+            "Rational Thinking",
+
+        "reflection_question":
+            "Reflection Question",
+
+        # =================================================
+        # AUTHENTICATION
+        # =================================================
+
+        "username":
+            "Username",
+
+        "password":
+            "Password",
+
+        "create_account":
+            "Create Account",
+
+        "already_account":
+            "Already have an account?",
+
+        "no_account":
+            "Don't have an account?",
+
+        "incorrect_login":
+            "Incorrect username or password.",
+
+        "username_taken":
+            "That username is already taken.",
+
+        # =================================================
+        # CREATOR
+        # =================================================
+
+        "creator_dashboard":
+            "Creator Dashboard",
+
+        "analytics":
+            "Analytics",
+
+        "overview":
+            "Overview",
+
+        "total_users":
+            "Total Users",
+
+        "total_reflections":
+            "Total Reflections",
+
+        "total_feedback":
+            "Total Feedback",
+
+        "average_rating":
+            "Average Rating",
+
+        "feedback_coverage":
+            "Feedback Coverage",
+
+        "feedback_rate":
+            "Feedback Rate",
+
+        "emotional_impact":
+            "Emotional Impact",
+
+        "before":
+            "Before",
+
+        "after":
+            "After",
+
+        "average_change":
+            "Average Change",
+
+        "improvement":
+            "Improvement",
+
+        "improvement_rate":
+            "Improvement Rate",
+
+        "improved":
+            "Improved",
+
+        "unchanged":
+            "No Change",
+
+        "worsened":
+            "Worsened",
+
+        "emotional_patterns":
+            "Emotional Patterns",
+
+        "emotion_transitions":
+            "Emotion Transitions",
+
+        "starting_emotion":
+            "Most Common Starting Emotion",
+
+        "ending_emotion":
+            "Most Common Ending Emotion",
+
+        "top_starting_emotions":
+            "Top Starting Emotions",
+
+        "top_ending_emotions":
+            "Top Ending Emotions",
+
+        "recent_feedback":
+            "Recent Feedback",
+
+        "growth_signal":
+            "Growth Signal",
+
+        "early_data":
+            "Early Data",
+
+        "encouraging":
+            "Encouraging",
+
+        "mixed_positive":
+            "Mixed but Positive",
+
+        "mixed":
+            "Mixed",
+
+        "privacy_data":
+            "Privacy & Data",
+
+        "anonymous_data":
+            "Only limited, anonymous information is used for aggregate "
+            "analysis. Personal reflections and written responses are "
+            "not displayed here.",
+
+        "insufficient_data":
+            "Not enough data to calculate this yet.",
+
+        # =================================================
+        # SYSTEM
+        # =================================================
+
+        "not_found":
+            "The requested page could not be found.",
+
+        "error":
+            "Something went wrong. Please try again.",
+
+        "language":
+            "Language",
 
     },
 
 
+    # =====================================================
+    # JAPANESE
+    # =====================================================
+
     "ja": {
 
-        # Navigation
+        # =================================================
+        # NAVIGATION
+        # =================================================
+
         "dashboard": "ダッシュボード",
         "reflection": "振り返り",
         "decisions": "意思決定",
@@ -90,48 +620,546 @@ TRANSLATIONS = {
         "login": "ログイン",
         "signup": "新規登録",
 
-        # General
+        # =================================================
+        # GENERAL
+        # =================================================
+
         "welcome": "ようこそ",
-        "recent_reflections": "最近の振り返り",
-        "total_reflections": "振り返りの合計",
-        "common_emotion": "最も多かった感情",
-        "latest_reflection": "最新の振り返り",
-        "no_data": "まだ十分なデータがありません。",
-
-        # Reflection
-        "situation": "状況",
-        "emotion": "感情",
-        "intensity": "感情の強さ",
-        "thought": "考え",
-        "evidence": "根拠",
-        "alternative": "別の視点",
-        "response": "対応",
-        "insights": "気づき",
-
-        # Feedback
-        "feedback_responses": "フィードバック回答",
-        "rating": "評価",
-        "comment": "コメント",
-        "after_emotion": "振り返り後の感情",
-        "after_intensity": "振り返り後の強さ",
+        "continue": "続ける",
         "submit": "送信",
+        "save": "保存",
+        "cancel": "キャンセル",
+        "back": "戻る",
+        "next": "次へ",
+        "done": "完了",
+        "close": "閉じる",
+        "view": "見る",
+        "learn_more": "詳しく見る",
+        "no_data": "まだ十分なデータがありません。",
+        "loading": "読み込み中...",
+        "optional": "任意",
+        "required": "必須",
 
-        # Creator
-        "analytics": "分析",
-        "total_users": "総ユーザー数",
-        "average_rating": "平均評価",
-        "emotional_impact": "感情への影響",
-        "before": "前",
-        "after": "後",
-        "average_change": "平均変化",
-        "improvement": "改善",
-        "emotional_patterns": "感情パターン",
-        "starting_emotion": "最も多かった開始時の感情",
-        "ending_emotion": "最も多かった終了時の感情",
-        "privacy_data": "プライバシーとデータ",
+        # =================================================
+        # DASHBOARD
+        # =================================================
 
+        "rationalmind": "RATIONALMIND",
+
+        "dashboard_eyebrow":
+            "あなたの心のスペース",
+
+        "dashboard_title":
+            "気づきを深める。<br>意識的に選択する。",
+
+        "dashboard_description":
+            "あなたの心は、考え、感情、そして意思決定によって形作られています。"
+            "RationalMindは、そのパターンを理解し、より明確に行動するためのサポートをします。",
+
+        "what_is_rationalmind":
+            "RATIONALMINDとは？",
+
+        "rationalmind_heading":
+            "明確に考える。自分を理解する。意識的に選択する。",
+
+        "rationalmind_description":
+            "RationalMindは、自分の考えや感情を振り返り、重要な選択について、"
+            "より深い気づきを持って考えるためのツールです。",
+
+        "reflect":
+            "振り返る",
+
+        "reflect_description":
+            "自分の経験、感情、考え、反応を理解します。",
+
+        "reason":
+            "考える",
+
+        "reason_description":
+            "事実と推測を分け、さまざまな視点から考えます。",
+
+        "decide":
+            "選択する",
+
+        "decide_description":
+            "選択肢やメリット・デメリットを比較し、目標に沿った選択をします。",
+
+        "rationalmind_principle_short":
+            "RationalMindは、完璧な答えを見つけるためのものではありません。"
+            "自分がどのように考えているのかを、より深く理解するためのものです。",
+
+        "personal_insight":
+            "あなたへの気づき",
+
+        "awareness_creates_change":
+            "気づきが変化を生み出します。",
+
+        "reflection_completed":
+            "回の振り返りを完了しました。",
+
+        "most_frequent_emotion":
+            "最も多かった感情は：",
+
+        "observe_patterns":
+            "感情を判断するのではなく、パターンを観察し続けてみましょう。",
+
+        "your_journey":
+            "あなたの歩み",
+
+        "growth_dashboard":
+            "成長ダッシュボード",
+
+        "growth_description":
+            "振り返りを記録し、自分の考え、感情、意思決定への理解を深めましょう。",
+
+        "reflections_completed":
+            "完了した振り返り",
+
+        "entries_recorded":
+            "記録されたエントリー",
+
+        "latest_reflection":
+            "最新の振り返り",
+
+        "insight":
+            "気づき",
+
+        "todays_practice":
+            "今日の実践",
+
+        "todays_practice_description":
+            "気づきを深めるための活動を一つ選びましょう。",
+
+        "reflect_on_thoughts":
+            "自分の考えを振り返る",
+
+        "reset_attention":
+            "注意をリセットする",
+
+        "analyze_decision":
+            "意思決定を分析する",
+
+        "recent_reflections":
+            "最近の振り返り",
+
+        "complete_first_reflection":
+            "最初の振り返りを完了すると、自分の成長を記録できるようになります。",
+
+        "your_privacy":
+            "あなたのプライバシー",
+
+        "privacy_title":
+            "あなたの情報は個人的なものとして守られます。",
+
+        "privacy_description_1":
+            "RationalMindに入力した個人的な情報、振り返り、考え、意思決定、履歴、"
+            "その他の文章による回答は、クリエイターである私から見ることはできません。",
+
+        "privacy_description_2":
+            "私は、アプリの利用状況を理解するために必要な、感情の傾向や強さなどの"
+            "限定された匿名データのみを確認できます。あなたの個人的な記録を読むことはできません。",
+
+        "rationalmind_principle":
+            "RationalMindの原則",
+
+        "principle_description":
+            "すべての出来事をコントロールすることはできません。"
+            "しかし、その出来事をどのように理解し、どう反応するかは改善できます。",
+
+        # =================================================
+        # REFLECTION
+        # =================================================
+
+        "reflection_title":
+            "振り返り",
+
+        "reflection_description":
+            "どのように対応するかを決める前に、自分の経験について少し立ち止まって考えてみましょう。",
+
+        "situation":
+            "状況",
+
+        "situation_prompt":
+            "何が起こりましたか？",
+
+        "emotion":
+            "感情",
+
+        "emotion_prompt":
+            "今、どのような感情を感じていますか？",
+
+        "emotion_direction":
+            "感情の方向",
+
+        "negative":
+            "ネガティブ",
+
+        "positive":
+            "ポジティブ",
+
+        "intensity":
+            "感情の強さ",
+
+        "intensity_prompt":
+            "この感情はどのくらい強いですか？",
+
+        "thought":
+            "考え",
+
+        "thought_prompt":
+            "今、どのようなことを考えていますか？",
+
+        "evidence":
+            "根拠",
+
+        "supporting_evidence":
+            "あなたの解釈を支持する根拠は何ですか？",
+
+        "challenging_evidence":
+            "あなたの解釈に疑問を投げかける根拠は何ですか？",
+
+        "alternative":
+            "別の視点",
+
+        "alternative_prompt":
+            "この状況を別の方法で見るとしたら、どう考えられますか？",
+
+        "response":
+            "対応",
+
+        "response_prompt":
+            "あなたはどのように対応したいですか？",
+
+        "insights":
+            "気づき",
+
+        "insights_prompt":
+            "この振り返りから何を学びましたか？",
+
+        "complete_reflection":
+            "振り返りを完了する",
+
+        "feedback_required":
+            "新しい振り返りを始める前に、前回の振り返りについてフィードバックを送信してください。",
+
+        "select_intensity":
+            "感情の強さを選択してください。",
+
+        "select_direction":
+            "感情がネガティブかポジティブかを選択してください。",
+
+        "negative_intensity_error":
+            "ネガティブな感情の強さは -5 から -1 の範囲で指定してください。",
+
+        "positive_intensity_error":
+            "ポジティブな感情の強さは +1 から +5 の範囲で指定してください。",
+
+        # =================================================
+        # DECISIONS
+        # =================================================
+
+        "decision_title":
+            "合理的な意思決定",
+
+        "decision_description":
+            "一度立ち止まり、根拠を確認し、意識的に選択しましょう。",
+
+        "goal":
+            "目標",
+
+        "facts":
+            "事実",
+
+        "assumptions":
+            "前提・推測",
+
+        "option_a":
+            "選択肢A",
+
+        "option_b":
+            "選択肢B",
+
+        "benefits":
+            "メリット",
+
+        "drawbacks":
+            "デメリット",
+
+        "short_term":
+            "短期的な結果",
+
+        "long_term":
+            "長期的な結果",
+
+        "decision_choice":
+            "決定",
+
+        "reasoning":
+            "理由",
+
+        "analyze_decision":
+            "意思決定を分析する",
+
+        # =================================================
+        # HISTORY
+        # =================================================
+
+        "reflection_history":
+            "振り返り履歴",
+
+        "decision_history":
+            "意思決定履歴",
+
+        "no_reflections":
+            "まだ振り返りを完了していません。",
+
+        "no_decisions":
+            "まだ意思決定を記録していません。",
+
+        "date":
+            "日付",
+
+        # =================================================
+        # FEEDBACK
+        # =================================================
+
+        "feedback_title":
+            "フィードバック",
+
+        "feedback_description":
+            "この体験があなたにどのような影響を与えたか振り返ってみましょう。",
+
+        "feedback_responses":
+            "フィードバック回答",
+
+        "rating":
+            "評価",
+
+        "comment":
+            "コメント",
+
+        "comment_optional":
+            "コメント（任意）",
+
+        "after_emotion":
+            "振り返り後の感情",
+
+        "after_intensity":
+            "振り返り後の感情の強さ",
+
+        "other":
+            "その他",
+
+        "submit_feedback":
+            "フィードバックを送信",
+
+        "feedback_submitted":
+            "ありがとうございます。フィードバックが送信されました。",
+
+        "already_submitted":
+            "最新の振り返りについては、すでにフィードバックを送信しています。"
+            "新しい振り返りを完了すると、次のフィードバックを送信できます。",
+
+        "feedback_no_reflection":
+            "フィードバックを送信する前に、振り返りを完了してください。",
+
+        "select_rating":
+            "評価を選択してください。",
+
+        "select_emotion":
+            "感情を選択または入力してください。",
+
+        "select_emotional_intensity":
+            "感情の強さを選択してください。",
+
+        # =================================================
+        # RESET
+        # =================================================
+
+        "reset_title":
+            "リセット",
+
+        "reset_description":
+            "少しの間、状況から離れて注意をリセットしましょう。",
+
+        "reset_purpose":
+            "リセットは、新しい振り返りを記録するためのものではありません。"
+            "立ち止まり、呼吸し、視点を取り戻すための短い時間です。",
+
+        "reset_no_submission":
+            "この機能には送信ボタンがありません。この時間は履歴に新しい記録を残すためではなく、"
+            "その瞬間に立ち止まるためのものだからです。",
+
+        # =================================================
+        # EXPLORE
+        # =================================================
+
+        "explore_title":
+            "学ぶ",
+
+        "explore_description":
+            "心理学、哲学、感情知能、意思決定科学、合理的思考について学びましょう。",
+
+        "emotional_intelligence":
+            "感情知能",
+
+        "psychology":
+            "心理学",
+
+        "philosophy":
+            "哲学",
+
+        "decision_science":
+            "意思決定科学",
+
+        "rational_thinking":
+            "合理的思考",
+
+        "reflection_question":
+            "振り返りの質問",
+
+        # =================================================
+        # AUTHENTICATION
+        # =================================================
+
+        "username":
+            "ユーザー名",
+
+        "password":
+            "パスワード",
+
+        "create_account":
+            "アカウントを作成",
+
+        "already_account":
+            "すでにアカウントをお持ちですか？",
+
+        "no_account":
+            "アカウントをお持ちではありませんか？",
+
+        "incorrect_login":
+            "ユーザー名またはパスワードが正しくありません。",
+
+        "username_taken":
+            "そのユーザー名はすでに使用されています。",
+
+        # =================================================
+        # CREATOR
+        # =================================================
+
+        "creator_dashboard":
+            "クリエイターダッシュボード",
+
+        "analytics":
+            "分析",
+
+        "overview":
+            "概要",
+
+        "total_users":
+            "総ユーザー数",
+
+        "total_reflections":
+            "総振り返り数",
+
+        "total_feedback":
+            "総フィードバック数",
+
+        "average_rating":
+            "平均評価",
+
+        "feedback_coverage":
+            "フィードバック取得率",
+
+        "feedback_rate":
+            "フィードバック率",
+
+        "emotional_impact":
+            "感情への影響",
+
+        "before":
+            "前",
+
+        "after":
+            "後",
+
+        "average_change":
+            "平均変化",
+
+        "improvement":
+            "改善",
+
+        "improvement_rate":
+            "改善率",
+
+        "improved":
+            "改善",
+
+        "unchanged":
+            "変化なし",
+
+        "worsened":
+            "悪化",
+
+        "emotional_patterns":
+            "感情パターン",
+
+        "emotion_transitions":
+            "感情の変化",
+
+        "starting_emotion":
+            "最も多かった開始時の感情",
+
+        "ending_emotion":
+            "最も多かった終了時の感情",
+
+        "top_starting_emotions":
+            "主な開始時の感情",
+
+        "top_ending_emotions":
+            "主な終了時の感情",
+
+        "recent_feedback":
+            "最近のフィードバック",
+
+        "growth_signal":
+            "成長シグナル",
+
+        "early_data":
+            "初期データ",
+
+        "encouraging":
+            "良好な傾向",
+
+        "mixed_positive":
+            "混合的だがポジティブ",
+
+        "mixed":
+            "混合的",
+
+        "privacy_data":
+            "プライバシーとデータ",
+
+        "anonymous_data":
+            "集計分析には限定された匿名データのみが使用されます。"
+            "個人的な振り返りや文章による回答はここには表示されません。",
+
+        "insufficient_data":
+            "まだ計算に十分なデータがありません。",
+
+        # =================================================
+        # SYSTEM
+        # =================================================
+
+        "not_found":
+            "指定されたページが見つかりません。",
+
+        "error":
+            "問題が発生しました。もう一度お試しください。",
+
+        "language":
+            "言語",
     }
-
 }
 # =========================================================
 # TIMEZONE
@@ -2748,6 +3776,8 @@ def creator():
     finally:
 
         connection.close()
+
+
 # =========================================================
 # LANGUAGE
 # =========================================================
