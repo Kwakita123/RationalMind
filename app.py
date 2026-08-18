@@ -1968,91 +1968,126 @@ def creator():
 
 
         # =====================================================
-        # BASIC USAGE
+        # OVERVIEW
         # =====================================================
 
         total_users = connection.execute(
-            "SELECT COUNT(*) FROM users"
+            """
+            SELECT COUNT(*)
+            FROM users
+            """
         ).fetchone()[0]
 
         total_reflections = connection.execute(
-            "SELECT COUNT(*) FROM reflections"
+            """
+            SELECT COUNT(*)
+            FROM reflections
+            """
         ).fetchone()[0]
 
         total_feedback = connection.execute(
-            "SELECT COUNT(*) FROM feedback"
+            """
+            SELECT COUNT(*)
+            FROM feedback
+            """
         ).fetchone()[0]
-
-
-        # =====================================================
-        # AVERAGE RATING
-        # =====================================================
 
         average_rating = connection.execute(
             """
             SELECT AVG(rating)
             FROM feedback
-            WHERE rating IS NOT NULL
             """
         ).fetchone()[0]
 
         if average_rating is not None:
-            average_rating = round(average_rating, 1)
+            average_rating = round(float(average_rating), 1)
 
 
         # =====================================================
-        # EMOTIONAL COMPARISONS
+        # FEEDBACK COVERAGE
+        # =====================================================
+        # Counts reflections that actually have feedback.
+        # This prevents the percentage from becoming misleading
+        # if old/duplicate data exists.
+
+        feedback_reflections = connection.execute(
+            """
+            SELECT COUNT(DISTINCT reflection_id)
+            FROM feedback
+            WHERE reflection_id IS NOT NULL
+            """
+        ).fetchone()[0]
+
+        feedback_rate = None
+
+        if total_reflections > 0:
+
+            feedback_rate = round(
+                (
+                    feedback_reflections
+                    / total_reflections
+                ) * 100
+            )
+
+
+        # =====================================================
+        # VALID BEFORE / AFTER COMPARISONS
         # =====================================================
 
         comparison_rows = connection.execute(
             """
             SELECT
+                f.id,
                 r.emotion AS before_emotion,
                 r.intensity AS before_intensity,
-                f.after_emotion AS after_emotion,
-                f.after_intensity AS after_intensity
+                f.after_emotion,
+                f.after_intensity,
+                f.rating,
+                f.comment,
+                f.created_at
             FROM feedback f
             JOIN reflections r
                 ON r.id = f.reflection_id
             WHERE
                 r.intensity IS NOT NULL
                 AND f.after_intensity IS NOT NULL
+            ORDER BY f.id DESC
             """
         ).fetchall()
 
 
         # =====================================================
-        # ANALYZE EMOTIONAL CHANGE
+        # OUTCOME COUNTS
         # =====================================================
 
-        negative_before = []
-        negative_after = []
-
-        positive_before = []
-        positive_after = []
-
-        improved_negative = 0
-        improved_positive = 0
+        improved = 0
         unchanged = 0
         worsened = 0
 
+        negative_before_values = []
+        negative_after_values = []
+
+        positive_before_values = []
+        positive_after_values = []
+
         comparisons = []
+
 
         for row in comparison_rows:
 
             try:
-                before = int(row["before_intensity"])
-                after = int(row["after_intensity"])
+
+                before = int(
+                    row["before_intensity"]
+                )
+
+                after = int(
+                    row["after_intensity"]
+                )
+
             except (TypeError, ValueError):
+
                 continue
-
-            before_emotion = (
-                row["before_emotion"] or ""
-            ).strip()
-
-            after_emotion = (
-                row["after_emotion"] or ""
-            ).strip()
 
 
             # -------------------------------------------------
@@ -2061,20 +2096,18 @@ def creator():
 
             if before < 0:
 
-                negative_before.append(abs(before))
-                negative_after.append(abs(after))
+                negative_before_values.append(
+                    abs(before)
+                )
 
-                # Moving toward zero = improvement
-                change = abs(before) - abs(after)
+                negative_after_values.append(
+                    abs(after)
+                )
 
-                if change > 0:
-                    improved_negative += 1
-
-                elif change == 0:
-                    unchanged += 1
-
-                else:
-                    worsened += 1
+                change = (
+                    abs(before)
+                    - abs(after)
+                )
 
 
             # -------------------------------------------------
@@ -2083,43 +2116,119 @@ def creator():
 
             elif before > 0:
 
-                positive_before.append(before)
-                positive_after.append(after)
+                positive_before_values.append(
+                    before
+                )
 
-                # Increasing positive intensity = improvement
-                change = after - before
+                positive_after_values.append(
+                    after
+                )
 
-                if change > 0:
-                    improved_positive += 1
+                change = (
+                    after
+                    - before
+                )
 
-                elif change == 0:
-                    unchanged += 1
+            else:
 
-                else:
-                    worsened += 1
+                continue
+
+
+            # -------------------------------------------------
+            # CLASSIFY OUTCOME
+            # -------------------------------------------------
+
+            if change > 0:
+
+                outcome = "Improved"
+                improved += 1
+
+            elif change == 0:
+
+                outcome = "No change"
+                unchanged += 1
+
+            else:
+
+                outcome = "Worsened"
+                worsened += 1
 
 
             comparisons.append({
-                "before": before,
-                "after": after,
-                "before_emotion": before_emotion,
-                "after_emotion": after_emotion
+
+                "before_emotion":
+                    row["before_emotion"],
+
+                "after_emotion":
+                    row["after_emotion"],
+
+                "before":
+                    before,
+
+                "after":
+                    after,
+
+                "change":
+                    change,
+
+                "outcome":
+                    outcome
+
             })
+
+
+        # =====================================================
+        # COMPARISON TOTAL
+        # =====================================================
+
+        total_comparisons = len(
+            comparisons
+        )
+
+
+        # =====================================================
+        # IMPROVEMENT RATE
+        # =====================================================
+
+        improvement_percentage = None
+
+        if total_comparisons > 0:
+
+            improvement_percentage = round(
+                (
+                    improved
+                    / total_comparisons
+                ) * 100
+            )
 
 
         # =====================================================
         # NEGATIVE EMOTIONAL INTENSITY
         # =====================================================
 
-        if negative_before:
+        average_negative_before = None
+        average_negative_after = None
+        negative_change = None
+
+        if negative_before_values:
 
             average_negative_before = round(
-                sum(negative_before) / len(negative_before),
+                sum(
+                    negative_before_values
+                )
+                / len(
+                    negative_before_values
+                ),
                 1
             )
 
             average_negative_after = round(
-                sum(negative_after) / len(negative_after),
+                sum(
+                    negative_after_values
+                )
+                / len(
+                    negative_after_values
+                ),
                 1
             )
 
@@ -2129,26 +2238,34 @@ def creator():
                 1
             )
 
-        else:
-
-            average_negative_before = None
-            average_negative_after = None
-            negative_change = None
-
 
         # =====================================================
         # POSITIVE EMOTIONAL INTENSITY
         # =====================================================
 
-        if positive_before:
+        average_positive_before = None
+        average_positive_after = None
+        positive_change = None
+
+        if positive_before_values:
 
             average_positive_before = round(
-                sum(positive_before) / len(positive_before),
+                sum(
+                    positive_before_values
+                )
+                / len(
+                    positive_before_values
+                ),
                 1
             )
 
             average_positive_after = round(
-                sum(positive_after) / len(positive_after),
+                sum(
+                    positive_after_values
+                )
+                / len(
+                    positive_after_values
+                ),
                 1
             )
 
@@ -2158,43 +2275,9 @@ def creator():
                 1
             )
 
-        else:
-
-            average_positive_before = None
-            average_positive_after = None
-            positive_change = None
-
 
         # =====================================================
-        # IMPROVEMENT PERCENTAGE
-        # =====================================================
-
-        total_comparisons = (
-            improved_negative
-            + improved_positive
-            + unchanged
-            + worsened
-        )
-
-        if total_comparisons > 0:
-
-            improvement_percentage = round(
-                (
-                    (
-                        improved_negative
-                        + improved_positive
-                    )
-                    / total_comparisons
-                ) * 100
-            )
-
-        else:
-
-            improvement_percentage = None
-
-
-        # =====================================================
-        # EMOTIONAL TRANSITIONS
+        # EMOTION TRANSITIONS
         # =====================================================
 
         transition_rows = connection.execute(
@@ -2214,7 +2297,9 @@ def creator():
             GROUP BY
                 TRIM(r.emotion),
                 TRIM(f.after_emotion)
-            ORDER BY amount DESC
+            ORDER BY
+                amount DESC
+            LIMIT 10
             """
         ).fetchall()
 
@@ -2223,9 +2308,16 @@ def creator():
         for row in transition_rows:
 
             transitions.append({
-                "before": row["before_emotion"],
-                "after": row["after_emotion"],
-                "amount": row["amount"]
+
+                "before":
+                    row["before_emotion"],
+
+                "after":
+                    row["after_emotion"],
+
+                "amount":
+                    row["amount"]
+
             })
 
 
@@ -2270,6 +2362,46 @@ def creator():
 
 
         # =====================================================
+        # TOP STARTING EMOTIONS
+        # =====================================================
+
+        starting_emotions = connection.execute(
+            """
+            SELECT
+                TRIM(emotion) AS emotion,
+                COUNT(*) AS amount
+            FROM reflections
+            WHERE
+                emotion IS NOT NULL
+                AND TRIM(emotion) != ''
+            GROUP BY TRIM(emotion)
+            ORDER BY amount DESC
+            LIMIT 5
+            """
+        ).fetchall()
+
+
+        # =====================================================
+        # TOP ENDING EMOTIONS
+        # =====================================================
+
+        ending_emotions = connection.execute(
+            """
+            SELECT
+                TRIM(after_emotion) AS emotion,
+                COUNT(*) AS amount
+            FROM feedback
+            WHERE
+                after_emotion IS NOT NULL
+                AND TRIM(after_emotion) != ''
+            GROUP BY TRIM(after_emotion)
+            ORDER BY amount DESC
+            LIMIT 5
+            """
+        ).fetchall()
+
+
+        # =====================================================
         # RECENT FEEDBACK
         # =====================================================
 
@@ -2291,28 +2423,61 @@ def creator():
             """
         ).fetchall()
 
+
+        # =====================================================
+        # FORMAT TIMESTAMPS
+        # =====================================================
+
         recent_feedback = []
 
         for item in recent_feedback_rows:
 
             feedback_data = dict(item)
 
-            if feedback_data["created_at"]:
+            timestamp = feedback_data.get(
+                "created_at"
+            )
 
-                created = feedback_data["created_at"]
+            if timestamp:
 
-                if isinstance(created, datetime):
+                try:
+
+                    if isinstance(
+                        timestamp,
+                        datetime
+                    ):
+
+                        if timestamp.tzinfo is None:
+
+                            timestamp = timestamp.replace(
+                                tzinfo=timezone.utc
+                            )
+
+                    else:
+
+                        timestamp = datetime.strptime(
+                            str(timestamp),
+                            "%Y-%m-%d %H:%M:%S"
+                        ).replace(
+                            tzinfo=timezone.utc
+                        )
+
+                    timestamp = timestamp.astimezone(
+                        ZoneInfo("America/Chicago")
+                    )
 
                     feedback_data["created_at"] = (
-                        created
-                        .replace(tzinfo=ZoneInfo("UTC"))
-                        .astimezone(
-                            ZoneInfo("America/Chicago")
-                        )
-                        .strftime(
+                        timestamp.strftime(
                             "%B %d, %Y at %I:%M %p"
                         )
                     )
+
+                except (
+                    ValueError,
+                    TypeError
+                ):
+
+                    pass
 
             recent_feedback.append(
                 feedback_data
@@ -2320,17 +2485,77 @@ def creator():
 
 
         # =====================================================
+        # GROWTH SIGNAL
+        # =====================================================
+
+        if total_comparisons < 5:
+
+            growth_signal = (
+                "The dataset is still developing. "
+                "Continue collecting reflections and feedback "
+                "before drawing strong conclusions."
+            )
+
+            growth_level = "Early data"
+
+        elif improvement_percentage >= 70:
+
+            growth_signal = (
+                "Most reported comparisons currently move "
+                "in the intended direction. This is an "
+                "encouraging descriptive pattern, although "
+                "the data does not establish causation."
+            )
+
+            growth_level = "Encouraging"
+
+        elif improvement_percentage >= 50:
+
+            growth_signal = (
+                "More reported comparisons currently improve "
+                "than worsen. Continued data collection will "
+                "help determine whether this pattern remains "
+                "consistent."
+            )
+
+            growth_level = "Mixed but positive"
+
+        else:
+
+            growth_signal = (
+                "Reported outcomes are currently mixed. "
+                "More data is needed to determine whether "
+                "a stable pattern exists."
+            )
+
+            growth_level = "Mixed"
+
+
+        # =====================================================
         # RETURN DASHBOARD
         # =====================================================
 
         return render_template(
+
             "creator.html",
 
+            # Overview
             total_users=total_users,
             total_reflections=total_reflections,
             total_feedback=total_feedback,
             average_rating=average_rating,
 
+            # Coverage
+            feedback_reflections=
+                feedback_reflections,
+
+            feedback_rate=
+                feedback_rate,
+
+            total_comparisons=
+                total_comparisons,
+
+            # Impact
             average_negative_before=
                 average_negative_before,
 
@@ -2349,23 +2574,16 @@ def creator():
             positive_change=
                 positive_change,
 
+            # Outcomes
+            improved=improved,
+            unchanged=unchanged,
+            worsened=worsened,
+
             improvement_percentage=
                 improvement_percentage,
 
-            improved_negative=
-                improved_negative,
-
-            improved_positive=
-                improved_positive,
-
-            unchanged=
-                unchanged,
-
-            worsened=
-                worsened,
-
-            transitions=
-                transitions,
+            # Patterns
+            transitions=transitions,
 
             starting_emotion=
                 starting_emotion,
@@ -2373,8 +2591,23 @@ def creator():
             ending_emotion=
                 ending_emotion,
 
+            starting_emotions=
+                starting_emotions,
+
+            ending_emotions=
+                ending_emotions,
+
+            # Feedback
             recent_feedback=
-                recent_feedback
+                recent_feedback,
+
+            # Growth
+            growth_signal=
+                growth_signal,
+
+            growth_level=
+                growth_level
+
         )
 
     finally:
