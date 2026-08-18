@@ -2748,9 +2748,14 @@ def creator():
     finally:
 
         connection.close()
-    @app.route("/set-language/<language>")
-    def set_language(language):
-     if language not in TRANSLATIONS:
+# =========================================================
+# LANGUAGE
+# =========================================================
+
+@app.route("/set-language/<language>")
+def set_language(language):
+
+    if language not in TRANSLATIONS:
         language = "en"
 
     session["language"] = language
@@ -2758,6 +2763,7 @@ def creator():
     return redirect(
         request.referrer or "/"
     )
+
 # =========================================================
 # INITIALIZE DATABASE
 # =========================================================
