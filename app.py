@@ -7,12 +7,128 @@ from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from analysis import analyze_reflection
 
+# =========================================================
+# LANGUAGE / TRANSLATIONS
+# =========================================================
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+TRANSLATIONS = {
 
-if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL environment variable is not set.")
+    "en": {
 
+        # Navigation
+        "dashboard": "Dashboard",
+        "reflection": "Reflection",
+        "decisions": "Decisions",
+        "history": "History",
+        "explore": "Explore",
+        "reset": "Reset",
+        "feedback": "Feedback",
+        "creator": "Creator",
+        "logout": "Logout",
+        "login": "Login",
+        "signup": "Sign Up",
+
+        # General
+        "welcome": "Welcome",
+        "recent_reflections": "Recent Reflections",
+        "total_reflections": "Total Reflections",
+        "common_emotion": "Most Common Emotion",
+        "latest_reflection": "Latest Reflection",
+        "no_data": "Not enough data yet.",
+
+        # Reflection
+        "situation": "Situation",
+        "emotion": "Emotion",
+        "intensity": "Emotional Intensity",
+        "thought": "Thought",
+        "evidence": "Evidence",
+        "alternative": "Alternative Perspective",
+        "response": "Response",
+        "insights": "Insights",
+
+        # Feedback
+        "feedback_responses": "Feedback Responses",
+        "rating": "Rating",
+        "comment": "Comment",
+        "after_emotion": "Emotion After",
+        "after_intensity": "Intensity After",
+        "submit": "Submit",
+
+        # Creator
+        "analytics": "Analytics",
+        "total_users": "Total Users",
+        "average_rating": "Average Rating",
+        "emotional_impact": "Emotional Impact",
+        "before": "Before",
+        "after": "After",
+        "average_change": "Average Change",
+        "improvement": "Improvement",
+        "emotional_patterns": "Emotional Patterns",
+        "starting_emotion": "Most Common Starting Emotion",
+        "ending_emotion": "Most Common Ending Emotion",
+        "privacy_data": "Privacy & Data",
+
+    },
+
+
+    "ja": {
+
+        # Navigation
+        "dashboard": "ダッシュボード",
+        "reflection": "振り返り",
+        "decisions": "意思決定",
+        "history": "履歴",
+        "explore": "学ぶ",
+        "reset": "リセット",
+        "feedback": "フィードバック",
+        "creator": "クリエイター",
+        "logout": "ログアウト",
+        "login": "ログイン",
+        "signup": "新規登録",
+
+        # General
+        "welcome": "ようこそ",
+        "recent_reflections": "最近の振り返り",
+        "total_reflections": "振り返りの合計",
+        "common_emotion": "最も多かった感情",
+        "latest_reflection": "最新の振り返り",
+        "no_data": "まだ十分なデータがありません。",
+
+        # Reflection
+        "situation": "状況",
+        "emotion": "感情",
+        "intensity": "感情の強さ",
+        "thought": "考え",
+        "evidence": "根拠",
+        "alternative": "別の視点",
+        "response": "対応",
+        "insights": "気づき",
+
+        # Feedback
+        "feedback_responses": "フィードバック回答",
+        "rating": "評価",
+        "comment": "コメント",
+        "after_emotion": "振り返り後の感情",
+        "after_intensity": "振り返り後の強さ",
+        "submit": "送信",
+
+        # Creator
+        "analytics": "分析",
+        "total_users": "総ユーザー数",
+        "average_rating": "平均評価",
+        "emotional_impact": "感情への影響",
+        "before": "前",
+        "after": "後",
+        "average_change": "平均変化",
+        "improvement": "改善",
+        "emotional_patterns": "感情パターン",
+        "starting_emotion": "最も多かった開始時の感情",
+        "ending_emotion": "最も多かった終了時の感情",
+        "privacy_data": "プライバシーとデータ",
+
+    }
+
+}
 # =========================================================
 # TIMEZONE
 # =========================================================
@@ -206,6 +322,21 @@ def inject_creator_status():
 
     return {
         "is_creator": username == CREATOR_USERNAME
+    }
+@app.context_processor
+def inject_language():
+
+    language = session.get(
+        "language",
+        "en"
+    )
+
+    if language not in TRANSLATIONS:
+        language = "en"
+
+    return {
+        "language": language,
+        "t": TRANSLATIONS[language]
     }
 # =========================================================
 # DATABASE
@@ -2613,6 +2744,16 @@ def creator():
     finally:
 
         connection.close()
+    @app.route("/set-language/<language>")
+    def set_language(language):
+     if language not in TRANSLATIONS:
+        language = "en"
+
+    session["language"] = language
+
+    return redirect(
+        request.referrer or "/"
+    )
 # =========================================================
 # INITIALIZE DATABASE
 # =========================================================
