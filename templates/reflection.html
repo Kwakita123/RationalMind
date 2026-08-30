@@ -1,418 +1,457 @@
 {% extends "base.html" %}
 
 {% block title %}
-Reflection | RationalMind
+Daily Reflection | RationalMind
 {% endblock %}
 
 {% block content %}
 
 <main class="page-container">
 
-    <section class="dashboard-header">
+```
+<!-- ================================================= -->
+<!-- HEADER -->
+<!-- ================================================= -->
 
-        <p class="eyebrow">
-            RATIONALMIND
-        </p>
+<section class="dashboard-header">
 
-        <h1>
-            Daily Reflection
-        </h1>
+    <p class="eyebrow">
+        RationalMind
+    </p>
+
+    <h1>
+        Daily Reflection
+    </h1>
+
+    <p>
+        Take a moment to examine your thoughts, emotions, and reactions.
+    </p>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- PRIVACY NOTICE -->
+<!-- ================================================= -->
+
+<div class="privacy-notice">
+
+    <strong>🔒 Your Privacy</strong>
+
+    Your personal reflection content is private and is not viewed by the
+    creator. Only anonymous emotional data and aggregate information may
+    be used for analytics.
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- FEEDBACK REQUIRED MESSAGE -->
+<!-- ================================================= -->
+
+{% if feedback_required %}
+
+    <section class="feedback-required">
+
+        <h2>
+            Feedback Required
+        </h2>
 
         <p>
-            Step back from your emotions and examine your experience objectively.
+            Before creating another reflection, please complete the
+            feedback for your most recent reflection.
         </p>
+
+        <p>
+            Your feedback helps improve RationalMind while keeping your
+            personal reflection content private.
+        </p>
+
+        <a href="/feedback" class="button">
+            Complete Feedback
+        </a>
 
     </section>
 
+{% endif %}
 
-    <!-- ================================================= -->
-    <!-- PRIVACY NOTICE -->
-    <!-- ================================================= -->
 
-    <div class="privacy-notice">
+<!-- ================================================= -->
+<!-- MESSAGE -->
+<!-- ================================================= -->
 
-        <strong>🔒 Privacy Notice</strong>
+{% if message %}
 
-        Your personal information and written content in RationalMind—including
-        reflections, decisions, history, and other responses—are not viewable by
-        the creator. Only anonymous emotional information, such as emotion and
-        intensity, may be used for general patterns and analytics. Your
-        information is not displayed with your name or other identifying
-        information.
-
+    <div class="success-message">
+        {{ message }}
     </div>
 
-
-    <!-- ================================================= -->
-    <!-- FEEDBACK REQUIRED MESSAGE -->
-    <!-- ================================================= -->
-
-    {% if feedback_required %}
-
-        <section class="feedback-required">
-
-            <h2>
-                Feedback Required
-            </h2>
-
-            <p>
-                Before starting another reflection, please complete
-                the feedback form for your previous reflection.
-            </p>
-
-            <p>
-                This helps RationalMind measure whether the reflection
-                changed your emotional state and gives you an opportunity
-                to evaluate the reflection experience.
-            </p>
-
-            <a href="/feedback" class="button">
-                Complete Feedback
-            </a>
-
-        </section>
-
-    {% endif %}
+{% endif %}
 
 
-    <!-- ================================================= -->
-    <!-- MESSAGE -->
-    <!-- ================================================= -->
+<!-- ================================================= -->
+<!-- REFLECTION FORM -->
+<!-- ================================================= -->
 
-    {% if message %}
+{% if not feedback_required %}
 
-        <div class="success-message">
-            {{ message }}
-        </div>
+    <form method="POST">
 
-    {% endif %}
+        <!-- 01 -->
 
+        <label>
+            01 — What happened?
+        </label>
 
-    <!-- ================================================= -->
-    <!-- REFLECTION FORM -->
-    <!-- ================================================= -->
+        <p class="form-help">
+            Describe the situation or event that you want to reflect on.
+        </p>
 
-    {% if not feedback_required %}
-
-        <form method="POST">
-
-
-            <!-- 01 -->
-
-            <label>
-                01 — What happened?
-            </label>
-
-            <p class="form-help">
-                Describe the situation as objectively as possible.
-                Focus on observable events rather than interpretations.
-            </p>
-
-            <textarea
-                name="situation"
-                required></textarea>
+        <textarea
+            name="situation"
+            required></textarea>
 
 
-            <!-- 02 -->
+        <!-- 02 -->
+
+        <label>
+            02 — What are you feeling?
+        </label>
+
+        <p class="form-help">
+            Identify the emotion you are experiencing.
+        </p>
+
+        <input
+            type="text"
+            name="emotion"
+            id="emotion"
+            required>
+
+
+        <!-- EMOTION DIRECTION -->
+
+        <label>
+            Is this emotion positive or negative?
+        </label>
+
+        <p class="form-help">
+            Choose the direction of the emotion before selecting its
+            intensity.
+        </p>
+
+
+        <div class="rating-options">
 
             <label>
-                02 — What are you feeling?
-            </label>
-
-            <p class="form-help">
-                Name the emotion rather than judging it.
-            </p>
-
-            <input
-                type="text"
-                name="emotion"
-                id="emotion"
-                required>
-
-
-            <!-- EMOTION DIRECTION -->
-
-            <label>
-                Is this emotion generally negative or positive?
-            </label>
-
-            <p class="form-help">
-                Choose the direction that best represents how this emotion
-                feels to you in this situation.
-            </p>
-
-
-            <div class="rating-options">
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="emotion_direction"
-                        value="negative"
-                        required
-                        onchange="setIntensityRange('negative')">
-
-                    Negative
-
-                </label>
-
-
-                <label>
-
-                    <input
-                        type="radio"
-                        name="emotion_direction"
-                        value="positive"
-                        onchange="setIntensityRange('positive')">
-
-                    Positive
-
-                </label>
-
-            </div>
-
-
-            <!-- INTENSITY -->
-
-            <label for="intensity">
-                How intense is the emotion?
-            </label>
-
-            <p class="form-help">
-                -5 represents a very strongly negative emotional state,
-                while +5 represents a very strongly positive emotional state.
-                0 represents a neutral state.
-            </p>
-
-
-            <div class="intensity-container">
-
-                <span id="intensity-min">
-                    -5
-                </span>
-
 
                 <input
-                    type="range"
-                    name="intensity"
-                    id="intensity"
-                    min="-5"
-                    max="-1"
-                    value="-3"
-                    step="1"
-                    disabled
-                    oninput="updateIntensityValue(this.value)"
-                >
+                    type="radio"
+                    name="emotion_direction"
+                    value="negative"
+                    required
+                    onchange="setIntensityRange('negative')">
 
+                Negative
 
-                <span id="intensity-max">
-                    -1
-                </span>
-
-            </div>
-
-
-            <output
-                id="intensity-value"
-                for="intensity">
-
-                Select an emotion direction
-
-            </output>
-
-
-            <!-- 03 -->
-
-            <label>
-                03 — What thought is behind the emotion?
             </label>
 
-            <p class="form-help">
-                What are you telling yourself about the situation?
-            </p>
-
-            <textarea
-                name="thought"
-                required></textarea>
-
-
-            <!-- 04 -->
 
             <label>
-                04 — What evidence supports that thought?
+
+                <input
+                    type="radio"
+                    name="emotion_direction"
+                    value="positive"
+                    onchange="setIntensityRange('positive')">
+
+                Positive
+
             </label>
 
-            <p class="form-help">
-                Look for specific facts rather than assumptions.
-            </p>
-
-            <textarea
-                name="evidence"
-                required></textarea>
+        </div>
 
 
-            <!-- 05 -->
+        <!-- INTENSITY -->
 
-            <label>
-                05 — What evidence challenges it?
-            </label>
+        <label for="intensity">
+            How intense is the emotion?
+        </label>
 
-            <p class="form-help">
-                Consider information that doesn't fit your original interpretation.
-            </p>
-
-            <textarea
-                name="challenging_evidence"
-                required></textarea>
+        <p class="form-help">
+            Select an intensity from 1 to 5. Negative emotions use
+            negative values and positive emotions use positive values.
+        </p>
 
 
-            <!-- 06 -->
+        <div class="intensity-container">
 
-            <label>
-                06 — What else could be true?
-            </label>
-
-            <p class="form-help">
-                Generate at least one alternative explanation.
-            </p>
-
-            <textarea
-                name="alternative"
-                required></textarea>
+            <span id="intensity-min">
+                -5
+            </span>
 
 
-            <!-- 07 -->
-
-            <label>
-                07 — What response aligns with your goals?
-            </label>
-
-            <p class="form-help">
-                You may not control the situation,
-                but you can choose your next action.
-            </p>
-
-            <textarea
-                name="response"
-                required></textarea>
+            <input
+                type="range"
+                name="intensity"
+                id="intensity"
+                min="-5"
+                max="-1"
+                value="-3"
+                step="1"
+                disabled
+                oninput="updateIntensityValue(this.value)"
+            >
 
 
-            <!-- 08 -->
+            <span id="intensity-max">
+                -1
+            </span>
 
-            <label>
-                08 — What did you learn?
-            </label>
-
-            <p class="form-help">
-                Identify the insight you want to carry forward.
-            </p>
-
-            <textarea
-                name="insights"
-                required></textarea>
+        </div>
 
 
-            <!-- SUBMIT -->
+        <output
+            id="intensity-value"
+            for="intensity">
 
-            <button type="submit">
-                Save Reflection
-            </button>
+            Select an emotion direction
 
-        </form>
-
-    {% endif %}
+        </output>
 
 
-    <!-- ================================================= -->
-    <!-- REFLECTION HISTORY -->
-    <!-- ================================================= -->
+        <!-- 03 -->
 
-    {% if entries %}
+        <label>
+            03 — What thought is behind the emotion?
+        </label>
 
-        <section class="reflection-history">
+        <p class="form-help">
+            Identify the thought, belief, or interpretation connected to
+            your emotion.
+        </p>
 
-            <h2>
-                Previous Reflections
-            </h2>
-
-
-            {% for entry in entries %}
-
-                <article class="reflection-entry">
-
-                    <p class="reflection-date">
-
-                        {{ entry.created_at | illinois_time }}
-
-                    </p>
+        <textarea
+            name="thought"
+            required></textarea>
 
 
-                    <h3>
-                        {{ entry.emotion }}
-                    </h3>
+        <!-- 04 -->
+
+        <label>
+            04 — What evidence supports this thought?
+        </label>
+
+        <p class="form-help">
+            Consider the facts or observations that support your
+            interpretation.
+        </p>
+
+        <textarea
+            name="evidence"
+            required></textarea>
 
 
-                    <p>
-                        <strong>Situation:</strong>
-                        {{ entry.situation }}
-                    </p>
+        <!-- 05 -->
+
+        <label>
+            05 — What evidence challenges this thought?
+        </label>
+
+        <p class="form-help">
+            Consider facts or observations that may contradict or
+            complicate your interpretation.
+        </p>
+
+        <textarea
+            name="challenging_evidence"
+            required></textarea>
 
 
-                    <p>
-                        <strong>Intensity:</strong>
+        <!-- 06 -->
 
-                        {% if entry.intensity|int > 0 %}
-                            +{{ entry.intensity }}
-                        {% else %}
-                            {{ entry.intensity }}
-                        {% endif %}
+        <label>
+            06 — What else could be true?
+        </label>
 
-                    </p>
+        <p class="form-help">
+            Consider another possible explanation for the situation.
+        </p>
 
-
-                    <p>
-                        <strong>Thought:</strong>
-                        {{ entry.thought }}
-                    </p>
+        <textarea
+            name="alternative"
+            required></textarea>
 
 
-                    <p>
-                        <strong>Evidence:</strong>
-                        {{ entry.evidence }}
-                    </p>
+        <!-- 07 -->
+
+        <label>
+            07 — Does your response align with your goals?
+        </label>
+
+        <p class="form-help">
+            Consider whether your reaction helps you move toward the
+            person you want to become.
+        </p>
+
+        <textarea
+            name="response"
+            required></textarea>
 
 
-                    <p>
-                        <strong>Alternative:</strong>
-                        {{ entry.alternative }}
-                    </p>
+        <!-- 08 -->
+
+        <label>
+            08 — What did you learn?
+        </label>
+
+        <p class="form-help">
+            Summarize the most important insight you gained from this
+            reflection.
+        </p>
+
+        <textarea
+            name="insights"
+            required></textarea>
 
 
-                    <p>
-                        <strong>Response:</strong>
-                        {{ entry.response }}
-                    </p>
+        <!-- SUBMIT -->
+
+        <button type="submit">
+            Save Reflection
+        </button>
+
+    </form>
+
+{% endif %}
 
 
-                    <p>
-                        <strong>Insight:</strong>
-                        {{ entry.insights }}
-                    </p>
+<!-- ================================================= -->
+<!-- REFLECTION HISTORY -->
+<!-- ================================================= -->
 
-                </article>
+{% if entries %}
 
-            {% endfor %}
+    <section class="reflection-history">
 
-        </section>
+        <h2>
+            Previous Reflections
+        </h2>
 
-    {% endif %}
+
+        {% for entry in entries %}
+
+            <article class="reflection-entry">
+
+                <p class="reflection-date">
+                    {{ entry.created_at | illinois_time }}
+                </p>
+
+
+                <h3>
+                    {{ entry.emotion }}
+                </h3>
+
+
+                <p>
+
+                    <strong>
+                        Situation:
+                    </strong>
+
+                    {{ entry.situation }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Intensity:
+                    </strong>
+
+                    {% if entry.intensity|int > 0 %}
+
+                        +{{ entry.intensity }}
+
+                    {% else %}
+
+                        {{ entry.intensity }}
+
+                    {% endif %}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Thought:
+                    </strong>
+
+                    {{ entry.thought }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Evidence:
+                    </strong>
+
+                    {{ entry.evidence }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Alternative:
+                    </strong>
+
+                    {{ entry.alternative }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Response:
+                    </strong>
+
+                    {{ entry.response }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Insight:
+                    </strong>
+
+                    {{ entry.insights }}
+
+                </p>
+
+            </article>
+
+        {% endfor %}
+
+    </section>
+
+{% endif %}
+```
 
 </main>
 
-
 <!-- ===================================================== -->
+
 <!-- INTENSITY JAVASCRIPT -->
+
 <!-- ===================================================== -->
 
 <script>
@@ -438,16 +477,11 @@ function setIntensityRange(direction) {
     if (direction === "negative") {
 
         slider.min = "-5";
-
         slider.max = "-1";
-
         slider.value = "-3";
 
-
         minimum.textContent = "-5";
-
         maximum.textContent = "-1";
-
         valueDisplay.textContent = "-3";
 
     }
@@ -456,16 +490,11 @@ function setIntensityRange(direction) {
     else if (direction === "positive") {
 
         slider.min = "1";
-
         slider.max = "5";
-
         slider.value = "3";
 
-
         minimum.textContent = "+1";
-
         maximum.textContent = "+5";
-
         valueDisplay.textContent = "+3";
 
     }
