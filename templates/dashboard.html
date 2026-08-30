@@ -8,529 +8,515 @@ Dashboard | RationalMind
 
 <main class="dashboard-container">
 
-    <!-- ================================================= -->
-    <!-- HERO -->
-    <!-- ================================================= -->
+```
+<!-- ================================================= -->
+<!-- HERO -->
+<!-- ================================================= -->
 
-    <section class="welcome-section">
+<section class="welcome-section">
 
-        <p class="eyebrow">
-            RATIONALMIND
-        </p>
+    <p class="eyebrow">
+        RATIONALMIND
+    </p>
 
-        <h1>
-            Build awareness.<br>
-            Make intentional choices.
-        </h1>
+    <h1>
+        Your journey toward clearer thinking.
+    </h1>
 
-        <p>
-            RationalMind helps you step back from your thoughts and
-            emotions, understand your patterns, and approach decisions
-            with greater clarity.
-        </p>
+    <p>
+        Understand your emotions, reflect on your experiences,
+        and make more rational decisions.
+    </p>
 
-    </section>
-
-
-    <!-- ================================================= -->
-    <!-- GROWTH SNAPSHOT -->
-    <!-- ================================================= -->
-
-    <section>
-
-        <div class="dashboard-header">
-
-            <p class="eyebrow">
-                YOUR PROGRESS
-            </p>
-
-            <h2>
-                Growth Snapshot
-            </h2>
-
-            <p>
-                A simple view of how you have been using RationalMind.
-            </p>
-
-        </div>
+</section>
 
 
-        <div class="stats-grid">
+<!-- ================================================= -->
+<!-- GROWTH SNAPSHOT -->
+<!-- ================================================= -->
 
-            <!-- REFLECTIONS -->
+<section>
 
-            <div class="stat-card">
-
-                <p class="eyebrow">
-                    REFLECTIONS
-                </p>
-
-                <h2>
-                    {{ reflection_count }}
-                </h2>
-
-                <p>
-                    Reflection{% if reflection_count != 1 %}s{% endif %}
-                    completed
-                </p>
-
-            </div>
-
-
-            <!-- COMMON EMOTION -->
-
-            <div class="stat-card">
-
-                <p class="eyebrow">
-                    EMOTIONAL PATTERN
-                </p>
-
-                <h2>
-                    {% if common_emotion %}
-                        {{ common_emotion }}
-                    {% else %}
-                        —
-                    {% endif %}
-                </h2>
-
-                <p>
-                    Most frequently reported emotion
-                </p>
-
-            </div>
-
-
-            <!-- DECISIONS -->
-
-            {% if decision_count is defined %}
-
-            <div class="stat-card">
-
-                <p class="eyebrow">
-                    DECISIONS
-                </p>
-
-                <h2>
-                    {{ decision_count }}
-                </h2>
-
-                <p>
-                    Decision{% if decision_count != 1 %}s{% endif %}
-                    analyzed
-                </p>
-
-            </div>
-
-            {% else %}
-
-            <div class="stat-card">
-
-                <p class="eyebrow">
-                    ACTIVITY
-                </p>
-
-                <h2>
-                    {% if reflection_count > 0 %}
-                        Active
-                    {% else %}
-                        —
-                    {% endif %}
-                </h2>
-
-                <p>
-                    Your reflection journey
-                </p>
-
-            </div>
-
-            {% endif %}
-
-        </div>
-
-    </section>
-
-
-    <!-- ================================================= -->
-    <!-- PERSONAL INSIGHT -->
-    <!-- ================================================= -->
-
-    <section class="insight-card">
+    <div class="dashboard-header">
 
         <p class="eyebrow">
-            PERSONAL INSIGHT
+            YOUR JOURNEY
         </p>
 
         <h2>
-            Awareness creates change.
+            Growth Dashboard
         </h2>
 
-        {% if reflection_count > 0 %}
-
         <p>
-            You have completed
-            <strong>{{ reflection_count }}</strong>
-            reflection{% if reflection_count != 1 %}s{% endif %}.
+            A snapshot of your reflection and decision-making journey.
         </p>
 
-        {% if common_emotion %}
-
-        <p>
-            <strong>{{ common_emotion }}</strong>
-            is currently your most frequently reported emotional state.
-        </p>
-
-        {% endif %}
-
-        <p>
-            Patterns are observations, not judgments. The purpose is
-            to understand yourself more clearly rather than label yourself.
-        </p>
-
-        {% else %}
-
-        <p>
-            Your first reflection will begin creating a record of your
-            thoughts, emotions, and patterns.
-        </p>
-
-        <p>
-            The goal is not to judge what you feel, but to understand it.
-        </p>
-
-        {% endif %}
-
-    </section>
+    </div>
 
 
-    <!-- ================================================= -->
-    <!-- LATEST REFLECTION -->
-    <!-- ================================================= -->
+    <div class="stats-grid">
 
-    {% if latest_reflection %}
+        <!-- REFLECTIONS -->
 
-    <section>
-
-        <div class="dashboard-header">
+        <div class="stat-card">
 
             <p class="eyebrow">
-                MOST RECENT REFLECTION
+                REFLECTIONS COMPLETED
             </p>
 
             <h2>
-                Your Latest Entry
+                {{ reflection_count }}
             </h2>
 
-        </div>
-
-
-        <div class="recent-card">
-
-            <div class="date">
-                {{ latest_reflection["created_at"] }}
-            </div>
-
-            <h3>
-                {{ latest_reflection["emotion"] }}
-            </h3>
-
-            {% if latest_reflection["situation"] %}
-
             <p>
-                {{ latest_reflection["situation"] }}
+                entries recorded
             </p>
 
-            {% endif %}
+        </div>
 
 
-            {% if latest_reflection["insights"] %}
+        <!-- COMMON EMOTION -->
 
-            <div class="insight-card">
+        <div class="stat-card">
 
-                <p class="eyebrow">
-                    REFLECTION INSIGHT
-                </p>
+            <p class="eyebrow">
+                EMOTIONAL PATTERNS
+            </p>
 
-                <p>
-                    {{ latest_reflection["insights"] }}
-                </p>
+            <h2>
+                {% if common_emotion %}
+                    {{ common_emotion }}
+                {% else %}
+                    —
+                {% endif %}
+            </h2>
 
-            </div>
-
-            {% endif %}
+            <p>
+                most frequent emotion
+            </p>
 
         </div>
 
-    </section>
+
+        <!-- DECISIONS -->
+
+        {% if decision_count is defined %}
+
+        <div class="stat-card">
+
+            <p class="eyebrow">
+                DECISIONS
+            </p>
+
+            <h2>
+                {{ decision_count }}
+            </h2>
+
+            <p>
+                decisions analyzed
+            </p>
+
+        </div>
+
+        {% else %}
+
+        <div class="stat-card">
+
+            <p class="eyebrow">
+                YOUR JOURNEY
+            </p>
+
+            <h2>
+                {% if reflection_count > 0 %}
+                    ✓
+                {% else %}
+                    —
+                {% endif %}
+            </h2>
+
+            <p>
+                Continue building awareness.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- PERSONAL INSIGHT -->
+<!-- ================================================= -->
+
+<section class="insight-card">
+
+    <p class="eyebrow">
+        PERSONAL INSIGHT
+    </p>
+
+    <h2>
+        Awareness creates change.
+    </h2>
+
+
+    {% if reflection_count > 0 %}
+
+    <p>
+        You have completed {{ reflection_count }} reflection{% if reflection_count != 1 %}s{% endif %}.
+    </p>
+
+
+    {% if common_emotion %}
+
+    <p>
+        Your most frequent emotion is
+        <strong>{{ common_emotion }}</strong>.
+    </p>
 
     {% endif %}
 
 
-    <!-- ================================================= -->
-    <!-- TODAY'S PRACTICE -->
-    <!-- ================================================= -->
+    <p>
+        Continue observing your thoughts and emotional patterns
+        to better understand yourself.
+    </p>
 
-    <section class="practice-card">
+
+    {% else %}
+
+    <p>
+        Complete your first reflection to begin understanding
+        your emotional patterns.
+    </p>
+
+    <p>
+        RationalMind helps you slow down, observe your thoughts,
+        and approach situations with greater awareness.
+    </p>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- LATEST REFLECTION -->
+<!-- ================================================= -->
+
+{% if latest_reflection %}
+
+<section>
+
+    <div class="dashboard-header">
 
         <p class="eyebrow">
-            CONTINUE YOUR JOURNEY
+            LATEST REFLECTION
         </p>
 
         <h2>
-            Choose your next step.
+            Reflection History
+        </h2>
+
+    </div>
+
+
+    <div class="recent-card">
+
+        <div class="date">
+            {{ latest_reflection["created_at"] }}
+        </div>
+
+        <h3>
+            {{ latest_reflection["emotion"] }}
+        </h3>
+
+
+        {% if latest_reflection["situation"] %}
+
+        <p>
+            {{ latest_reflection["situation"] }}
+        </p>
+
+        {% endif %}
+
+
+        {% if latest_reflection["insights"] %}
+
+        <div class="insight-card">
+
+            <p class="eyebrow">
+                INSIGHT
+            </p>
+
+            <p>
+                {{ latest_reflection["insights"] }}
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- ================================================= -->
+<!-- CONTINUE -->
+<!-- ================================================= -->
+
+<section class="practice-card">
+
+    <p class="eyebrow">
+        TODAY'S PRACTICE
+    </p>
+
+    <h2>
+        Keep building awareness through small moments of reflection.
+    </h2>
+
+
+    <div class="practice-buttons">
+
+        <a href="/reflection">
+            Reflect on Thoughts
+        </a>
+
+        <a href="/decision">
+            Analyze a Decision
+        </a>
+
+        <a href="/reset">
+            Reset Attention
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- RECENT ACTIVITY -->
+<!-- ================================================= -->
+
+<section class="recent-section">
+
+    <div class="dashboard-header">
+
+        <p class="eyebrow">
+            HISTORY
+        </p>
+
+        <h2>
+            Recent Reflections
         </h2>
 
         <p>
-            You do not need to complete everything. Choose the activity
-            that is most useful to you right now.
+            Review your recent thoughts, emotions, and insights.
         </p>
+
+    </div>
+
+
+    {% if recent_reflections %}
+
+        {% for reflection in recent_reflections %}
+
+        <div class="recent-card">
+
+            <div class="date">
+                {{ reflection["created_at"] }}
+            </div>
+
+            <h3>
+                {{ reflection["emotion"] }}
+            </h3>
+
+
+            {% if reflection["situation"] %}
+
+            <p>
+                {{ reflection["situation"] }}
+            </p>
+
+            {% endif %}
+
+
+            {% if reflection["insights"] %}
+
+            <p>
+                <strong>Insight:</strong>
+                {{ reflection["insights"] }}
+            </p>
+
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
 
 
         <div class="practice-buttons">
 
+            <a href="/history">
+                View History
+            </a>
+
+        </div>
+
+
+    {% else %}
+
+        <div class="empty-card">
+
+            <p>
+                Complete your first reflection to begin building your history.
+            </p>
+
             <a href="/reflection">
+                Reflect on Thoughts
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- WHAT RATIONALMIND IS -->
+<!-- ================================================= -->
+
+<section class="about-section">
+
+    <p class="eyebrow">
+        WHAT IS RATIONALMIND?
+    </p>
+
+    <h2>
+        A space for reflection, reasoning, and better decisions.
+    </h2>
+
+    <p class="about-description">
+        RationalMind helps you understand your emotions and thoughts
+        so you can approach everyday situations with greater clarity
+        and rationality.
+    </p>
+
+
+    <div class="about-grid">
+
+        <div class="about-card">
+
+            <h3>
                 Reflect
-            </a>
-
-            <a href="/decision">
-                Analyze a Decision
-            </a>
-
-            <a href="/reset">
-                Reset
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================================================= -->
-    <!-- RECENT ACTIVITY -->
-    <!-- ================================================= -->
-
-    <section class="recent-section">
-
-        <div class="dashboard-header">
-
-            <p class="eyebrow">
-                YOUR HISTORY
-            </p>
-
-            <h2>
-                Recent Reflections
-            </h2>
+            </h3>
 
             <p>
-                Review your recent entries and observe your thinking over time.
+                Slow down and examine what happened, what you felt,
+                and what you were thinking.
             </p>
 
         </div>
 
 
-        {% if recent_reflections %}
+        <div class="about-card">
 
-            {% for reflection in recent_reflections %}
-
-            <div class="recent-card">
-
-                <div class="date">
-                    {{ reflection["created_at"] }}
-                </div>
-
-                <h3>
-                    {{ reflection["emotion"] }}
-                </h3>
-
-                {% if reflection["situation"] %}
-
-                <p>
-                    {{ reflection["situation"] }}
-                </p>
-
-                {% endif %}
-
-
-                {% if reflection["insights"] %}
-
-                <p>
-                    <strong>Insight:</strong>
-                    {{ reflection["insights"] }}
-                </p>
-
-                {% endif %}
-
-            </div>
-
-            {% endfor %}
-
-
-            <div class="practice-buttons">
-
-                <a href="/history">
-                    View Full History
-                </a>
-
-            </div>
-
-
-        {% else %}
-
-            <div class="empty-card">
-
-                <p>
-                    You have not completed a reflection yet.
-                </p>
-
-                <p>
-                    Your reflection history will appear here once you begin.
-                </p>
-
-                <a href="/reflection">
-                    Start Your First Reflection
-                </a>
-
-            </div>
-
-        {% endif %}
-
-    </section>
-
-
-    <!-- ================================================= -->
-    <!-- WHAT RATIONALMIND IS -->
-    <!-- ================================================= -->
-
-    <section class="about-section">
-
-        <p class="eyebrow">
-            THE RATIONALMIND APPROACH
-        </p>
-
-        <h2>
-            Think clearly. Understand yourself. Choose intentionally.
-        </h2>
-
-        <p class="about-description">
-            RationalMind is designed to help you examine your experiences,
-            understand your emotional responses, and approach important
-            decisions with greater awareness.
-        </p>
-
-
-        <div class="about-grid">
-
-            <div class="about-card">
-
-                <h3>
-                    Reflect
-                </h3>
-
-                <p>
-                    Examine what happened, what you felt, and how you
-                    interpreted the situation.
-                </p>
-
-            </div>
-
-
-            <div class="about-card">
-
-                <h3>
-                    Reason
-                </h3>
-
-                <p>
-                    Separate observations from assumptions and consider
-                    whether your conclusions are supported by evidence.
-                </p>
-
-            </div>
-
-
-            <div class="about-card">
-
-                <h3>
-                    Decide
-                </h3>
-
-                <p>
-                    Consider your goals, alternatives, tradeoffs, and
-                    possible consequences before choosing.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="about-principle">
+            <h3>
+                Reason
+            </h3>
 
             <p>
-                RationalMind is not about eliminating emotion.
-                It is about creating enough distance to understand
-                emotion before deciding how to respond.
+                Learn to recognize emotional patterns, assumptions,
+                and thinking habits.
             </p>
 
         </div>
 
-    </section>
+
+        <div class="about-card">
+
+            <h3>
+                Decide
+            </h3>
+
+            <p>
+                Approach important choices with greater awareness
+                and clearer reasoning.
+            </p>
+
+        </div>
+
+    </div>
 
 
-    <!-- ================================================= -->
-    <!-- PRIVACY -->
-    <!-- ================================================= -->
-
-    <section class="privacy-card">
-
-        <p class="eyebrow">
-            YOUR PRIVACY
-        </p>
-
-        <h2>
-            Your personal reflections stay personal.
-        </h2>
-
-        <p>
-            The personal information you enter into RationalMind,
-            including your reflections, thoughts, decisions, history,
-            and written responses, is not displayed to the creator.
-        </p>
+    <div class="about-principle">
 
         <p>
-            The creator dashboard uses limited aggregate information,
-            such as anonymous emotional patterns and intensity data,
-            to understand how RationalMind is being used.
+            Awareness creates change.
         </p>
 
-        <p>
-            Your individual reflection content is not used as creator
-            analytics.
-        </p>
+    </div>
 
-    </section>
+</section>
 
 
-    <!-- ================================================= -->
-    <!-- PRINCIPLE -->
-    <!-- ================================================= -->
+<!-- ================================================= -->
+<!-- PRIVACY -->
+<!-- ================================================= -->
 
-    <section class="principle-card">
+<section class="privacy-card">
 
-        <p class="eyebrow">
-            RATIONALMIND PRINCIPLE
-        </p>
+    <p class="eyebrow">
+        YOUR PRIVACY
+    </p>
 
-        <h2>
-            You cannot control every event.
-        </h2>
+    <h2>
+        Your reflections are private.
+    </h2>
 
-        <p>
-            But you can improve how you understand,
-            evaluate, and respond to those events.
-        </p>
+    <p>
+        Your personal reflection content is not viewed by the creator
+        of RationalMind.
+    </p>
 
-    </section>
+    <p>
+        RationalMind may use anonymous emotional information and
+        aggregate data to understand how the platform is being used
+        and improve the experience.
+    </p>
 
+</section>
+
+
+<!-- ================================================= -->
+<!-- PRINCIPLE -->
+<!-- ================================================= -->
+
+<section class="principle-card">
+
+    <p class="eyebrow">
+        RATIONALMIND PRINCIPLE
+    </p>
+
+    <h2>
+        Awareness creates change.
+    </h2>
+
+    <p>
+        You cannot always control what happens, but you can learn
+        to understand your thoughts, recognize your emotions,
+        and choose how you respond.
+    </p>
+
+</section>
+```
 
 </main>
 
