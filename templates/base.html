@@ -1,108 +1,183 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <title>
-        {% block title %}
-        RationalMind
-        {% endblock %}
-    </title>
+<title>
+    {% block title %}
+    RationalMind
+    {% endblock %}
+</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+    /* Language selector */
+    .language-selector {
+        margin-left: 15px;
+        display: inline-block;
+    }
+
+    .language-selector select {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    /* Hide Google's default top banner */
+    .goog-te-banner-frame {
+        display: none !important;
+    }
+
+    body {
+        top: 0 !important;
+    }
+
+    /* Hide unnecessary Google Translate text */
+    .goog-logo-link {
+        display: none !important;
+    }
+
+    .goog-te-gadget {
+        font-size: 0 !important;
+    }
+</style>
+```
 
 </head>
 
 <body>
 
-    <nav class="navbar">
+<nav class="navbar">
 
-        <div class="logo">
+```
+<div class="logo">
 
-            <a href="/">
-                RationalMind
+    <a href="/">
+        RationalMind
+    </a>
+
+</div>
+
+
+<div class="nav-links">
+
+    {% if logged_in %}
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+        <a href="/reflection">
+            Reflection
+        </a>
+
+        <a href="/decision">
+            Decisions
+        </a>
+
+        <a href="/history">
+            History
+        </a>
+
+        <a href="/explore">
+            Explore
+        </a>
+
+        <a href="/reset">
+            Reset
+        </a>
+
+        <a href="/feedback">
+            Feedback
+        </a>
+
+        {% if is_creator %}
+
+            <a href="/creator"
+               class="creator-nav-link">
+
+                Creator
+
             </a>
 
-        </div>
+        {% endif %}
+
+        <a href="/logout">
+            Logout
+        </a>
 
 
-        <div class="nav-links">
+    {% else %}
 
-            {% if logged_in %}
+        <a href="/login">
+            Login
+        </a>
 
-                <a href="/dashboard">
-                    Dashboard
-                </a>
+        <a href="/signup">
+            Sign Up
+        </a>
 
-                <a href="/reflection">
-                    Reflection
-                </a>
-
-                <a href="/decision">
-                    Decisions
-                </a>
-
-                <a href="/history">
-                    History
-                </a>
-
-                <a href="/explore">
-                    Explore
-                </a>
-
-                <a href="/reset">
-                    Reset
-                </a>
-
-                <a href="/feedback">
-                    Feedback
-                </a>
-
-                {% if is_creator %}
-
-                    <a href="/creator"
-                       class="creator-nav-link">
-
-                        Creator
-
-                    </a>
-
-                {% endif %}
-
-                <a href="/logout">
-                    Logout
-                </a>
+    {% endif %}
 
 
-            {% else %}
+    <!-- LANGUAGE SELECTOR -->
 
-                <a href="/login">
-                    Login
-                </a>
+    <div id="google_translate_element"
+         class="language-selector">
+    </div>
 
-                <a href="/signup">
-                    Sign Up
-                </a>
+</div>
+```
 
-            {% endif %}
+</nav>
 
-        </div>
+<main>
 
-    </nav>
+```
+{% block content %}
+{% endblock %}
+```
 
+</main>
 
-    <main>
+<!-- GOOGLE TRANSLATE -->
 
-        {% block content %}
-        {% endblock %}
+<script type="text/javascript">
 
-    </main>
+    function googleTranslateElementInit() {
+
+        new google.translate.TranslateElement(
+            {
+                pageLanguage: 'en',
+
+                includedLanguages:'en,ja,es,fr,de,zh-CN,zh-TW,ko,hi,pt,it,ru',
+
+                autoDisplay: false
+
+            },
+
+            'google_translate_element'
+        );
+
+    }
+
+</script>
+
+<script
+    type="text/javascript"
+    src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+</script>
 
 </body>
 
