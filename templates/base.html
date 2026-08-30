@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ language }}">
+<html lang="en">
 
 <head>
 
@@ -37,94 +37,60 @@
             {% if logged_in %}
 
                 <a href="/dashboard">
-                    {{ t["dashboard"] }}
+                    Dashboard
                 </a>
 
                 <a href="/reflection">
-                    {{ t["reflection"] }}
+                    Reflection
                 </a>
 
                 <a href="/decision">
-                    {{ t["decisions"] }}
+                    Decisions
                 </a>
 
                 <a href="/history">
-                    {{ t["history"] }}
+                    History
                 </a>
 
                 <a href="/explore">
-                    {{ t["explore"] }}
+                    Explore
                 </a>
 
                 <a href="/reset">
-                    {{ t["reset"] }}
+                    Reset
                 </a>
 
                 <a href="/feedback">
-                    {{ t["feedback"] }}
+                    Feedback
                 </a>
-
 
                 {% if is_creator %}
 
                     <a href="/creator"
                        class="creator-nav-link">
 
-                        {{ t["creator"] }}
+                        Creator
 
                     </a>
 
                 {% endif %}
 
-
                 <a href="/logout">
-                    {{ t["logout"] }}
+                    Logout
                 </a>
 
 
             {% else %}
 
                 <a href="/login">
-                    {{ t["login"] }}
+                    Login
                 </a>
 
                 <a href="/signup">
-                    {{ t["signup"] }}
+                    Sign Up
                 </a>
 
             {% endif %}
-
-
-            <!-- LANGUAGE SELECTOR -->
-
-            <div class="language-selector">
-
-                <select
-                    onchange="window.location.href='/set-language/' + this.value"
-                >
-
-                    <option
-                        value="en"
-                        {% if language == "en" %}
-                            selected
-                        {% endif %}
-                    >
-                        English
-                    </option>
-
-
-                    <option
-                        value="ja"
-                        {% if language == "ja" %}
-                            selected
-                        {% endif %}
-                    >
-                        日本語
-                    </option>
-
-                </select>
-
-            </div>
 
         </div>
 
